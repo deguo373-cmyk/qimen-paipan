@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/qimen", "destination": "/api/qimen" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
