@@ -1,6 +1,8 @@
 {
   "rewrites": [
     { "source": "/api/qimen", "destination": "/api/qimen" },
+    { "source": "/api/qimen_batch", "destination": "/api/qimen_batch" },
+    { "source": "/api/bazi", "destination": "/api/bazi" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

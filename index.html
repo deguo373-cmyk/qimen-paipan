@@ -3,812 +3,731 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>奇门遁甲 · 在线排盘</title>
+  <title>术数工具箱 · 奇门遁甲 · 八字排盘</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
-    /* ═══════════════════════════════════════
-       Notion Design System 变体
-       ═══════════════════════════════════════ */
     :root {
-      --bg: #ffffff;
-      --bg-warm: #f6f5f4;
-      --text: rgba(0,0,0,0.95);
-      --text-secondary: #615d59;
-      --text-muted: #a39e98;
-      --accent: #0075de;
-      --accent-hover: #005bab;
-      --border: 1px solid rgba(0,0,0,0.1);
-      --radius: 12px;
-      --radius-sm: 4px;
+      --bg: #ffffff; --bg-warm: #f6f5f4; --text: rgba(0,0,0,0.95);
+      --text-secondary: #615d59; --text-muted: #a39e98;
+      --accent: #0075de; --accent-hover: #005bab;
+      --border: 1px solid rgba(0,0,0,0.1); --radius: 12px; --radius-sm: 4px;
       --shadow-card: rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.84688px, rgba(0,0,0,0.02) 0px 0.8px 2.925px, rgba(0,0,0,0.01) 0px 0.175px 1.04062px;
-      --shadow-deep: rgba(0,0,0,0.01) 0px 1px 3px, rgba(0,0,0,0.02) 0px 3px 7px, rgba(0,0,0,0.02) 0px 7px 15px, rgba(0,0,0,0.04) 0px 14px 28px, rgba(0,0,0,0.05) 0px 23px 52px;
       --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       --font-serif: 'Noto Serif SC', serif;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { font-size: 16px; scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--font-sans);
-      color: var(--text);
-      background: var(--bg);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── Layout ─────────────────────────────── */
-
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 48px 24px 80px;
-    }
-
-    @media (max-width: 640px) {
-      .container { padding: 24px 16px 48px; }
-    }
-
-    /* ── Header ─────────────────────────────── */
-
-    .header { margin-bottom: 40px; }
-
-    .header h1 {
-      font-family: var(--font-serif);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header h1 .emoji { font-family: var(--font-sans); font-size: 1.6rem; }
-
-    .header p {
-      margin-top: 6px;
-      color: var(--text-secondary);
-      font-size: 0.9375rem;
-      font-weight: 400;
-    }
-
-    .header .badge {
-      display: inline-block;
-      margin-top: 10px;
-      background: #f2f9ff;
-      color: #097fe8;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 9999px;
-      letter-spacing: 0.125px;
-    }
-
-    /* ── Card ───────────────────────────────── */
-
-    .card {
-      background: var(--bg);
-      border: var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-card);
-      padding: 28px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 640px) {
-      .card { padding: 20px 16px; }
-    }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* ── Form ───────────────────────────────── */
-
-    .form-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .form-group {
-      flex: 1;
-      min-width: 140px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #dddddd;
-      border-radius: var(--radius-sm);
-      font-size: 0.9375rem;
-      font-family: var(--font-sans);
-      color: var(--text);
-      background: var(--bg);
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(0,117,222,0.15);
-    }
-
-    .form-group input::placeholder { color: var(--text-muted); }
-
-    .form-actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 8px 20px;
-      border-radius: var(--radius-sm);
-      font-size: 0.9375rem;
-      font-weight: 600;
-      font-family: var(--font-sans);
-      border: none;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-    }
-
-    .btn:active { transform: scale(0.97); }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-primary:disabled {
-      background: #c4d9f0;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: rgba(0,0,0,0.05);
-      color: var(--text);
-    }
-
-    .btn-secondary:hover { background: rgba(0,0,0,0.08); }
-
-    /* ── Loading ────────────────────────────── */
-
-    .loading {
-      display: none;
-      align-items: center;
-      gap: 10px;
-      padding: 16px 0;
-      color: var(--text-secondary);
-      font-size: 0.9375rem;
-    }
-
-    .loading.active { display: flex; }
-
-    .spinner {
-      width: 18px; height: 18px;
-      border: 2px solid rgba(0,0,0,0.08);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Results ────────────────────────────── */
-
-    #results { display: none; margin-top: 24px; }
-    #results.active { display: block; }
-
-    /* ── Info Bar ───────────────────────────── */
-
-    .info-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 20px;
-      padding: 16px 20px;
-      background: var(--bg-warm);
-      border-radius: 8px;
-      margin-bottom: 24px;
-    }
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.875rem;
-    }
-
-    .info-item .label {
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .info-item .value {
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .info-item .value.highlight {
-      color: var(--accent);
-    }
-
-    .info-item .tag {
-      display: inline-block;
-      background: #f2f9ff;
-      color: #097fe8;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 9999px;
-    }
-
-    /* ── 九宫格 ─────────────────────────────── */
-
-    .grid-wrapper {
-      position: relative;
-      margin-bottom: 24px;
-    }
-
-    .grid-label {
-      position: absolute;
-      font-family: var(--font-serif);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .grid-label.north { bottom: -20px; left: 50%; transform: translateX(-50%); }
-    .grid-label.south { top: -20px; left: 50%; transform: translateX(-50%); }
-    .grid-label.east { top: 50%; left: -28px; transform: translateY(-50%); }
-    .grid-label.west { top: 50%; right: -28px; transform: translateY(-50%); }
-
-    .qimen-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: rgba(0,0,0,0.08);
-      border: 1px solid rgba(0,0,0,0.1);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .palace {
-      background: var(--bg);
-      padding: 10px 8px;
-      min-height: 130px;
-      display: flex;
-      flex-direction: column;
-      transition: background 0.15s;
-    }
-
-    .palace:hover { background: #fafaf9; }
-
-    .palace.is-center {
-      background: var(--bg-warm);
-      justify-content: center;
-      align-items: center;
-      min-height: 100px;
-    }
-
-    .palace.is-center .center-text {
-      font-family: var(--font-serif);
-      font-size: 0.8125rem;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .palace.is-center .center-text strong {
-      display: block;
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-    }
-
-    .palace-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      font-size: 0.75rem;
-    }
-
-    .palace-name {
-      font-family: var(--font-serif);
-      font-weight: 700;
-      font-size: 0.8125rem;
-      color: var(--text);
-    }
-
-    .palace-element {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      background: var(--bg-warm);
-      padding: 0 6px;
-      border-radius: 3px;
-    }
-
-    .palace-god {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--accent);
-      margin-bottom: 2px;
-    }
-
-    .palace-star {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 1px;
-    }
-
-    .palace-door {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: #c0392b;
-      margin-bottom: 1px;
-    }
-
-    .palace-stems {
-      margin-top: auto;
-      display: flex;
-      gap: 6px;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-    }
-
-    .palace-stems .stem {
-      background: var(--bg-warm);
-      padding: 1px 6px;
-      border-radius: 3px;
-      font-weight: 500;
-    }
-
-    .palace-stems .stem.earth { color: #6b4f3a; }
-    .palace-stems .stem.sky { color: #2c6e49; }
-
-    .palace-kong {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    @media (max-width: 640px) {
-      .palace { padding: 6px 5px; min-height: 100px; }
-      .palace-name { font-size: 0.75rem; }
-      .palace-god { font-size: 0.6875rem; }
-      .palace-star, .palace-door, .palace-stems { font-size: 0.75rem; }
-    }
-
-    /* ── Ganzhi / Calendar Info ─────────────── */
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 12px;
-    }
-
-    .detail-item {
-      padding: 8px 12px;
-      background: var(--bg-warm);
-      border-radius: 6px;
-    }
-
-    .detail-item .label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .detail-item .value {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-top: 2px;
-      font-family: var(--font-serif);
-    }
-
-    /* ── Warnings ───────────────────────────── */
-
-    .warnings {
-      margin-top: 20px;
-    }
-
-    .warnings summary {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      cursor: pointer;
-      padding: 8px 0;
-    }
-
-    .warnings ul {
-      list-style: none;
-      padding: 8px 0;
-    }
-
-    .warnings li {
-      font-size: 0.8125rem;
-      color: #8b6914;
-      padding: 4px 0 4px 16px;
-      position: relative;
-    }
-
-    .warnings li::before {
-      content: '⚠';
-      position: absolute;
-      left: 0;
-    }
-
-    /* ── Error ──────────────────────────────── */
-
-    .error-banner {
-      display: none;
-      padding: 12px 16px;
-      background: #fff4f0;
-      border: 1px solid #fcc;
-      border-radius: 8px;
-      color: #c0392b;
-      font-size: 0.875rem;
-      margin-bottom: 16px;
-    }
-
-    .error-banner.active { display: block; }
-
-    /* ── Footer ─────────────────────────────── */
-
-    .footer {
-      margin-top: 48px;
-      padding-top: 24px;
-      border-top: var(--border);
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.8125rem;
-    }
-
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .footer a:hover { text-decoration: underline; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:16px;scroll-behavior:smooth}
+    body{font-family:var(--font-sans);color:var(--text);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+    .container{max-width:860px;margin:0 auto;padding:32px 24px 60px}
+    @media(max-width:640px){.container{padding:20px 12px 40px}}
+    .header{margin-bottom:28px}
+    .header h1{font-family:var(--font-serif);font-size:1.75rem;font-weight:700;display:flex;align-items:center;gap:10px}
+    .header h1 .emoji{font-family:var(--font-sans)}
+    .header p{margin-top:4px;color:var(--text-secondary);font-size:0.875rem}
+    .header .badge{display:inline-block;margin-top:8px;background:#f2f9ff;color:#097fe8;font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:9999px}
+
+    /* ── Tabs ────────────────────────── */
+    .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:var(--border);padding-bottom:0}
+    .tab-btn{padding:10px 18px;font-size:0.9375rem;font-weight:500;font-family:var(--font-sans);border:none;background:transparent;cursor:pointer;color:var(--text-secondary);border-bottom:2px solid transparent;transition:all 0.15s;margin-bottom:-1px}
+    .tab-btn:hover{color:var(--text)}
+    .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+
+    .card{background:var(--bg);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:24px;margin-bottom:20px}
+    @media(max-width:640px){.card{padding:16px}}
+    .card-title{font-size:1rem;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+    .form-row{display:flex;gap:12px;flex-wrap:wrap}
+    .form-group{flex:1;min-width:130px}
+    .form-group label{display:block;font-size:0.8125rem;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
+    .form-group input,.form-group select{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:var(--radius-sm);font-size:0.9375rem;font-family:var(--font-sans);color:var(--text);background:var(--bg);outline:none;transition:border-color 0.15s,box-shadow 0.15s}
+    .form-group input:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,117,222,0.15)}
+    .form-group input::placeholder{color:var(--text-muted)}
+    .form-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+
+    .btn{padding:8px 20px;border-radius:var(--radius-sm);font-size:0.9375rem;font-weight:600;font-family:var(--font-sans);border:none;cursor:pointer;transition:background 0.15s,transform 0.1s}
+    .btn:active{transform:scale(0.97)}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:hover{background:var(--accent-hover)}
+    .btn-primary:disabled{background:#c4d9f0;cursor:not-allowed}
+    .btn-secondary{background:rgba(0,0,0,0.05);color:var(--text)}
+    .btn-secondary:hover{background:rgba(0,0,0,0.08)}
+
+    .loading{display:none;align-items:center;gap:10px;padding:14px 0;color:var(--text-secondary);font-size:0.9375rem}
+    .loading.active{display:flex}
+    .spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,0.08);border-top-color:var(--accent);border-radius:50%;animation:spin 0.6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #results{display:none;margin-top:20px}
+    #results.active{display:block}
+    .error-banner{display:none;padding:12px 16px;background:#fff4f0;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:0.875rem;margin-bottom:12px}
+    .error-banner.active{display:block}
+
+    /* ── Info Bar ────────────────────── */
+    .info-bar{display:flex;flex-wrap:wrap;gap:8px 18px;padding:14px 18px;background:var(--bg-warm);border-radius:8px;margin-bottom:20px}
+    .info-item{display:flex;align-items:center;gap:6px;font-size:0.875rem}
+    .info-item .label{color:var(--text-muted);font-weight:500}
+    .info-item .value{font-weight:600}
+    .info-item .value.highlight{color:var(--accent)}
+    .info-item .tag{background:#f2f9ff;color:#097fe8;font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px}
+
+    /* ── 九宫格 ──────────────────────── */
+    .qimen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);border-radius:8px;overflow:hidden;margin-bottom:16px}
+    .palace{background:var(--bg);padding:8px;min-height:110px;display:flex;flex-direction:column;transition:background 0.15s}
+    .palace:hover{background:#fafaf9}
+    .palace.is-center{background:var(--bg-warm);justify-content:center;align-items:center;min-height:90px}
+    .palace.is-center .center-text{font-family:var(--font-serif);font-size:0.8125rem;color:var(--text-muted);text-align:center}
+    .palace.is-center .center-text strong{display:block;font-size:1rem;color:var(--text-secondary);margin-bottom:4px}
+    .palace-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:0.75rem}
+    .palace-name{font-family:var(--font-serif);font-weight:700;font-size:0.8125rem}
+    .palace-element{font-size:0.6875rem;color:var(--text-muted);background:var(--bg-warm);padding:0 6px;border-radius:3px}
+    .palace-god{font-size:0.75rem;font-weight:500;color:var(--accent)}
+    .palace-star{font-size:0.8125rem;font-weight:600}
+    .palace-door{font-size:0.8125rem;font-weight:600;color:#c0392b}
+    .palace-stems{margin-top:auto;display:flex;gap:6px;font-size:0.8125rem;color:var(--text-secondary)}
+    .palace-stems .stem{background:var(--bg-warm);padding:1px 6px;border-radius:3px;font-weight:500}
+    .palace-stems .stem.earth{color:#6b4f3a}
+    .palace-stems .stem.sky{color:#2c6e49}
+    @media(max-width:640px){.palace{padding:5px;min-height:90px}.palace-name{font-size:0.75rem}.palace-god{font-size:0.6875rem}.palace-star,.palace-door,.palace-stems{font-size:0.75rem}}
+
+    /* ── 吉凶方位 ────────────────────── */
+    .direction-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+    .direction-card{padding:10px;border-radius:8px;border:var(--border);text-align:center}
+    .direction-card .dir-name{font-family:var(--font-serif);font-weight:700;font-size:1rem;margin-bottom:2px}
+    .direction-card .dir-detail{font-size:0.75rem;color:var(--text-secondary)}
+    .direction-card.good{background:#f0faf0;border-color:#b8e0b8}
+    .direction-card.bad{background:#faf0f0;border-color:#e0b8b8}
+    .direction-card.neutral{background:var(--bg-warm)}
+
+    /* ── 断事参考 ────────────────────── */
+    .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
+    .ref-card{padding:10px 12px;border-radius:8px;border:var(--border);background:var(--bg-warm)}
+    .ref-card .ref-title{font-weight:600;font-size:0.875rem;margin-bottom:4px}
+    .ref-card .ref-detail{font-size:0.8125rem;color:var(--text-secondary);line-height:1.6}
+
+    /* ── 择时 ────────────────────────── */
+    .shichen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:12px}
+    .shichen-card{padding:10px 8px;border-radius:8px;border:var(--border);text-align:center;cursor:default;transition:transform 0.1s}
+    .shichen-card:hover{transform:scale(1.03)}
+    .shichen-card .sc-name{font-weight:600;font-size:0.9375rem}
+    .shichen-card .sc-period{font-size:0.6875rem;color:var(--text-muted)}
+    .shichen-card .sc-rating{font-size:0.8125rem;font-weight:600;margin:4px 0}
+    .shichen-card .sc-door{font-size:0.75rem;color:var(--text-secondary)}
+    .shichen-card.lev-daji{background:#e8f5e9;border-color:#a5d6a7}
+    .shichen-card.lev-ji{background:#f1f8e9;border-color:#c5e1a5}
+    .shichen-card.lev-ping{background:#fff8e1;border-color:#ffe082}
+    .shichen-card.lev-xiong{background:#fce4ec;border-color:#ef9a9a}
+    .shichen-card.lev-daxiong{background:#f4433615;border-color:#e57373}
+
+    /* ── 八字 ────────────────────────── */
+    .bazi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(0,0,0,0.08);border:var(--border);border-radius:8px;overflow:hidden;margin:12px 0}
+    .bazi-cell{padding:10px;background:var(--bg);text-align:center;min-height:70px}
+    .bazi-cell .pillar-label{font-size:0.6875rem;color:var(--text-muted);font-weight:500;margin-bottom:2px}
+    .bazi-cell .pillar-ganzhi{font-family:var(--font-serif);font-size:1.25rem;font-weight:700}
+    .bazi-cell .pillar-shishen{font-size:0.75rem;color:var(--accent);font-weight:500;margin-top:2px}
+    .bazi-cell .pillar-nayin{font-size:0.6875rem;color:var(--text-muted)}
+    .bazi-cell.self{background:var(--bg-warm)}
+
+    .dayun-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .dayun-item{padding:6px 10px;border-radius:6px;border:var(--border);text-align:center;min-width:70px}
+    .dayun-item .dy-ganzhi{font-family:var(--font-serif);font-weight:700;font-size:0.9375rem}
+    .dayun-item .dy-age{font-size:0.6875rem;color:var(--text-muted)}
+    .dayun-item.current{background:#f0f7ff;border-color:var(--accent)}
+
+    .canggan-list{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:3px}
+    .canggan-tag{font-size:0.6875rem;background:var(--bg-warm);padding:0 5px;border-radius:3px;color:var(--text-secondary)}
+
+    .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+    .detail-item{padding:6px 10px;background:var(--bg-warm);border-radius:6px}
+    .detail-item .label{font-size:0.6875rem;color:var(--text-muted);font-weight:500}
+    .detail-item .value{font-size:0.9375rem;font-weight:600;margin-top:1px;font-family:var(--font-serif)}
+
+    .warnings{margin-top:16px}
+    .warnings details summary{font-size:0.875rem;font-weight:600;color:var(--text-secondary);cursor:pointer;padding:6px 0}
+    .warnings ul{list-style:none;padding:6px 0}
+    .warnings li{font-size:0.8125rem;color:#8b6914;padding:3px 0 3px 16px;position:relative}
+    .warnings li::before{content:'⚠';position:absolute;left:0}
+
+    .footer{margin-top:40px;padding-top:20px;border-top:var(--border);text-align:center;color:var(--text-muted);font-size:0.8125rem}
+    .footer a{color:var(--accent);text-decoration:none}
+    .footer a:hover{text-decoration:underline}
+    .btn-share{background:#10b981;color:#fff;margin-top:8px}
+    .btn-share:hover{background:#059669}
+    .toast{display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:8px;font-size:0.875rem;z-index:999;animation:toastIn 0.3s ease}
+    @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}}
+    .toast.show{display:block}
   </style>
 </head>
 <body>
-
-<div class="container">
+<div class="container" id="app">
 
   <!-- ═══ Header ═══ -->
   <div class="header">
-    <h1><span class="emoji">☲</span> 奇门遁甲 · 在线排盘</h1>
-    <p>输入时间即刻起盘 — 时家转盘奇门，大陆主流口径</p>
+    <h1><span class="emoji">☲</span> 术数工具箱</h1>
+    <p>奇门遁甲 · 八字排盘 · 择时推荐 · 吉凶方位 · 断事参考</p>
     <span class="badge">基于 AI 术数工程化 · Numerologist Skills</span>
   </div>
 
-  <!-- ═══ Form ═══ -->
-  <div class="card">
-    <div class="card-title">📅 设定时间</div>
+  <!-- ═══ Tabs ═══ -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="qimen">🔮 奇门排盘</button>
+    <button class="tab-btn" data-tab="shichen">⏰ 择时推荐</button>
+    <button class="tab-btn" data-tab="bazi">📜 八字排盘</button>
+  </div>
 
-    <div class="form-row">
-      <div class="form-group" style="flex:0 0 auto; min-width:100px;">
-        <label>历法</label>
-        <select id="calendarType">
-          <option value="solar">公历</option>
-          <option value="lunar">农历</option>
-          <option value="now">现在</option>
-        </select>
+  <!-- ════════════════════════════
+       TAB 1: 奇门排盘
+       ════════════════════════════ -->
+  <div class="tab-pane active" id="tab-qimen">
+
+    <div class="card">
+      <div class="card-title">📅 设定时间</div>
+      <div class="form-row">
+        <div class="form-group" style="flex:0 0 auto;min-width:90px">
+          <label>历法</label>
+          <select id="qmCalendarType">
+            <option value="solar">公历</option>
+            <option value="lunar">农历</option>
+            <option value="now">现在</option>
+          </select>
+        </div>
+        <div class="form-group" id="qmDateGroup">
+          <label>日期</label>
+          <input type="date" id="qmDate">
+        </div>
+        <div class="form-group">
+          <label>时间</label>
+          <input type="time" id="qmTime" value="12:00">
+        </div>
+        <div class="form-group" style="flex:0 0 auto;min-width:110px">
+          <label>地点</label>
+          <select id="qmLocation">
+            <option value="china">中国大陆</option>
+            <option value="utc8">UTC+8</option>
+            <option value="japan">日本</option>
+            <option value="us-east">美东</option>
+            <option value="us-west">美西</option>
+            <option value="uk">英国</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group" id="dateGroup">
-        <label>日期</label>
-        <input type="date" id="dateInput">
+      <div class="form-actions">
+        <button class="btn btn-primary" id="qmBtn">起盘</button>
+        <button class="btn btn-secondary" id="qmNow">填当前时间</button>
       </div>
-      <div class="form-group">
-        <label>时间</label>
-        <input type="time" id="timeInput" value="12:00">
-      </div>
-      <div class="form-group" style="flex:0 0 auto; min-width:120px;">
-        <label>地点</label>
-        <select id="location">
-          <option value="china">中国大陆</option>
-          <option value="utc8">UTC+8 (台湾/香港/新加坡)</option>
-          <option value="japan">日本 UTC+9</option>
-          <option value="us-east">美国东部 UTC-5</option>
-          <option value="us-west">美国西部 UTC-8</option>
-          <option value="uk">英国 UTC+0</option>
-          <option value="australia">澳洲东部 UTC+10</option>
-        </select>
-      </div>
+      <div class="loading" id="qmLoading"><div class="spinner"></div><span>正在起盘...</span></div>
     </div>
 
-    <div class="form-actions">
-      <button class="btn btn-primary" id="btnSubmit">起盘</button>
-      <button class="btn btn-secondary" id="btnNow">填当前时间</button>
-    </div>
+    <div class="error-banner" id="qmError"></div>
 
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <span>正在起盘...</span>
+    <div id="qmResults">
+      <div class="info-bar" id="qmInfoBar"></div>
+      <div class="qimen-grid" id="qmGrid"></div>
+
+      <!-- 吉凶方位 -->
+      <div class="card" id="qmDirections" style="display:none">
+        <div class="card-title">🧭 吉凶方位</div>
+        <div class="direction-grid" id="qmDirGrid"></div>
+      </div>
+
+      <!-- 断事参考 -->
+      <div class="card" id="qmReference" style="display:none">
+        <div class="card-title">📖 断事参考</div>
+        <div class="ref-grid" id="qmRefGrid"></div>
+      </div>
+
+      <!-- 干支信息 -->
+      <div class="card">
+        <div class="card-title">📜 干支 · 日历</div>
+        <div class="detail-grid" id="qmCal"></div>
+      </div>
+
+      <div class="form-actions" style="justify-content:flex-end">
+        <button class="btn btn-share" id="qmShare">📸 分享图片</button>
+      </div>
+
+      <div class="warnings" id="qmWarnings" style="display:none">
+        <details><summary>⚠ 注意事项</summary><ul id="qmWarnList"></ul></details>
+      </div>
     </div>
   </div>
 
-  <!-- ═══ Error ═══ -->
-  <div class="error-banner" id="error"></div>
-
-  <!-- ═══ Results ═══ -->
-  <div id="results">
-
-    <!-- Info Bar -->
-    <div class="info-bar" id="infoBar"></div>
-
-    <!-- 九宫格 -->
-    <div class="grid-wrapper">
-      <div class="grid-label south">南</div>
-      <div class="grid-label north">北</div>
-      <div class="grid-label east">东</div>
-      <div class="grid-label west">西</div>
-      <div class="qimen-grid" id="grid"></div>
-    </div>
-
-    <!-- 干支日历信息 -->
+  <!-- ════════════════════════════
+       TAB 2: 择时推荐
+       ════════════════════════════ -->
+  <div class="tab-pane" id="tab-shichen">
     <div class="card">
-      <div class="card-title">📜 日历与干支</div>
-      <div class="detail-grid" id="calendarInfo"></div>
+      <div class="card-title">⏰ 择时分析</div>
+      <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:12px">选择日期，系统自动计算当天 12 个时辰的奇门走势，选出吉时。</p>
+      <div class="form-row">
+        <div class="form-group" style="flex:0 0 auto;min-width:160px">
+          <label>日期</label>
+          <input type="date" id="scDate">
+        </div>
+        <div class="form-group" style="flex:0 0 auto;min-width:110px">
+          <label>地点</label>
+          <select id="scLocation">
+            <option value="china">中国大陆</option>
+            <option value="utc8">UTC+8</option>
+            <option value="japan">日本</option>
+            <option value="us-east">美东</option>
+            <option value="us-west">美西</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="scBtn">分析</button>
+        <button class="btn btn-secondary" id="scToday">今天</button>
+      </div>
+      <div class="loading" id="scLoading"><div class="spinner"></div><span>正在逐时辰分析...</span></div>
     </div>
-
-    <!-- 值符值使 -->
-    <div class="card">
-      <div class="card-title">🎯 值符 · 值使</div>
-      <div class="detail-grid" id="zhifuInfo"></div>
+    <div class="error-banner" id="scError"></div>
+    <div id="scResults" style="display:none">
+      <div class="info-bar" id="scInfoBar"></div>
+      <div class="shichen-grid" id="scGrid"></div>
+      <div class="card" style="margin-top:12px;padding:16px">
+        <div class="card-title">📊 统计</div>
+        <div class="detail-grid" id="scStats"></div>
+      </div>
     </div>
-
-    <!-- Warnings -->
-    <div class="warnings" id="warningsBox" style="display:none;">
-      <details>
-        <summary>⚠ 注意事项</summary>
-        <ul id="warningsList"></ul>
-      </details>
-    </div>
-
   </div>
 
-  <!-- Footer -->
+  <!-- ════════════════════════════
+       TAB 3: 八字排盘
+       ════════════════════════════ -->
+  <div class="tab-pane" id="tab-bazi">
+    <div class="card">
+      <div class="card-title">📜 八字排盘</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>公历日期</label>
+          <input type="date" id="bzDate">
+        </div>
+        <div class="form-group">
+          <label>时间</label>
+          <input type="time" id="bzTime" value="12:00">
+        </div>
+        <div class="form-group" style="flex:0 0 auto;min-width:80px">
+          <label>性别</label>
+          <select id="bzGender"><option value="男">男</option><option value="女">女</option></select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="bzBtn">排盘</button>
+        <button class="btn btn-secondary" id="bzNow">当前时间</button>
+      </div>
+      <div class="loading" id="bzLoading"><div class="spinner"></div><span>正在排盘...</span></div>
+    </div>
+    <div class="error-banner" id="bzError"></div>
+    <div id="bzResults" style="display:none">
+      <div class="info-bar" id="bzInfoBar"></div>
+
+      <!-- 四柱 -->
+      <div class="card">
+        <div class="card-title">🏛 四柱</div>
+        <div class="bazi-grid" id="bzPillars"></div>
+        <div style="margin-top:10px;font-size:0.8125rem;color:var(--text-secondary)" id="bzNayin"></div>
+      </div>
+
+      <!-- 五行统计 -->
+      <div class="card">
+        <div class="card-title">🔥 五行统计</div>
+        <div class="detail-grid" id="bzWuxing"></div>
+      </div>
+
+      <!-- 藏干 -->
+      <div class="card">
+        <div class="card-title">🌱 地支藏干</div>
+        <div id="bzCanggan"></div>
+      </div>
+
+      <!-- 大运 -->
+      <div class="card">
+        <div class="card-title">🏃 大运</div>
+        <div id="bzDayunInfo"></div>
+        <div class="dayun-list" id="bzDayun"></div>
+      </div>
+
+      <!-- 流年 -->
+      <div class="card">
+        <div class="card-title">📅 当前流年</div>
+        <div class="detail-grid" id="bzLiuYear"></div>
+      </div>
+
+      <!-- 空亡 -->
+      <div class="card" style="background:var(--bg-warm)">
+        <div class="card-title">🕳 空亡</div>
+        <div class="detail-grid" id="bzXunkong"></div>
+      </div>
+
+      <div class="warnings" id="bzWarnings" style="display:none">
+        <details><summary>⚠ 注意事项</summary><ul id="bzWarnList"></ul></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Footer ═══ -->
   <div class="footer">
     数据基于 <a href="https://github.com/FANzR-arch/Numerologist_skills" target="_blank">Numerologist Skills</a> ·
-    仅供传统文化研究参考，不构成现实决策建议
+    仅供传统文化研究参考 · 不构成现实决策建议
   </div>
-
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-const API_URL = '/api/qimen';
+// ── Config ────────────────────────────────
+const LOC_TZ = { china:'Asia/Shanghai', utc8:'Asia/Singapore', japan:'Asia/Tokyo', 'us-east':'America/New_York', 'us-west':'America/Los_Angeles', uk:'Europe/London' };
+const LOC_CN = { china:'中国', utc8:'', japan:'日本', 'us-east':'美国', 'us-west':'美国', uk:'英国' };
 
-// ── 地点 → 时区映射 ──────────────────────────
-const LOCATION_TZ = {
-  china:    'Asia/Shanghai',
-  utc8:     'Asia/Singapore',
-  japan:    'Asia/Tokyo',
-  'us-east': 'America/New_York',
-  'us-west': 'America/Los_Angeles',
-  uk:       'Europe/London',
-  australia: 'Australia/Sydney',
-};
-
-// ── DOM refs ──────────────────────────────────
-const calendarType   = document.getElementById('calendarType');
-const dateInput      = document.getElementById('dateInput');
-const timeInput      = document.getElementById('timeInput');
-const locationSelect = document.getElementById('location');
-const btnSubmit      = document.getElementById('btnSubmit');
-const btnNow         = document.getElementById('btnNow');
-const loading        = document.getElementById('loading');
-const errorEl        = document.getElementById('error');
-const resultsEl      = document.getElementById('results');
-const infoBarEl      = document.getElementById('infoBar');
-const gridEl         = document.getElementById('grid');
-const calendarInfoEl = document.getElementById('calendarInfo');
-const zhifuInfoEl    = document.getElementById('zhifuInfo');
-const warningsBox    = document.getElementById('warningsBox');
-const warningsList   = document.getElementById('warningsList');
-
-// ── Calendar type toggle ──────────────────────
-calendarType.addEventListener('change', () => {
-  const type = calendarType.value;
-  document.getElementById('dateGroup').style.display = type === 'now' ? 'none' : 'block';
-  timeInput.disabled = type === 'now';
-  dateInput.disabled = type === 'now';
+// ── Tab switching ─────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
 });
 
-// ── Set current time ──────────────────────────
-function setNow() {
-  const now = new Date();
-  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-  dateInput.value = local.toISOString().slice(0, 10);
-  timeInput.value = local.toISOString().slice(11, 16);
-  calendarType.value = 'solar';
-  document.getElementById('dateGroup').style.display = 'block';
-  timeInput.disabled = false;
-  dateInput.disabled = false;
+// ── Helpers ───────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+function nowStr() {
+  const n=new Date(); return n.toISOString().slice(0,10);
+}
+function pad(n){return String(n).padStart(2,'0')}
+function nowDate(){const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function nowTime(){const d=new Date();return `${pad(d.getHours())}:${pad(d.getMinutes())}`}
+
+// ── Init dates ────────────────────────────
+document.getElementById('qmDate').value = nowDate();
+document.getElementById('qmTime').value = nowTime();
+document.getElementById('scDate').value = nowDate();
+document.getElementById('bzDate').value = nowDate();
+document.getElementById('bzTime').value = nowTime();
+
+// Qimen "now" toggle
+document.getElementById('qmCalendarType').addEventListener('change', function(){
+  const g=document.getElementById('qmDateGroup');
+  g.style.display=this.value==='now'?'none':'block';
+  document.getElementById('qmTime').disabled=this.value==='now';
+  document.getElementById('qmDate').disabled=this.value==='now';
+});
+
+document.getElementById('qmNow').addEventListener('click',()=>{
+  document.getElementById('qmDate').value=nowDate();
+  document.getElementById('qmTime').value=nowTime();
+  document.getElementById('qmCalendarType').value='solar';
+  document.getElementById('qmDateGroup').style.display='block';
+  document.getElementById('qmTime').disabled=false;
+  document.getElementById('qmDate').disabled=false;
+});
+
+// ═══════════════════════════════════════
+// TAB 1: 奇门排盘
+// ═══════════════════════════════════════
+const QM_DOOR = {
+  '休门':'休息求财','生门':'生意创业','伤门':'争斗防损','杜门':'隐匿保密',
+  '景门':'文书考试','死门':'追捕诉讼','惊门':'惊恐官司','开门':'开创求职'
+};
+const QM_DIR = {1:'北',2:'西南',3:'东',4:'东南',6:'西北',7:'西',8:'东北',9:'南'};
+const QM_ELEM = {1:'水',2:'土',3:'木',4:'木',6:'金',7:'金',8:'土',9:'火'};
+
+document.getElementById('qmBtn').addEventListener('click', qimenGo);
+async function qimenGo() {
+  const e=document.getElementById('qmError');e.classList.remove('active');
+  document.getElementById('qmResults').style.display='none';
+  const l=document.getElementById('qmLoading');l.classList.add('active');
+  document.getElementById('qmBtn').disabled=true;
+
+  const type=document.getElementById('qmCalendarType').value;
+  const loc=document.getElementById('qmLocation').value;
+  let timeInput, calType;
+  if(type==='now'){timeInput='now';calType='now';}
+  else if(type==='lunar'){timeInput=document.getElementById('qmDate').value+' '+document.getElementById('qmTime').value+':00';calType='lunar';}
+  else{timeInput=document.getElementById('qmDate').value+' '+document.getElementById('qmTime').value+':00';calType='solar';}
+
+  try{
+    const r=await fetch('/api/qimen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({time_input:timeInput,calendar_type:calType,location:{country:LOC_CN[loc]||'中国',timezone:LOC_TZ[loc]||'Asia/Shanghai'}})});
+    const d=await r.json();
+    if(!r.ok||d.error) throw new Error(d.error||'排盘失败');
+    renderQimen(d);
+  }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
+  finally{l.classList.remove('active');document.getElementById('qmBtn').disabled=false;}
 }
 
-btnNow.addEventListener('click', setNow);
-
-// ── Initialize with current time ──────────────
-setNow();
-
-// ── Submit ────────────────────────────────────
-btnSubmit.addEventListener('click', async () => {
-  errorEl.classList.remove('active');
-  resultsEl.classList.remove('active');
-  loading.classList.add('active');
-  btnSubmit.disabled = true;
-
-  const type = calendarType.value;
-
-  let timeInputStr, calendarTypeStr, locationInput;
-
-  // Get timezone from location
-  const tzName = LOCATION_TZ[locationSelect.value] || 'Asia/Shanghai';
-  const countryMap = {
-    china:    '中国',
-    utc8:     '',
-    japan:    '日本',
-    'us-east': '美国',
-    'us-west': '美国',
-    uk:       '英国',
-    australia: '澳大利亚',
-  };
-
-  if (type === 'now') {
-    timeInputStr = 'now';
-    calendarTypeStr = 'now';
-    locationInput = { country: countryMap[locationSelect.value] || '', timezone: tzName };
-  } else if (type === 'lunar') {
-    // For lunar, we need to send the date and mark it as lunar
-    // But since the input is a date picker (solar date), we can't easily convert
-    // Let the API handle it — send as solar for now
-    timeInputStr = `${dateInput.value} ${timeInput.value}:00`;
-    calendarTypeStr = 'lunar';
-    locationInput = { country: countryMap[locationSelect.value] || '', timezone: tzName };
-  } else {
-    timeInputStr = `${dateInput.value} ${timeInput.value}:00`;
-    calendarTypeStr = 'solar';
-    locationInput = { country: countryMap[locationSelect.value] || '', timezone: tzName };
-  }
-
-  const payload = {
-    time_input: timeInputStr,
-    calendar_type: calendarTypeStr,
-    location: locationInput,
-  };
-
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-
-    if (!res.ok || data.error) {
-      throw new Error(data.error || '排盘失败');
-    }
-
-    renderResults(data);
-  } catch (err) {
-    errorEl.textContent = '❌ ' + err.message;
-    errorEl.classList.add('active');
-  } finally {
-    loading.classList.remove('active');
-    btnSubmit.disabled = false;
-  }
-});
-
-// ── Render ────────────────────────────────────
-function renderResults(data) {
-  const c = data.chart;
-  const cal = data.calendar;
-  const g = data.ganzhi;
+function renderQimen(d) {
+  const c=d.chart,g=d.ganzhi,cal=d.calendar;
 
   // Info bar
-  infoBarEl.innerHTML = `
+  document.getElementById('qmInfoBar').innerHTML=`
     <div class="info-item"><span class="label">节气</span><span class="value">${c.active_jie}</span><span class="tag">${c.dun_type}</span></div>
     <div class="info-item"><span class="label">局</span><span class="value highlight">${c.dun_type} ${c.ju_number}局</span><span class="tag">${c.yuan}</span></div>
     <div class="info-item"><span class="label">旬首</span><span class="value">${c.xunshou}</span></div>
-    <div class="info-item"><span class="label">遁仪</span><span class="value">${c.hidden_yi}</span></div>
+    <div class="info-item"><span class="label">值符</span><span class="value">${c.zhifu.star} ${c.zhifu.palace}宫</span></div>
+    <div class="info-item"><span class="label">值使</span><span class="value">${c.zhishi.door} ${c.zhishi.palace}宫</span></div>
     <div class="info-item"><span class="label">空亡</span><span class="value">${c.kongwang.join('、')}</span></div>
   `;
 
   // 九宫格
-  const gridOrder = [4, 9, 2, 3, 5, 7, 8, 1, 6];
-  const palaceMap = {};
-  c.palaces.forEach(p => { palaceMap[p.palace] = p; });
-
-  gridEl.innerHTML = gridOrder.map(no => {
-    const p = palaceMap[no];
-    if (!p) return `<div class="palace is-center"><div class="center-text"><strong>中宫</strong>寄坤</div></div>`;
-
-    if (p.is_center) {
-      return `<div class="palace is-center">
-        <div class="center-text">
-          <strong>中宫</strong>
-          天禽<br>
-          <span style="font-size:0.75rem;color:var(--text-muted)">${p.hosting_note || ''}</span>
-        </div>
-      </div>`;
-    }
-
-    const kongClass = (c.kongwang_palaces || []).includes(no) ? ' palace-kong' : '';
-
-    return `<div class="palace${kongClass}">
-      <div class="palace-header">
-        <span class="palace-name">${p.name}</span>
-        <span class="palace-element">${p.direction} · ${p.element}</span>
-      </div>
-      ${p.god ? `<div class="palace-god">${p.god}</div>` : ''}
+  const gridOrder=[4,9,2,3,5,7,8,1,6], pmap={};
+  c.palaces.forEach(p=>pmap[p.palace]=p);
+  document.getElementById('qmGrid').innerHTML=gridOrder.map(no=>{
+    const p=pmap[no];
+    if(!p||p.is_center) return `<div class="palace is-center"><div class="center-text"><strong>中宫</strong>天禽<br><span style="font-size:0.75rem;color:var(--text-muted)">${p?.hosting_note||''}</span></div></div>`;
+    return `<div class="palace${(c.kongwang_palaces||[]).includes(no)?' palace-kong':''}">
+      <div class="palace-header"><span class="palace-name">${p.name}</span><span class="palace-element">${p.direction}·${p.element}</span></div>
+      ${p.god?`<div class="palace-god">${p.god}</div>`:''}
       <div class="palace-star">${p.star}</div>
-      <div class="palace-door">${p.door || ''}</div>
-      ${(c.kongwang_palaces || []).includes(no) ? `<div class="palace-kong">空亡 ${c.kongwang.join('')}</div>` : ''}
-      <div class="palace-stems">
-        <span class="stem earth">${p.earth_stem || ''}</span>
-        <span class="stem sky">${p.sky_stem || ''}</span>
-      </div>
+      <div class="palace-door">${p.door||''}</div>
+      ${(c.kongwang_palaces||[]).includes(no)?`<div style="font-size:0.6875rem;color:var(--text-muted);margin-top:2px">空亡 ${c.kongwang.join('')}</div>`:''}
+      <div class="palace-stems"><span class="stem earth">${p.earth_stem||''}</span><span class="stem sky">${p.sky_stem||''}</span></div>
     </div>`;
   }).join('');
 
-  // Calendar Info
-  const lunar = cal.lunar;
-  calendarInfoEl.innerHTML = `
+  // 吉凶方位
+  renderDirections(c);
+  // 断事参考
+  renderReference(c);
+  // 干支日历
+  document.getElementById('qmCal').innerHTML=`
     <div class="detail-item"><div class="label">公历</div><div class="value">${cal.solar.ymd_hms}</div></div>
-    <div class="detail-item"><div class="label">农历</div><div class="value">${lunar.year}年 ${lunar.month_text}月${lunar.day_text}</div></div>
+    <div class="detail-item"><div class="label">农历</div><div class="value">${cal.lunar.year}年${cal.lunar.month_text}月${cal.lunar.day_text}</div></div>
     <div class="detail-item"><div class="label">年干支</div><div class="value">${g.year}</div></div>
     <div class="detail-item"><div class="label">月干支</div><div class="value">${g.month}</div></div>
     <div class="detail-item"><div class="label">日干支</div><div class="value">${g.day}</div></div>
     <div class="detail-item"><div class="label">时干支</div><div class="value">${g.time}</div></div>
-    <div class="detail-item"><div class="label">日旬空亡</div><div class="value" style="font-family:var(--font-sans);font-size:0.875rem;">${g.day_xunkong_exact}</div></div>
-    <div class="detail-item"><div class="label">时旬空亡</div><div class="value" style="font-family:var(--font-sans);font-size:0.875rem;">${g.time_xunkong}</div></div>
-  `;
-
-  // 值符值使
-  zhifuInfoEl.innerHTML = `
-    <div class="detail-item"><div class="label">值符</div><div class="value">${c.zhifu.star} (${c.zhifu.palace}宫)</div></div>
-    <div class="detail-item"><div class="label">值使</div><div class="value">${c.zhishi.door} (${c.zhishi.palace}宫)</div></div>
-    <div class="detail-item"><div class="label">时干显现</div><div class="value" style="font-family:var(--font-serif);">${c.time_stem_visible}</div></div>
-    <div class="detail-item"><div class="label">时干旬</div><div class="value">${c.xunshou}</div></div>
+    <div class="detail-item"><div class="label">日空亡</div><div class="value" style="font-family:var(--font-sans);font-size:0.875rem">${g.day_xunkong_exact}</div></div>
+    <div class="detail-item"><div class="label">时空亡</div><div class="value" style="font-family:var(--font-sans);font-size:0.875rem">${g.time_xunkong}</div></div>
   `;
 
   // Warnings
-  if (data.warnings && data.warnings.length > 0) {
-    warningsBox.style.display = 'block';
-    warningsList.innerHTML = data.warnings.map(w => `<li>${w}</li>`).join('');
-  } else {
-    warningsBox.style.display = 'none';
-  }
+  const w=document.getElementById('qmWarnings'),wl=document.getElementById('qmWarnList');
+  if(d.warnings&&d.warnings.length){w.style.display='block';wl.innerHTML=d.warnings.map(x=>`<li>${x}</li>`).join('');}else{w.style.display='none';}
 
-  // Scroll to results
-  resultsEl.classList.add('active');
-  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('qmResults').style.display='block';
+  document.getElementById('qmResults').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderDirections(c) {
+  const el=document.getElementById('qmDirections');
+  const g=document.getElementById('qmDirGrid');
+  // Map each direction to its palace door
+  const dirDoors={};
+  c.palaces.forEach(p=>{
+    if(p.is_center||!p.door) return;
+    const dirName=QM_DIR[p.palace];
+    if(dirName) dirDoors[dirName]={door:p.door,desc:QM_DOOR[p.door]||'',palace:p.name,element:p.element};
+  });
+
+  const dirOrder=['北','东北','东','东南','南','西南','西','西北'];
+  g.innerHTML=dirOrder.map(dir=>{
+    const info=dirDoors[dir];
+    if(!info) return '';
+    const good=info.door==='生门'||info.door==='开门'||info.door==='休门';
+    const bad=info.door==='死门'||info.door==='伤门'||info.door==='惊门';
+    return `<div class="direction-card ${good?'good':bad?'bad':'neutral'}">
+      <div class="dir-name">${dir}</div>
+      <div class="dir-detail">${info.palace}</div>
+      <div class="dir-detail" style="font-weight:600;margin:2px 0">${info.door}</div>
+      <div class="dir-detail">${info.desc}</div>
+    </div>`;
+  }).join('');
+  el.style.display='block';
+}
+
+function renderReference(c) {
+  const el=document.getElementById('qmReference');
+  const g=document.getElementById('qmRefGrid');
+  const refs={
+    '求财·事业':{doors:['生门','开门'],palaces:['坎宫'+(c.dun_type=='阳遁'?'(水)':''),'乾宫(金)'],desc:'看生门方位、开门方位，结合日干落宫'},
+    '感情·婚姻':{doors:['休门','六合'],palaces:['坤宫(土)','离宫(火)'],desc:'休门主感情，六合主婚姻，坤宫为母亲/媒人'},
+    '出行·迁移':{doors:['开门','休门'],palaces:['艮宫(土)','乾宫(金)'],desc:'开门利远行，休门利搬家，忌伤门死门方位'},
+    '考试·文书':{doors:['景门','天辅','朱雀'],palaces:['离宫(火)','巽宫(木)'],desc:'景门主文书，天辅星利考试，离宫为文明之象'},
+    '健康·疾病':{doors:['天芮','死门'],palaces:['坤宫(土)','兑宫(金)'],desc:'天芮星为病星，落宫看五行生死，死门测病不吉'},
+    '官司·诉讼':{doors:['惊门','白虎'],palaces:['兑宫(金)','震宫(木)'],desc:'惊门主口舌官非，白虎主凶，逢开门则吉'},
+  };
+  g.innerHTML=Object.entries(refs).map(([k,v])=>`
+    <div class="ref-card">
+      <div class="ref-title">${k}</div>
+      <div class="ref-detail"><b>相关门/星：</b>${v.doors.join('、')}</div>
+      <div class="ref-detail"><b>宫位：</b>${v.palaces.join('、')}</div>
+      <div class="ref-detail">${v.desc}</div>
+    </div>
+  `).join('');
+  el.style.display='block';
+}
+
+// Share
+document.getElementById('qmShare').addEventListener('click', async function(){
+  const el=document.getElementById('qmResults');
+  try{
+    const canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2,useCORS:true});
+    const link=document.createElement('a');
+    link.download='奇门遁甲排盘.png';
+    link.href=canvas.toDataURL();
+    link.click();
+    showToast('✅ 图片已保存');
+  }catch(e){showToast('❌ 截图失败');}
+});
+
+// ═══════════════════════════════════════
+// TAB 2: 择时推荐
+// ═══════════════════════════════════════
+document.getElementById('scToday').addEventListener('click',()=>{
+  document.getElementById('scDate').value=nowDate();
+});
+
+document.getElementById('scBtn').addEventListener('click', async function() {
+  const e=document.getElementById('scError');e.classList.remove('active');
+  document.getElementById('scResults').style.display='none';
+  const l=document.getElementById('scLoading');l.classList.add('active');
+  this.disabled=true;
+  const loc=document.getElementById('scLocation').value;
+  try{
+    const r=await fetch('/api/qimen_batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:document.getElementById('scDate').value,timezone:LOC_TZ[loc]||'Asia/Shanghai'})});
+    const d=await r.json();
+    if(!r.ok||d.error) throw new Error(d.error||'分析失败');
+    renderShichen(d);
+  }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
+  finally{l.classList.remove('active');this.disabled=false;}
+});
+
+function renderShichen(d) {
+  document.getElementById('scInfoBar').innerHTML=`
+    <div class="info-item"><span class="label">日期</span><span class="value">${d.date}</span></div>
+    <div class="info-item"><span class="label">时区</span><span class="value">${d.timezone}</span></div>
+    <div class="info-item"><span class="label">共</span><span class="value">${d.results.length}个时辰</span></div>
+  `;
+
+  const g=document.getElementById('scGrid');
+  g.innerHTML=d.results.map(r=>{
+    const rt=r.rating?.text||'?';
+    const clsMap={'大吉':'lev-daji','吉':'lev-ji','平':'lev-ping','凶':'lev-xiong','大凶':'lev-daxiong'};
+    return `<div class="shichen-card ${clsMap[rt]||'lev-ping'}">
+      <div class="sc-name">${r.name}</div>
+      <div class="sc-period">${r.period}</div>
+      <div class="sc-rating">${r.rating?.star||''} ${rt}</div>
+      <div class="sc-door">${r.zhishi?.door||''}</div>
+      <div style="font-size:0.6875rem;color:var(--text-muted)">${r.time_ganzhi||''}</div>
+    </div>`;
+  }).join('');
+
+  // Stats
+  const stats={};
+  d.results.forEach(r=>{const t=r.rating?.text||'?';stats[t]=(stats[t]||0)+1;});
+  document.getElementById('scStats').innerHTML=Object.entries(stats).map(([k,v])=>`
+    <div class="detail-item"><div class="label">${k}</div><div class="value">${v}个时辰</div></div>
+  `).join('');
+
+  document.getElementById('scResults').style.display='block';
+  document.getElementById('scResults').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══════════════════════════════════════
+// TAB 3: 八字排盘
+// ═══════════════════════════════════════
+document.getElementById('bzNow').addEventListener('click',()=>{
+  document.getElementById('bzDate').value=nowDate();
+  document.getElementById('bzTime').value=nowTime();
+});
+
+document.getElementById('bzBtn').addEventListener('click', async function(){
+  const e=document.getElementById('bzError');e.classList.remove('active');
+  document.getElementById('bzResults').style.display='none';
+  const l=document.getElementById('bzLoading');l.classList.add('active');
+  this.disabled=true;
+  try{
+    const dt=document.getElementById('bzDate').value+' '+document.getElementById('bzTime').value+':00';
+    const g=document.getElementById('bzGender').value;
+    const r=await fetch('/api/bazi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({time_input:dt,calendar_type:'solar',gender:g,location:{country:'中国',timezone:'Asia/Shanghai'}})});
+    const d=await r.json();
+    if(!r.ok||d.error) throw new Error(d.error||'排盘失败');
+    renderBazi(d);
+  }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
+  finally{l.classList.remove('active');this.disabled=false;}
+});
+
+function renderBazi(d) {
+  // Info bar
+  document.getElementById('bzInfoBar').innerHTML=`
+    <div class="info-item"><span class="label">日主</span><span class="value highlight">${d.day_master}${d.day_master_wuxing}</span><span class="tag">${d.day_master_yinyang}</span></div>
+    <div class="info-item"><span class="label">性别</span><span class="value">${d.genders.birth_gender}</span></div>
+    <div class="info-item"><span class="label">公历</span><span class="value">${d.solar}</span></div>
+    <div class="info-item"><span class="label">农历</span><span class="value">${d.lunar}</span></div>
+    <div class="info-item"><span class="label">起运</span><span class="value">${d.dayun.start_age}岁</span></div>
+    <div class="info-item"><span class="label">大运</span><span class="value">${d.dayun.direction}</span></div>
+  `;
+
+  // 四柱
+  const order=['year','month','day','hour'];
+  const labelMap={year:'年柱',month:'月柱',day:'日柱',hour:'时柱'};
+  const pMap={year:'年',month:'月',day:'日',hour:'时'};
+  document.getElementById('bzPillars').innerHTML=order.map(k=>{
+    const p=d.four_pillars[k];
+    const ss=d.shishen[k+'_gan'];
+    const isSelf=k==='day';
+    const cg=(d.canggan[k]||[]).map(x=>`<span class="canggan-tag">${x.gan}${x.shishen}</span>`).join('');
+    return `<div class="bazi-cell${isSelf?' self':''}">
+      <div class="pillar-label">${labelMap[k]}</div>
+      <div class="pillar-ganzhi">${p.ganzhi}</div>
+      <div class="pillar-shishen">${ss}</div>
+      <div class="pillar-nayin">${p.nayin}</div>
+      <div class="canggan-list">${cg}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('bzNayin').textContent='▲ 各柱纳音如上所示';
+
+  // 五行
+  const wx=d.wuxing_stat;
+  const wxOrder=['木','火','土','金','水'];
+  document.getElementById('bzWuxing').innerHTML=wxOrder.map(k=>`
+    <div class="detail-item"><div class="label">${k}</div><div class="value">${wx[k]||0}</div></div>
+  `).join('');
+
+  // 藏干
+  document.getElementById('bzCanggan').innerHTML=order.map(k=>{
+    const zhi=d.four_pillars[k].zhi;
+    const cg=(d.canggan[k]||[]).map(x=>`${x.gan}(${x.shishen})`).join('、');
+    return `<div style="display:inline-block;margin:6px 12px 6px 0;padding:6px 12px;background:var(--bg-warm);border-radius:6px">
+      <span style="font-weight:600">${pMap[k]}支 ${zhi}</span>：${cg}
+    </div>`;
+  }).join('');
+
+  // 大运
+  document.getElementById('bzDayunInfo').innerHTML=`
+    <span style="font-size:0.875rem;color:var(--text-secondary)">${d.dayun.direction} · ${d.dayun.start_age}岁起运 · 每运10年</span>
+  `;
+  const cy=d.dayun.start_age;
+  document.getElementById('bzDayun').innerHTML=d.dayun.pills.map(p=>`
+    <div class="dayun-item${(cy>=p.age_start&&cy<=p.age_end)?' current':''}">
+      <div class="dy-ganzhi">${p.ganzhi}</div>
+      <div class="dy-age">${p.age_start}-${p.age_end}岁</div>
+    </div>
+  `).join('');
+
+  // 流年
+  document.getElementById('bzLiuYear').innerHTML=`
+    <div class="detail-item"><div class="label">当前流年</div><div class="value">${d.current_year.year}年</div></div>
+    <div class="detail-item"><div class="label">干支</div><div class="value">${d.current_year.ganzhi}</div></div>
+    <div class="detail-item"><div class="label">流年十神</div><div class="value">${d.current_year.shishen}</div></div>
+  `;
+
+  // 空亡
+  document.getElementById('bzXunkong').innerHTML=order.map(k=>`
+    <div class="detail-item"><div class="label">${pMap[k]}柱空亡</div><div class="value">${d.xunkong[k]}</div></div>
+  `).join('');
+
+  // Warnings
+  const w=document.getElementById('bzWarnings'),wl=document.getElementById('bzWarnList');
+  if(d.warnings&&d.warnings.length){w.style.display='block';wl.innerHTML=d.warnings.map(x=>`<li>${x}</li>`).join('');}else{w.style.display='none';}
+
+  document.getElementById('bzResults').style.display='block';
+  document.getElementById('bzResults').scrollIntoView({behavior:'smooth',block:'start'});
 }
 </script>
 </body>
