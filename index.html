@@ -449,6 +449,14 @@
       line-height: 1.7;
     }
     .guide-note strong { color: var(--cinnabar); font-family: var(--font-title); }
+    .guide-text {
+      font-size: 0.78rem; color: var(--ink-muted);
+      padding: 10px 14px; margin-top: 12px;
+      background: #f0f4ec; border-left: 3px solid var(--stone-blue);
+      line-height: 1.8; border-radius: 0 4px 4px 0;
+    }
+    .guide-text .guide-icon { margin-right: 6px; }
+    .guide-text b { color: var(--ink); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -633,6 +641,10 @@
         <button class="btn-classic btn-cinnabar" id="scBtn">分析</button>
         <button class="btn-classic" id="scToday">今天</button>
       </div>
+      <div class="guide-text">
+        <span class="guide-icon">📖</span>
+        <span>择时推荐是根据奇门遁甲分析当天12个时辰的吉凶。<b>绿色</b>=吉时适合办事，<b>红色</b>=凶时宜静不宜动。可以选择某一天来查看当天什么时辰做什么事最顺利。</span>
+      </div>
       <div class="loading-classic" id="scLoad"><div class="spinner"></div><span>逐时辰分析中…</span></div>
     </div>
     <div class="error-banner" id="scErr"></div>
@@ -685,6 +697,10 @@
       <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
         <button class="btn-classic btn-cinnabar" id="bzBtn">排盘</button>
         <button class="btn-classic" id="bzNow">当前时间</button>
+      </div>
+      <div class="guide-text">
+        <span class="guide-icon">📖</span>
+        <span>八字排盘根据你的出生年月日时推算出<b>四柱</b>（年柱、月柱、日柱、时柱），每柱由一个天干和一个地支组成。日柱的天干代表你自己，其他干支代表你身边的各种关系和运势。适合看性格、运势、大运流年。</span>
       </div>
       <div class="loading-classic" id="bzLoad"><div class="spinner"></div><span>排盘中…</span></div>
     </div>
@@ -996,7 +1012,22 @@ var SHORT_HINTS = {
   "天柱": "注意口舌", "天心": "谋略策划", "天禽": "居中协调",
   "休门": "宜休息求财", "生门": "宜创业求财", "伤门": "防争斗损失",
   "杜门": "宜幕后工作", "景门": "宜考试宣传",
-  "死门": "不利求财签约", "惊门": "防口舌官非", "开门": "宜开创求职"
+  "死门": "不利求财签约", "惊门": "防口舌官非", "开门": "宜开创求职",
+  // 八字 · 十神
+  "正官": "事业运", "偏官": "挑战压力", "正印": "学业贵人",
+  "偏印": "独特思维", "正财": "稳定财源", "偏财": "偏财运",
+  "比肩": "兄弟姐妹", "劫财": "竞争损耗", "食神": "才华享受",
+  "伤官": "创意表达",
+  // 八字 · 四柱
+  "年柱": "代表祖上", "月柱": "代表父母", "日柱": "代表自己",
+  "时柱": "代表晚年",
+  // 八字 · 其他
+  "纳音": "五行纳音", "藏干": "地支藏干", "大运": "十年一运",
+  "流年": "当前流年", "空亡": "旬空·力量偏虚", "日主": "出生日的天干",
+  "起运": "开始行运的年龄",
+  // 刑冲合害
+  "六冲": "变动冲突", "六合": "合作顺利", "三合": "团队合作",
+  "六害": "暗中有损", "三刑": "是非纠缠", "自刑": "自我纠结"
 };
 
 // 辅助函数：生成简短术语标注
@@ -1582,18 +1613,25 @@ document.getElementById('bzBtn').addEventListener('click',async function(){
 
 function renderBaziAll(d){
   document.getElementById('bzInfo').innerHTML=
-    '<div class="info-item"><span class="ilabel">日主</span><span class="ivalue icinnabar">'+d.day_master+d.day_master_wuxing+'</span><span class="itag">'+d.day_master_yinyang+'</span></div>'+
+    '<div class="info-item"><span class="ilabel">日主</span><span class="ivalue icinnabar">'+d.day_master+d.day_master_wuxing+'</span><span class="itag">'+d.day_master_yinyang+'</span>'+termHint('日主')+'</div>'+
     '<div class="info-item"><span class="ilabel">性别</span><span class="ivalue">'+d.genders.birth_gender+'</span></div>'+
     '<div class="info-item"><span class="ilabel">公历</span><span class="ivalue">'+d.solar+'</span></div>'+
     '<div class="info-item"><span class="ilabel">农历</span><span class="ivalue">'+d.lunar+'</span></div>'+
-    '<div class="info-item"><span class="ilabel">起运</span><span class="ivalue">'+d.dayun.start_age+'岁</span></div>'+
-    '<div class="info-item"><span class="ilabel">大运</span><span class="ivalue">'+d.dayun.direction+'</span></div>';
+    '<div class="info-item"><span class="ilabel">起运</span><span class="ivalue">'+d.dayun.start_age+'岁</span>'+termHint('起运')+'</div>'+
+    '<div class="info-item"><span class="ilabel">大运</span><span class="ivalue">'+d.dayun.direction+'</span>'+termHint('大运')+'</div>';
 
   var order=['year','month','day','hour'],lm={year:'年柱',month:'月柱',day:'日柱',hour:'时柱'},pm={year:'年',month:'月',day:'日',hour:'时'};
   document.getElementById('bzPillars').innerHTML=order.map(function(k){
     var p=d.four_pillars[k],ss=d.shishen[k+'_gan'],is=(k==='day');
     var cg=(d.canggan[k]||[]).map(function(x){return '<span style="font-size:0.65rem;background:var(--paper-dark);padding:0 5px;margin:1px;display:inline-block">'+x.gan+x.shishen+'</span>';}).join('');
-    return '<div class="bazi-classic-cell'+(is?' self':'')+'"><div class="bz-label">'+lm[k]+'</div><div class="bz-ganzhi">'+p.ganzhi+'</div><div class="bz-shishen">'+ss+'</div><div class="bz-nayin">'+p.nayin+'</div><div style="margin-top:3px">'+cg+'</div></div>';
+    // Add termHint to shishen names
+    var shishenTerms=['正官','偏官','正印','偏印','正财','偏财','比肩','劫财','食神','伤官'];
+    shishenTerms.forEach(function(t){
+      if(ss && ss.indexOf(t)!==-1 && SHORT_HINTS[t]){
+        ss = ss.split(t).join(t+termHint(t));
+      }
+    });
+    return '<div class="bazi-classic-cell'+(is?' self':'')+'"><div class="bz-label">'+lm[k]+termHint(lm[k])+'</div><div class="bz-ganzhi">'+p.ganzhi+'</div><div class="bz-shishen">'+ss+'</div><div class="bz-nayin">'+p.nayin+termHint('纳音')+'</div>'+(cg?'<div style="margin-top:3px">'+cg+'</div>':'')+'</div>';
   }).join('');
 
   // 刑冲合害
@@ -1604,7 +1642,15 @@ function renderBaziAll(d){
     xc.innerHTML=xfindings.map(function(x){
       var icon={good:'✅',bad:'❌',warn:'⚠️'}[x.type]||'';
       var cls={good:'good',bad:'bad',warn:'warn'}[x.type]||'';
-      return '<span class="tag-classic '+cls+'">'+icon+'</span> '+x.text;
+      // Add term hints to xingchonghehai terms
+      var text = x.text;
+      var xTerms = ['六冲','六合','三合','三刑','自刑','六害'];
+      xTerms.forEach(function(t){
+        if(text.indexOf(t)!==-1 && SHORT_HINTS[t]){
+          text = text.split(t).join(t+'<span class="term-note">（'+SHORT_HINTS[t]+'）</span>');
+        }
+      });
+      return '<span class="tag-classic '+cls+'">'+icon+'</span> '+text;
     }).join('<br>');
   }else{xel.style.display='none';}
 
@@ -1615,11 +1661,11 @@ function renderBaziAll(d){
   // 藏干
   document.getElementById('bzCanggan').innerHTML=order.map(function(k){
     var zhi=d.four_pillars[k].zhi,cg=(d.canggan[k]||[]).map(function(x){return x.gan+'('+x.shishen+')';}).join('、');
-    return '<div style="display:inline-block;margin:4px 10px 4px 0;padding:4px 10px;background:var(--paper-dark);border:1px solid var(--border-color)"><span style="font-weight:600;font-family:var(--font-title)">'+pm[k]+'支'+zhi+'</span>：'+cg+'</div>';
+    return '<div style="display:inline-block;margin:4px 10px 4px 0;padding:4px 10px;background:var(--paper-dark);border:1px solid var(--border-color)"><span style="font-weight:600;font-family:var(--font-title)">'+pm[k]+'支'+zhi+termHint('藏干')+'</span>：'+cg+'</div>';
   }).join('');
 
   // 大运
-  document.getElementById('bzDayunInfo').innerHTML='<span>'+d.dayun.direction+' · '+d.dayun.start_age+'岁起运 · 每运10年</span>';
+  document.getElementById('bzDayunInfo').innerHTML='<span>'+d.dayun.direction+' · '+d.dayun.start_age+'岁起运'+termHint('起运')+' · 每运10年'+termHint('大运')+'</span>';
   var cy=d.dayun.start_age;
   document.getElementById('bzDayun').innerHTML=d.dayun.pills.map(function(p){
     return '<div class="dayun-classic-item'+(cy>=p.age_start&&cy<=p.age_end?' current-dayun':'')+'"><div class="dy-gz">'+p.ganzhi+'</div><div class="dy-age">'+p.age_start+'-'+p.age_end+'岁</div></div>';
@@ -1627,13 +1673,13 @@ function renderBaziAll(d){
 
   // 流年
   document.getElementById('bzLiuYear').innerHTML=
-    '<div class="detail-classic-item"><div class="dlabel">当前流年</div><div class="dvalue">'+d.current_year.year+'年</div></div>'+
+    '<div class="detail-classic-item"><div class="dlabel">当前流年'+termHint('流年')+'</div><div class="dvalue">'+d.current_year.year+'年</div></div>'+
     '<div class="detail-classic-item"><div class="dlabel">干支</div><div class="dvalue">'+d.current_year.ganzhi+'</div></div>'+
     '<div class="detail-classic-item"><div class="dlabel">流年十神</div><div class="dvalue">'+d.current_year.shishen+'</div></div>';
 
   // 空亡
   document.getElementById('bzXun').innerHTML=order.map(function(k){
-    return '<div class="detail-classic-item"><div class="dlabel">'+pm[k]+'柱空亡</div><div class="dvalue">'+d.xunkong[k]+'</div></div>';
+    return '<div class="detail-classic-item"><div class="dlabel">'+pm[k]+'柱空亡'+termHint('空亡')+'</div><div class="dvalue">'+d.xunkong[k]+'</div></div>';
   }).join('');
 
   var w=document.getElementById('bzWarn'),wl=document.getElementById('bzWarnList');
