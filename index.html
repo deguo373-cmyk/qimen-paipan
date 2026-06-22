@@ -347,16 +347,150 @@
     .zw-detail-box .zw-d-section { margin-bottom: 8px; }
     .zw-detail-box .zw-d-section .zw-d-label { font-size: 0.72rem; color: var(--ink-muted); font-family: var(--font-title); letter-spacing: 0.05em; }
     .zw-detail-box .zw-d-section .zw-d-value { font-size: 0.85rem; color: var(--ink); font-family: var(--font-body); }
-    /* 响应式 */
+    /* ══ 响应式 — 完整手机端适配 ══ */
     @media (max-width: 640px) {
       .book-page { padding: 24px 16px; margin: 16px; }
       .book-page::before { top: 4px; left: 4px; right: 4px; bottom: 4px; }
-      .book-title h1 { font-size: 1.4rem; }
+      .book-title-wrap { gap: 12px; padding-bottom: 16px; }
+      .book-title h1 { font-size: 1.5rem; }
+      .book-title .subtitle { font-size: 0.75rem; }
+      .seal { width: 40px; height: 40px; font-size: 0.7rem; }
       .folio { padding: 16px; }
+      .folio-header .folio-title { font-size: 0.88rem; }
       .dir-classic-grid { grid-template-columns: repeat(2, 1fr); }
       .wuxing-classic-grid { grid-template-columns: repeat(3, 1fr); }
-      .tab-classic { padding: 8px 12px; font-size: 0.82rem; }
+      .tab-classic { padding: 8px 12px; font-size: 0.82rem; letter-spacing: 0.05em; }
+      .tabs-classic { flex-wrap: wrap; gap: 0; }
+      .luopan { grid-template-columns: repeat(3, 1fr); }
+      .palace-classic { padding: 6px; min-height: 90px; }
+      .palace-classic .p-name { font-size: 0.7rem; }
+      .palace-classic .p-star { font-size: 0.75rem; }
+      .palace-classic .p-door { font-size: 0.72rem; }
+      .palace-classic .p-god { font-size: 0.65rem; }
+      .palace-classic .p-stems { font-size: 0.68rem; }
       .zw-grid { grid-template-columns: repeat(2, 1fr); }
+      .zw-palace { min-height: 90px; padding: 6px 4px; }
+      .zw-palace .zw-p-name { font-size: 0.7rem; }
+      .zw-palace .zw-p-stars .zw-star { font-size: 0.68rem; }
+      .zw-palace .zw-p-stars .zw-star.minor { font-size: 0.6rem; }
+      .zw-palace .zw-p-stars .zw-sihua { font-size: 0.5rem; }
+      .zw-detail-box { padding: 20px; max-width: 94%; }
+      .detail-universal .du-box { padding: 20px; }
+      .shichen-classic-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+      .bazi-classic-grid { grid-template-columns: repeat(4, 1fr); }
+      .bazi-classic-cell { padding: 8px 4px; min-height: 60px; }
+      .bazi-classic-cell .bz-ganzhi { font-size: 1rem; }
+      .bazi-classic-cell .bz-shishen { font-size: 0.65rem; }
+      .bazi-classic-cell .bz-nayin { font-size: 0.6rem; }
+      .dayun-classic-item { min-width: 56px; padding: 4px 8px; }
+      .dayun-classic-item .dy-gz { font-size: 0.78rem; }
+      .book-colophon { font-size: 0.65rem; }
+      .info-classic { padding: 10px 12px; font-size: 0.76rem; }
+      .analysis-classic { padding: 10px 12px; font-size: 0.8rem; }
+      .plain-talk { padding: 10px 12px; font-size: 0.8rem; }
+      .guide-text { font-size: 0.72rem; padding: 8px 10px; }
+      .guide-note { font-size: 0.72rem; }
+      .loading-classic .spinner { width: 14px; height: 14px; }
+      .toast-classic { bottom: 16px; padding: 8px 16px; font-size: 0.75rem; }
+      .ref-classic-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .kaiyun-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .book-page { padding: 16px 12px; margin: 10px; }
+      .book-page::before { top: 3px; left: 3px; right: 3px; bottom: 3px; }
+      .book-title-wrap { gap: 8px; padding-bottom: 12px; flex-direction: column; align-items: center; text-align: center; }
+      .book-title h1 { font-size: 1.2rem; }
+      .book-title .subtitle { font-size: 0.68rem; letter-spacing: 0.1em; }
+      .book-title-wrap::after { left: 50%; transform: translateX(-50%) scaleX(0); width: 60px; }
+      .seal { width: 32px; height: 32px; font-size: 0.6rem; }
+      .tabs-classic { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; gap: 0; padding-bottom: 4px; }
+      .tabs-classic::-webkit-scrollbar { display: none; }
+      .tab-classic { flex-shrink: 0; padding: 8px 14px; font-size: 0.78rem; white-space: nowrap; scroll-snap-align: start; }
+      .folio { padding: 12px; margin-bottom: 14px; }
+      .folio-header { gap: 6px; margin-bottom: 10px; padding-bottom: 8px; }
+      .folio-header .folio-title { font-size: 0.82rem; }
+      .folio-header .folio-badge { font-size: 0.6rem; padding: 0 6px; }
+      .form-classic { gap: 8px; }
+      .field-group { min-width: 0 !important; flex: 1 1 100% !important; }
+      .field-group label { font-size: 0.68rem; }
+      .field-group input, .field-group select { padding: 6px 8px; font-size: 0.8rem; }
+      .btn-classic { padding: 6px 16px; font-size: 0.78rem; }
+      .info-classic { padding: 8px 10px; font-size: 0.72rem; gap: 4px 12px; }
+      .analysis-classic { padding: 8px 10px; font-size: 0.76rem; }
+      .plain-talk { padding: 8px 10px; font-size: 0.76rem; }
+      .guide-text { font-size: 0.68rem; padding: 6px 8px; margin-top: 8px; }
+      .guide-note { font-size: 0.68rem; padding: 6px 8px; }
+      /* 罗盘 */
+      .luopan { grid-template-columns: repeat(3, 1fr); }
+      .palace-classic { padding: 4px; min-height: 80px; }
+      .palace-classic .p-name { font-size: 0.62rem; }
+      .palace-classic .p-name .p-dir { font-size: 0.55rem; padding: 0 3px; }
+      .palace-classic .p-star { font-size: 0.68rem; }
+      .palace-classic .p-door { font-size: 0.65rem; }
+      .palace-classic .p-god { font-size: 0.6rem; }
+      .palace-classic .p-stems { font-size: 0.6rem; gap: 3px; }
+      .palace-classic .p-kong { font-size: 0.55rem; }
+      .palace-classic .center-txt { font-size: 0.65rem; }
+      .palace-classic .center-txt strong { font-size: 0.78rem; }
+      /* 八字 */
+      .bazi-classic-grid { grid-template-columns: repeat(2, 1fr); }
+      .bazi-classic-cell { padding: 6px 4px; min-height: 50px; }
+      .bazi-classic-cell .bz-ganzhi { font-size: 0.95rem; }
+      .bazi-classic-cell .bz-shishen { font-size: 0.6rem; }
+      .bazi-classic-cell .bz-nayin { font-size: 0.58rem; }
+      .dayun-classic-list { gap: 4px; }
+      .dayun-classic-item { min-width: 48px; padding: 3px 6px; }
+      .dayun-classic-item .dy-gz { font-size: 0.72rem; }
+      .dayun-classic-item .dy-age { font-size: 0.58rem; }
+      .wuxing-classic-grid { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+      .wuxing-classic-item { padding: 6px; font-size: 0.75rem; }
+      /* 时辰 */
+      .shichen-classic-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      .shichen-classic-card { padding: 6px; }
+      .shichen-classic-card .sc-name { font-size: 0.78rem; }
+      .shichen-classic-card .sc-period { font-size: 0.55rem; }
+      .shichen-classic-card .sc-rating { font-size: 0.7rem; }
+      .shichen-classic-card .sc-door { font-size: 0.65rem; }
+      /* 方位 */
+      .dir-classic-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      .dir-classic-card { padding: 8px; }
+      .dir-classic-card .d-name { font-size: 0.85rem; }
+      /* 紫微 */
+      .zw-grid { grid-template-columns: repeat(2, 1fr); }
+      .zw-palace { min-height: 80px; padding: 4px 3px; }
+      .zw-palace .zw-p-name { font-size: 0.65rem; }
+      .zw-palace .zw-p-name .zw-p-zhi { font-size: 0.5rem; }
+      .zw-palace .zw-p-stars { gap: 1px; }
+      .zw-palace .zw-p-stars .zw-star { font-size: 0.62rem; }
+      .zw-palace .zw-p-stars .zw-star.minor { font-size: 0.55rem; }
+      .zw-palace .zw-p-stars .zw-sihua { font-size: 0.45rem; }
+      .zw-detail-box { padding: 16px; max-width: 96%; }
+      .zw-detail-box .zw-d-title { font-size: 1rem; }
+      /* 通用弹窗 */
+      .detail-universal .du-box { padding: 16px; width: 96%; }
+      .detail-universal .du-box .du-title { font-size: 1rem; }
+      .detail-universal .du-box .du-content { font-size: 0.78rem; }
+      /* 参考卡片 */
+      .ref-classic-grid { grid-template-columns: 1fr; gap: 6px; }
+      .ref-classic-card { padding: 8px; font-size: 0.75rem; }
+      /* 详情网格 */
+      .detail-classic-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px; }
+      .detail-classic-item { padding: 4px 6px; }
+      .detail-classic-item .dlabel { font-size: 0.6rem; }
+      .detail-classic-item .dvalue { font-size: 0.78rem; }
+      /* 开运 */
+      .kaiyun-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      .kaiyun-item { padding: 6px; font-size: 0.72rem; }
+      .kaiyun-item .ky-value { font-size: 0.78rem; }
+      /* 底部 */
+      .book-colophon { font-size: 0.6rem; margin-top: 20px; }
+      .book-colophon a { font-size: 0.6rem; }
+      /* 加载/提示 */
+      .loading-classic { font-size: 0.75rem; gap: 6px; padding: 10px 0; }
+      .toast-classic { bottom: 12px; padding: 6px 14px; font-size: 0.7rem; }
+      .ink-divider { margin: 16px 0; }
+      /* 按钮行 */
+      div[style*="margin-top"]:has(.btn-classic) { gap: 6px !important; }
     }
     /* 可点击元素 */
     .clickable-item { cursor: pointer; transition: color 0.3s, border-color 0.3s, background 0.3s; }
@@ -737,6 +871,36 @@
           <span class="folio-badge">卷四</span>
         </div>
         <div class="wuxing-classic-grid" id="bzWuxing"></div>
+      </div>
+
+      <!-- 日主性格 -->
+      <div class="folio" id="bzChar" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">日主性格解析</span>
+          <span class="folio-badge">卷九</span>
+        </div>
+        <div id="bzCharContent"></div>
+      </div>
+
+      <!-- 喜用神/忌神 -->
+      <div class="folio" id="bzYong" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">喜用神 · 忌神</span>
+          <span class="folio-badge">卷十</span>
+        </div>
+        <div id="bzYongContent"></div>
+      </div>
+
+      <!-- 命局总结 -->
+      <div class="folio" id="bzSummary" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">命局总结</span>
+          <span class="folio-badge">卷十一</span>
+        </div>
+        <div id="bzSummaryContent"></div>
       </div>
 
       <!-- 地支藏干 -->
@@ -1595,6 +1759,105 @@ function analyzeXingChongHeHai(fourPillars){
 }
 
 // ═════════════════════════════════════════════════
+// 八字 · 天干性格详解数据
+// ═════════════════════════════════════════════════
+var TIANGAN_CHARACTER = {
+  "甲": { name:"甲木", desc:"参天大树，栋梁之材", character:"正直、有担当、领导力强，有上进心和使命感", strength:"有主见、不怕困难、有组织能力", weakness:"有时过于固执、好面子、压力大时硬撑", career:"适合管理、领导岗位、创业、军警、政府", image:"🌲 参天大树" },
+  "乙": { name:"乙木", desc:"花草藤蔓，柔韧通达", character:"温和灵活、善于协调、适应力强、有人情味", strength:"能屈能伸、交际能力强、应变能力好", weakness:"容易被影响、优柔寡断、缺乏魄力", career:"适合外交、咨询、艺术、教育、客服", image:"🌿 花草藤蔓" },
+  "丙": { name:"丙火", desc:"太阳之火，光明磊落", character:"热情大方、乐观积极、慷慨正直、感染力强", strength:"善社交、思维敏捷、热心助人", weakness:"急躁、缺乏耐心、容易三分钟热度", career:"适合传媒、演艺、社交、销售、公益", image:"☀️ 太阳之火" },
+  "丁": { name:"丁火", desc:"灯烛之火，细腻内敛", character:"细致周到、内心丰富、善于洞察、有艺术气质", strength:"观察力强、做事认真、有钻研精神", weakness:"容易多虑、内心敏感、有时缺乏安全感", career:"适合技术、研究、文艺、设计、教育", image:"🕯️ 灯烛之火" },
+  "戊": { name:"戊土", desc:"高岗厚土，稳重如山", character:"敦厚诚实、稳定可靠、包容大度、做事踏实", strength:"执行力强、守信用、能沉得住气", weakness:"有时过于固执守旧、不够灵活", career:"适合建筑、地产、农业、管理、金融", image:"⛰️ 高岗厚土" },
+  "己": { name:"己土", desc:"田园沃土，包容滋养", character:"温和包容、善于筹划、做事细致、有服务精神", strength:"耐心好、协调能力强、考虑周全", weakness:"容易犹豫不决、过于在意他人看法", career:"适合教育、慈善、规划、行政、顾问", image:"🌾 田园沃土" },
+  "庚": { name:"庚金", desc:"刀剑之金，刚毅果断", character:"果断刚强、有魄力、目标明确、不畏挑战", strength:"执行力强、意志坚定、敢作敢当", weakness:"有时过于锐利伤人、不善于妥协", career:"适合军警、法律、外科医生、技术、创业", image:"⚔️ 刀剑之金" },
+  "辛": { name:"辛金", desc:"珠宝之金，精致贵重", character:"精致优雅、追求品质、眼光独到、有审美", strength:"审美能力强、做事细致、追求完美", weakness:"挑剔、敏感、清高、容易钻牛角尖", career:"适合珠宝、设计、艺术、医学、财务", image:"💎 珠宝之金" },
+  "壬": { name:"壬水", desc:"江河之水，奔流不息", character:"智慧通达、善于变通、眼光长远、有谋略", strength:"头脑灵活、适应力强、统筹能力强", weakness:"容易飘忽不定、不够专注、过于理性", career:"适合贸易、物流、投资、科技、媒体", image:"🌊 江河之水" },
+  "癸": { name:"癸水", desc:"雨露之水，细微渗透", character:"细腻敏感、直觉强、有耐心、善于规划", strength:"洞察力强、能静下心深入研究、有智慧", weakness:"容易想太多、行动力不足、内向", career:"适合研究、策划、心理、文艺、IT", image:"💧 雨露之水" }
+};
+
+// ═════════════════════════════════════════════════
+// 八字 · 十神详解数据
+// ═════════════════════════════════════════════════
+var SHISHEN_DETAIL = {
+  "正官": { meaning: "约束、规则、贵人、管理", good: "正直、负责、守规矩、有贵人运", bad: "过于保守、怕犯错、魄力不足", year: "祖上有德、家族有约束力", month: "父母有威严、少年自律", day: "自我约束力强、有责任心（日支正官）", hour: "子女稳重、晚年运势稳", tip: "正官不宜太多，多则管束过重" },
+  "偏官": { meaning: "权威、压力、竞争、魄力", good: "决断力强、能抗压、有领导力", bad: "竞争压力大、易惹是非、性格偏激", year: "出身有挑战、早年压力大", month: "青年好胜心强、需控制脾气", day: "配偶能力强但关系需经营（日支偏官）", hour: "子女有魄力、晚年有威严", tip: "偏官有制则为偏官，无制度则为七杀" },
+  "七杀": { meaning: "权威、压力、竞争、魄力", good: "决断力强、能抗压、有领导力", bad: "竞争压力大、易惹是非、性格偏激", year: "出身有挑战、早年压力大", month: "青年好胜心强、需控制脾气", day: "配偶能力强但关系需经营（日支偏官）", hour: "子女有魄力、晚年有威严", tip: "偏官有制则为偏官，无制度则为七杀" },
+  "正印": { meaning: "庇护、学识、长辈、涵养", good: "聪明好学、有长辈缘、心地善良", bad: "依赖心强、不够主动、过于理想化", year: "祖上有文化、幼年受良好教育", month: "父母慈爱、学业顺利", day: "配偶温柔体贴（日支正印）", hour: "晚年有福气、子女孝顺", tip: "正印为吉神，主学业好、有贵人" },
+  "偏印": { meaning: "特殊才能、偏门思维、领悟力", good: "悟性高、思维独特、有专研精神", bad: "孤僻、不合群、思维跳跃难理解", year: "家庭环境特殊、早年经历独特", month: "不走寻常路、学习方式独特", day: "配偶有特殊才能（日支偏印）", hour: "晚年有独特成就", tip: "偏印过旺则孤僻，有食神制则吉" },
+  "正财": { meaning: "稳定收入、正途财富、勤俭", good: "勤俭持家、收入稳定、务实可靠", bad: "小气、追求安稳缺乏冒险精神", year: "家庭经济稳定、幼年不缺钱", month: "青年财运稳定、工作踏实", day: "配偶节俭会持家（日支正财）", hour: "晚年财运稳定、子女守财", tip: "正财在日支为最佳，主配偶贤惠" },
+  "偏财": { meaning: "意外之财、投资、人脉生财", good: "慷慨大方、人脉广、投资眼光好", bad: "钱来快去快、大手大脚、不稳定", year: "家庭人脉广、幼年不差钱", month: "青年有偏财运、社交能力强", day: "配偶大方有才（日支偏财）", hour: "晚年有额外收入", tip: "偏财宜透干，多主社交型求财" },
+  "比肩": { meaning: "自我、竞争、兄弟姐妹、同辈", good: "独立自主、自信、有竞争力", bad: "固执、自我中心、容易争执", year: "兄弟姐妹多或竞争多", month: "青年自我意识强", day: "配偶与自己性格相似（日支比肩）", hour: "晚年固执、需注意人际关系", tip: "比肩与劫财的区别：阴阳同则为比肩" },
+  "劫财": { meaning: "破财、竞争、同辈、合伙", good: "讲义气、有行动力、敢闯敢拼", bad: "容易破财、为朋友付出多、竞争激烈", year: "手足缘薄或兄弟姐妹竞争", month: "青年容易被朋友影响", day: "配偶关系需多沟通（日支劫财）", hour: "晚年注意合作纠纷", tip: "劫财为凶神，但身弱时劫财帮身" },
+  "食神": { meaning: "才华、口福、享受、表达", good: "才华横溢、乐观开朗、有口福", bad: "过于安逸、贪图享乐、不够进取", year: "幼年聪慧、家庭条件好", month: "青年才华出众、有艺术天赋", day: "配偶温和有才（日支食神）", hour: "晚年有福气、子女有成", tip: "食神生财为佳，食神制杀为贵" },
+  "伤官": { meaning: "才华、叛逆、创新、清高", good: "才华横溢、思维创新、长相不错", bad: "骄傲清高、说话直接、容易得罪人", year: "幼年聪明但叛逆", month: "青年恃才傲物", day: "配偶有才但关系需经营（日支伤官）", hour: "晚年清高孤傲", tip: "伤官配印为贵格，主才华被认可" }
+};
+
+// ═════════════════════════════════════════════════
+// 八字 · 大运天干/地支含义
+// ═════════════════════════════════════════════════
+var DAYUN_GAN_MEANING = {
+  "甲": "甲木大运：开创进取之运。适合开拓新领域、创业、扩大规模。木旺之年注意肝火。",
+  "乙": "乙木大运：柔韧发展之运。适合循序渐进、靠人际关系发展。注意不要过于软弱。",
+  "丙": "丙火大运：光明热情之运。社交活跃、事业红火。注意急躁冲动。",
+  "丁": "丁火大运：细致经营之运。适合深耕、精进技艺。注意情绪化。",
+  "戊": "戊土大运：稳定夯实之运。适合打好基础、积累实力。注意保守导致错失机会。",
+  "己": "己土大运：耕耘积累之运。适合规划、筹备、稳扎稳打。注意过于被动。",
+  "庚": "庚金大运：变革果断之运。适合大动作、决断、转型。注意过于刚硬伤人。",
+  "辛": "辛金大运：精致打磨之运。适合提升品质、精耕细作。注意过于挑剔。",
+  "壬": "壬水大运：智慧流动之运。适合外出、交流、学习新事物。注意精力分散。",
+  "癸": "癸水大运：内省沉淀之运。适合思考、规划、修养。注意行动力不足。"
+};
+var DAYUN_ZHI_MEANING = {
+  "子": "子水之年：聪明流动，但子午冲要注意变动。",
+  "丑": "丑土之年：积累沉淀，丑未冲要注意人际关系。",
+  "寅": "寅木之年：生机勃勃，适合开始新计划。",
+  "卯": "卯木之年：快速发展，卯酉冲注意合作变化。",
+  "辰": "辰土之年：稳步提升，辰戌冲注意变动。",
+  "巳": "巳火之年：热情高涨，巳亥冲注意计划受阻。",
+  "午": "午火之年：事业高光，注意不要过热过头。",
+  "未": "未土之年：收获之期，注意合同文书。",
+  "申": "申金之年：果断行动，注意交通安全。",
+  "酉": "酉金之年：精进技艺，注意口舌是非。",
+  "戌": "戌土之年：稳定积累，注意房产事宜。",
+  "亥": "亥水之年：智慧之年，适合学习和规划。"
+};
+
+// ═════════════════════════════════════════════════
+// 八字 · 纳音详解数据（常见纳音）
+// ═════════════════════════════════════════════════
+var NAYIN_DETAIL = {
+  "海中金": "珠藏于渊，含蓄内敛。主智慧不外露，内有大才。",
+  "炉中火": "炼金之火，热情专注。主事业心强，需坚持。",
+  "大林木": "茂盛之林，稳健成长。主团队协作，循序发展。",
+  "路旁土": "沿途之土，承载万物。主服务他人，踏实积累。",
+  "剑锋金": "锋芒毕露，锐不可当。主开创力强，注意人际关系。",
+  "山头火": "高山之火，照亮四方。主名声远扬，注意根基。",
+  "涧下水": "清澈溪流，智慧通达。主思维敏捷，感情细腻。",
+  "城头土": "城墙之土，保卫守护。主稳重可靠，有责任感。",
+  "白蜡金": "柔和之金，精致细腻。主审美品味，艺术天赋。",
+  "杨柳木": "柔韧之木，随风而变。主适应力强，灵活变通。",
+  "泉中水": "清泉之水，源源不断。主智慧绵长，温和内敛。",
+  "屋上土": "屋顶之土，高瞻远瞩。主有远见，适合规划类工作。",
+  "霹雳火": "雷火之威，震撼人心。主爆发力强，大起大落。",
+  "松柏木": "松柏长青，坚韧不拔。主意志坚定，经得起考验。",
+  "长流水": "长流之水，奔流不息。主智慧持续，事业发展稳。",
+  "砂石金": "砂中之金，需经磨砺。主大器晚成，需耐心等待。",
+  "山下火": "山中之火，温暖持久。主人际好，温和有钱。",
+  "平地木": "平川之木，广泛发展。主人脉广，能成大事。",
+  "壁上土": "墙壁之土，依靠他人。主需要贵人扶持。",
+  "金箔金": "金箔饰面，华丽外表。主重面子，内心敏感。",
+  "覆灯火": "油灯之火，延续不断。主学问好，持续学习。",
+  "天河水": "银河之水，高贵优雅。主气质好，有艺术鉴赏力。",
+  "大驿土": "驿道之土，奔波忙碌。主动中求财，适合外出发展。",
+  "钗钏金": "首饰之金，精致华美。主审美佳、生活品质高。",
+  "桑柘木": "桑蚕之木，默默奉献。主服务精神，利于教育。",
+  "大溪水": "大溪之水，气势磅礴。主智慧宏阔，适合大事业。",
+  "沙中土": "沙中之土，松散不稳。主根基需加固，适合稳中求进。",
+  "天上火": "天火之威，光芒万丈。主声名显赫，大贵之格。",
+  "石榴木": "多子之木，丰收之象。主家族兴旺，人丁茂盛。",
+  "大海水": "浩瀚之水，包容万物。主心胸宽广，大智若愚。"
+};
+
+// ═════════════════════════════════════════════════
 // TAB 3: 八字主流程
 // ═════════════════════════════════════════════════
 document.getElementById('bzBtn').addEventListener('click',async function(){
@@ -1631,7 +1894,13 @@ function renderBaziAll(d){
         ss = ss.split(t).join(t+termHint(t));
       }
     });
-    return '<div class="bazi-classic-cell'+(is?' self':'')+'"><div class="bz-label">'+lm[k]+termHint(lm[k])+'</div><div class="bz-ganzhi">'+p.ganzhi+'</div><div class="bz-shishen">'+ss+'</div><div class="bz-nayin">'+p.nayin+termHint('纳音')+'</div>'+(cg?'<div style="margin-top:3px">'+cg+'</div>':'')+'</div>';
+    // Wrap shishen terms with clickable spans for detailed popup
+    shishenTerms.forEach(function(t){
+      if(ss && ss.indexOf(t)!==-1){
+        ss = ss.split(t).join('<span class="bz-shishen-click" data-shishen="'+t+'" style="cursor:pointer;border-bottom:1px dashed var(--cinnabar);font-weight:600">'+t+'</span>');
+      }
+    });
+    return '<div class="bazi-classic-cell'+(is?' self':'')+'"><div class="bz-label">'+lm[k]+termHint(lm[k])+'</div><div class="bz-ganzhi">'+p.ganzhi+'</div><div class="bz-shishen">'+ss+'</div><div class="bz-nayin"><span class="bz-nayin-click" data-nayin="'+p.nayin+'" style="cursor:pointer;border-bottom:1px dashed var(--border-color)">'+p.nayin+'</span>'+termHint('纳音')+'</div>'+(cg?'<div style="margin-top:3px">'+cg+'</div>':'')+'</div>';
   }).join('');
 
   // 刑冲合害
@@ -1668,7 +1937,8 @@ function renderBaziAll(d){
   document.getElementById('bzDayunInfo').innerHTML='<span>'+d.dayun.direction+' · '+d.dayun.start_age+'岁起运'+termHint('起运')+' · 每运10年'+termHint('大运')+'</span>';
   var cy=d.dayun.start_age;
   document.getElementById('bzDayun').innerHTML=d.dayun.pills.map(function(p){
-    return '<div class="dayun-classic-item'+(cy>=p.age_start&&cy<=p.age_end?' current-dayun':'')+'"><div class="dy-gz">'+p.ganzhi+'</div><div class="dy-age">'+p.age_start+'-'+p.age_end+'岁</div></div>';
+    var gan=p.ganzhi[0],zhi=p.ganzhi[1];
+    return '<div class="dayun-classic-item clickable-dayun-bazi'+(cy>=p.age_start&&cy<=p.age_end?' current-dayun':'')+'" data-ganzhi="'+p.ganzhi+'" data-age-start="'+p.age_start+'" data-age-end="'+p.age_end+'"><div class="dy-gz">'+p.ganzhi+'</div><div class="dy-age">'+p.age_start+'-'+p.age_end+'岁</div></div>';
   }).join('');
 
   // 流年
@@ -1685,9 +1955,147 @@ function renderBaziAll(d){
   var w=document.getElementById('bzWarn'),wl=document.getElementById('bzWarnList');
   if(d.warnings&&d.warnings.length){w.style.display='block';wl.innerHTML=d.warnings.map(function(x){return '<li>⚠ '+x+'</li>';}).join('');}else{w.style.display='none';}
 
+  // 日主性格
+  var dm = d.day_master;
+  var ch = document.getElementById('bzChar'), cc = document.getElementById('bzCharContent');
+  if(dm && TIANGAN_CHARACTER[dm]){
+    ch.style.display='block';
+    var c = TIANGAN_CHARACTER[dm];
+    cc.innerHTML = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-size:2rem">'+c.image+'</span><div><span style="font-family:var(--font-title);font-size:1.1rem;font-weight:700">'+c.name+'</span><span style="color:var(--ink-muted);margin-left:8px">'+c.desc+'</span></div></div>'+
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;font-size:0.82rem">'+
+      '<div style="padding:8px;background:var(--paper-dark)"><strong style="font-family:var(--font-title);color:var(--stone-blue)">性格特质</strong><br>'+c.character+'</div>'+
+      '<div style="padding:8px;background:var(--paper-dark)"><strong style="font-family:var(--font-title);color:var(--stone-blue)">优势</strong><br>'+c.strength+'</div>'+
+      '<div style="padding:8px;background:var(--paper-dark)"><strong style="font-family:var(--font-title);color:var(--cinnabar)">注意</strong><br>'+c.weakness+'</div>'+
+      '<div style="padding:8px;background:var(--paper-dark)"><strong style="font-family:var(--font-title);color:var(--gold)">适合方向</strong><br>'+c.career+'</div>'+
+      '</div>'+
+      '<div style="margin-top:6px;font-size:0.75rem;color:var(--ink-muted)">日主即出生日的天干，代表你自己。你的日主为 <strong style="color:var(--cinnabar)">'+dm+'</strong>，属'+c.name+'。点击十神标签可查看详细解释。</div>';
+  }else{ch.style.display='none';}
+
+  // 喜用神/忌神 (简化版：根据五行统计和日主五行判断)
+  var dmy = d.day_master_wuxing;
+  var wxStats = d.wuxing_stat;
+  var yel = document.getElementById('bzYong'), yc = document.getElementById('bzYongContent');
+  yel.style.display='block';
+  // basic logic: find the most abundant and most scarce elements
+  var wxSorted = Object.keys(wxStats).sort(function(a,b){return wxStats[b]-wxStats[a];});
+  var most = wxSorted[0], least = wxSorted[wxSorted.length-1];
+  var allZero = wxSorted.every(function(k){return wxStats[k]===0;});
+  if(allZero){
+    yc.innerHTML = '<p style="font-size:0.82rem">五行数据不足，无法做喜用神分析。</p>';
+  } else {
+    var shengKe = { "木": ["火","土"], "火": ["土","金"], "土": ["金","水"], "金": ["水","木"], "水": ["木","火"] };
+    var xiUse = shengKe[dmy] ? shengKe[dmy][0] : '?';
+    var jiAvoid = shengKe[dmy] ? shengKe[dmy][1] : '?';
+    yc.innerHTML =
+      '<div style="font-size:0.82rem;line-height:1.8">'+
+      '<p><strong style="font-family:var(--font-title);color:var(--stone-blue)">日主五行：</strong>'+dm+'属<span style="font-weight:700">'+dmy+'</span></p>'+
+      '<p><strong style="font-family:var(--font-title);color:var(--stone-blue)">五行最多：</strong>'+most+'（'+wxStats[most]+'）</p>'+
+      '<p><strong style="font-family:var(--font-title);color:var(--cinnabar)">五行最少：</strong>'+least+'（'+wxStats[least]+'）</p>'+
+      '<div class="ink-divider"></div>'+
+      '<p><strong style="font-family:var(--font-title);color:var(--stone-blue)">喜用神（宜补）：</strong><span style="color:var(--cinnabar);font-weight:700;font-size:0.9rem">'+xiUse+'</span> — 多接触'+xiUse+'相关的颜色、行业、方位</p>'+
+      '<p><strong style="font-family:var(--font-title);color:var(--cinnabar)">忌神（宜避）：</strong><span style="font-weight:700;font-size:0.9rem">'+jiAvoid+'</span> — 注意不要过多加重'+jiAvoid+'的能量</p>'+
+      '<div class="ink-divider"></div>'+
+      '<div class="guide-note" style="font-size:0.75rem">💡 喜用神分析为简化版。完整分析需结合月令、地支藏干、格局综合判断。</div>'+
+      '</div>';
+  }
+
+  // 命局总结
+  var sel = document.getElementById('bzSummary'), sc = document.getElementById('bzSummaryContent');
+  sel.style.display='block';
+  var summaryHtml = '<div style="font-size:0.82rem;line-height:1.9">';
+  summaryHtml += '<p><strong>日主：</strong>'+dm+'（'+TIANGAN_CHARACTER[dm].name+'）— '+TIANGAN_CHARACTER[dm].desc+'</p>';
+  // count shishen types
+  var shishenCount = {};
+  var allSS = [d.shishen.year_gan, d.shishen.month_gan, d.shishen.hour_gan];
+  var ssTerms=['正官','偏官(七杀)','正官','偏官','正印','偏印','正财','偏财','比肩','劫财','食神','伤官'];
+  allSS.forEach(function(s){
+    if(s){
+      ssTerms.forEach(function(t){
+        if(s.indexOf(t)!==-1){
+          // normalize 偏官 and 七杀
+          var key = (t==='偏官(七杀)'||t==='偏官'||t==='七杀') ? '偏官/七杀' : t;
+          shishenCount[key] = (shishenCount[key]||0)+1;
+        }
+      });
+    }
+  });
+  var topSS = Object.keys(shishenCount).sort(function(a,b){return shishenCount[b]-shishenCount[a];}).slice(0,3);
+  if(topSS.length){
+    summaryHtml += '<p><strong>十神侧重：</strong>'+topSS.map(function(s){return s+'（'+shishenCount[s]+'）';}).join('、')+'</p>';
+  }
+  summaryHtml += '<p><strong>五行最旺：</strong>'+most+'（'+wxStats[most]+'） <strong>最弱：</strong>'+least+'（'+wxStats[least]+'）</p>';
+  // 大运提示
+  var currentDayun = d.dayun.pills.filter(function(p){return cy>=p.age_start&&cy<=p.age_end;});
+  if(currentDayun.length){
+    summaryHtml += '<p><strong>当前大运：</strong>'+currentDayun[0].ganzhi+'（'+currentDayun[0].age_start+'-'+currentDayun[0].age_end+'岁）<span class="clickable-dayun-bazi" data-ganzhi="'+currentDayun[0].ganzhi+'" data-age-start="'+currentDayun[0].age_start+'" data-age-end="'+currentDayun[0].age_end+'" style="cursor:pointer;color:var(--cinnabar);border-bottom:1px dashed var(--cinnabar);font-size:0.78rem">[点击详解]</span></p>';
+  }
+  summaryHtml += '</div>';
+  sc.innerHTML = summaryHtml;
+
   document.getElementById('bzResults').style.display='block';
   document.getElementById('bzResults').scrollIntoView({behavior:'smooth',block:'start'});
 }
+
+// 八字大运点击事件
+document.addEventListener('click', function(e){
+  var el = e.target.closest('.clickable-dayun-bazi');
+  if(el){
+    var ganzhi = el.dataset.ganzhi;
+    var ageStart = el.dataset.ageStart || '?';
+    var ageEnd = el.dataset.ageEnd || '?';
+    if(!ganzhi){showDetail('大运详解','<p>无法获取数据</p>');return;}
+    var gan = ganzhi[0], zhi = ganzhi[1];
+    var ganMean = DAYUN_GAN_MEANING[gan] || gan+'干，需结合命局综合判断。';
+    var zhiMean = DAYUN_ZHI_MEANING[zhi] || zhi+'支，需结合命局综合判断。';
+    var html = '<div class="du-section"><div class="du-slabel">大运干支</div><div class="du-value" style="font-family:var(--font-title);font-size:1.2rem;font-weight:700;color:var(--cinnabar)">'+ganzhi+'</div></div>'+
+      '<div class="du-section"><div class="du-slabel">掌管时段</div><div class="du-value">'+ageStart+'岁 — '+ageEnd+'岁</div></div>'+
+      '<div class="ink-divider"></div>'+
+      '<div class="du-section"><div class="du-slabel">天干·'+gan+'运</div><div class="du-value">'+ganMean+'</div></div>'+
+      '<div class="du-section"><div class="du-slabel">地支·'+zhi+'运</div><div class="du-value">'+zhiMean+'</div></div>'+
+      '<div class="ink-divider"></div>'+
+      '<div class="guide-note" style="font-size:0.75rem">💡 大运每十年一换。天干管前半运，地支管后半运，干支结合为完整运势。</div>';
+    showDetail('大运详解 · '+ganzhi, html);
+  }
+});
+
+// 八字十神点击事件
+document.addEventListener('click', function(e){
+  var el = e.target.closest('.bz-shishen-click');
+  if(el){
+    var shishen = el.dataset.shishen;
+    var detail = SHISHEN_DETAIL[shishen];
+    if(!detail){showDetail('十神详解','<p>暂无「'+shishen+'」的详细解释</p>');return;}
+    var html = '<div class="du-section"><div class="du-slabel">十神</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+shishen+'</div></div>'+
+      '<div class="du-section"><div class="du-slabel">核心含义</div><div class="du-value">'+detail.meaning+'</div></div>'+
+      '<div class="du-section"><div class="du-slabel" style="color:var(--stone-blue)">吉象</div><div class="du-value">'+detail.good+'</div></div>'+
+      '<div class="du-section"><div class="du-slabel" style="color:var(--cinnabar)">凶象</div><div class="du-value">'+detail.bad+'</div></div>'+
+      '<div class="ink-divider"></div>'+
+      '<table class="du-table">'+
+      '<tr><td>年柱</td><td>'+detail.year+'</td></tr>'+
+      '<tr><td>月柱</td><td>'+detail.month+'</td></tr>'+
+      '<tr><td>日柱</td><td>'+detail.day+'</td></tr>'+
+      '<tr><td>时柱</td><td>'+detail.hour+'</td></tr>'+
+      '</table>'+
+      '<div class="ink-divider"></div>'+
+      '<div class="guide-note" style="font-size:0.75rem">💡 提示：'+detail.tip+'</div>';
+    showDetail('十神详解 · '+shishen, html);
+  }
+});
+
+// 八字纳音点击事件
+document.addEventListener('click', function(e){
+  var el = e.target.closest('.bz-nayin-click');
+  if(el){
+    var nayin = el.dataset.nayin;
+    var detail = NAYIN_DETAIL[nayin];
+    if(!detail){showDetail('纳音详解','<p>暂无「'+nayin+'」的解释</p>');return;}
+    var html = '<div class="du-section"><div class="du-slabel">纳音</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+nayin+'</div></div>'+
+      '<div class="du-section"><div class="du-slabel">含义</div><div class="du-value">'+detail+'</div></div>'+
+      '<div class="ink-divider"></div>'+
+      '<div class="guide-note" style="font-size:0.75rem">💡 纳音是干支组合的五行音律象，代表该柱的深层气质和能量特质。</div>';
+    showDetail('纳音详解 · '+nayin, html);
+  }
+});
 
 // ═════════════════════════════════════════════════
 // TAB 4: 紫微斗数
