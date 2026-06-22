@@ -402,6 +402,11 @@
     .term-hint:hover {
       background: var(--cinnabar); color: var(--paper-light);
     }
+    .term-note {
+      font-size: 0.7rem; color: var(--ink-muted);
+      font-weight: 400; margin-left: 2px;
+      font-family: var(--font-body);
+    }
     /* 白话解读区块 */
     .plain-talk {
       padding: 14px 16px; background: #f0f4ec;
@@ -425,6 +430,16 @@
       text-decoration: underline; text-underline-offset: 2px;
     }
     .plain-talk .pt-suggest a:hover { color: var(--cinnabar); }
+    .plain-talk .pt-suggest-btn {
+      display: inline-block; cursor: pointer; padding: 4px 12px;
+      margin: 3px 2px; border: 1px solid var(--border-color);
+      font-size: 0.82rem; transition: all 0.2s;
+      background: var(--paper); color: var(--ink);
+    }
+    .plain-talk .pt-suggest-btn:hover {
+      border-color: var(--cinnabar); color: var(--cinnabar);
+      background: #faf2ef; transform: translateY(-1px);
+    }
     /* 新手引导提示 */
     .guide-note {
       font-size: 0.78rem; color: var(--ink-muted);
@@ -1176,8 +1191,8 @@ function renderGeju(chart) {
     var text = x.text;
     var patternTerms = ['青龙回首','飞鸟跌穴','太白入荧','荧入太白','值符得位','门受制','白虎','玄武','天辅','天芮','天心','天蓬','天英','天柱','死门','伤门','惊门','休门','生门','开门','杜门','景门'];
     patternTerms.forEach(function(term){
-      if(text.indexOf(term) !== -1 && QIMEN_TERMS[term]){
-        text = text.split(term).join(term+'<span class="term-hint" title="点击查看通俗解释" onclick="event.stopPropagation();showDetail(\''+term+'\',\'<p style=font-size:0.9rem;line-height:1.8>\'+QIMEN_TERMS[\''+term+'\']+\'</p>\');">?</span>');
+      if(text.indexOf(term) !== -1 && SHORT_HINTS[term]){
+        text = text.split(term).join(term+'<span class="term-note">（'+SHORT_HINTS[term]+'）</span>');
       }
     });
     return '<span class="tag-classic '+cls+'">'+icon+'</span> '+text;
@@ -1240,12 +1255,12 @@ function renderPlainTalk(chart) {
   // 3. 使用小贴士
   lines.push('<div class="pt-suggest">');
   lines.push('<b>💬 不知道问什么？试试这些：</b><br>');
-  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'career\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">💼 问事业</a> &nbsp;');
-  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'money\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">💰 问财运</a> &nbsp;');
-  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'love\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">❤️ 问感情</a> &nbsp;');
-  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'exam\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">📝 问考试</a> &nbsp;');
-  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'travel\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">✈️ 问出行</a> &nbsp;');
-  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'legal\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">⚖️ 问诉讼</a>');
+  lines.push('<a class="pt-suggest-btn" data-qtype="career">💼 问事业</a> &nbsp;');
+  lines.push('<a class="pt-suggest-btn" data-qtype="money">💰 问财运</a> &nbsp;');
+  lines.push('<a class="pt-suggest-btn" data-qtype="love">❤️ 问感情</a> &nbsp;');
+  lines.push('<a class="pt-suggest-btn" data-qtype="exam">📝 问考试</a> &nbsp;');
+  lines.push('<a class="pt-suggest-btn" data-qtype="travel">✈️ 问出行</a> &nbsp;');
+  lines.push('<a class="pt-suggest-btn" data-qtype="legal">⚖️ 问诉讼</a>');
   lines.push('<br><span style="font-size:0.75rem;color:var(--ink-muted)">（点击后自动切换问事类型，然后重新点"起盘+解盘"即可获得针对性分析）</span>');
   lines.push('</div>');
 
@@ -1795,6 +1810,14 @@ document.addEventListener('click', function(e) {
     var term = target.getAttribute('data-term');
     if (term && QIMEN_TERMS[term]) {
       showDetail(term, '<p style="font-size:0.9rem;line-height:1.9;color:var(--ink)">'+QIMEN_TERMS[term]+'</p>');
+    }
+  }
+  // 白话解读建议按钮
+  if (target.classList && target.classList.contains('pt-suggest-btn')) {
+    var qtype = target.getAttribute('data-qtype');
+    if (qtype) {
+      document.getElementById('qmQType').value = qtype;
+      toast('已切换到「问'+{career:'事业',money:'财运',love:'感情',exam:'考试',travel:'出行',legal:'诉讼'}[qtype]+'」，点"起盘+解盘"查看分析');
     }
   }
 });
