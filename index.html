@@ -949,6 +949,36 @@
         <div class="detail-classic-grid" id="bzXun"></div>
       </div>
 
+      <!-- 神煞系统 -->
+      <div class="folio" id="bzShensha" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">神煞系统</span>
+          <span class="folio-badge">增一</span>
+        </div>
+        <div id="bzShenshaContent" style="font-size:0.82rem"></div>
+      </div>
+
+      <!-- 格局判断 -->
+      <div class="folio" id="bzGeju" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">格局判断</span>
+          <span class="folio-badge">增二</span>
+        </div>
+        <div id="bzGejuContent" style="font-size:0.82rem"></div>
+      </div>
+
+      <!-- 旺衰分析 -->
+      <div class="folio" id="bzWangshuai" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">旺衰分析</span>
+          <span class="folio-badge">增三</span>
+        </div>
+        <div id="bzWangshuaiContent" style="font-size:0.82rem"></div>
+      </div>
+
       <div class="folio" id="bzWarn" style="display:none">
         <div class="folio-header">
           <div class="dot"></div>
@@ -1864,6 +1894,178 @@ var NAYIN_DETAIL = {
 };
 
 // ═════════════════════════════════════════════════
+// 八字 · 神煞查表数据
+// ═════════════════════════════════════════════════
+
+// 天乙贵人：日干查，返回地支数组
+var SHENSHA_TIANYI_GUIREN = {
+  "甲":["丑","未"],"戊":["丑","未"],"庚":["丑","未"],
+  "乙":["子","申"],"己":["子","申"],
+  "丙":["亥","酉"],"丁":["亥","酉"],
+  "壬":["卯","巳"],"癸":["卯","巳"],
+  "辛":["午","寅"]
+};
+
+// 文昌贵人：日干查
+var SHENSHA_WENCHANG = {
+  "甲":"巳","乙":"午","丙":"申","丁":"酉","戊":"申","己":"酉",
+  "庚":"亥","辛":"戌","壬":"寅","癸":"卯"
+};
+
+// 桃花（咸池）：年支/日支查
+var SHENSHA_TAOHUA = {
+  "寅":"卯","午":"卯","戌":"卯",
+  "巳":"午","酉":"午","丑":"午",
+  "申":"酉","子":"酉","辰":"酉",
+  "亥":"子","卯":"子","未":"子"
+};
+
+// 华盖：年支/日支查
+var SHENSHA_HUAGAI = {
+  "寅":"戌","午":"戌","戌":"戌",
+  "巳":"丑","酉":"丑","丑":"丑",
+  "申":"辰","子":"辰","辰":"辰",
+  "亥":"未","卯":"未","未":"未"
+};
+
+// 驿马：年支/日支查
+var SHENSHA_YIMA = {
+  "寅":"申","午":"申","戌":"申",
+  "巳":"亥","酉":"亥","丑":"亥",
+  "申":"寅","子":"寅","辰":"寅",
+  "亥":"巳","卯":"巳","未":"巳"
+};
+
+// 劫煞：年支查
+var SHENSHA_JIESHA = {
+  "寅":"亥","午":"亥","戌":"亥",
+  "巳":"寅","酉":"寅","丑":"寅",
+  "申":"巳","子":"巳","辰":"巳",
+  "亥":"申","卯":"申","未":"申"
+};
+
+// 亡神：年支查
+var SHENSHA_WANGSHEN = {
+  "寅":"巳","午":"巳","戌":"巳",
+  "巳":"申","酉":"申","丑":"申",
+  "申":"亥","子":"亥","辰":"亥",
+  "亥":"寅","卯":"寅","未":"寅"
+};
+
+// 天德贵人：月支查
+var SHENSHA_TIANDE = {
+  "寅":"丁","卯":"申","辰":"壬","巳":"辛",
+  "午":"亥","未":"甲","申":"癸","酉":"寅",
+  "戌":"丙","亥":"乙","子":"巳","丑":"庚"
+};
+
+// 月德贵人：月支查
+var SHENSHA_YUEDE = {
+  "寅":"丙","午":"丙","戌":"丙",
+  "亥":"甲","卯":"甲","未":"甲",
+  "申":"壬","子":"壬","辰":"壬",
+  "巳":"庚","酉":"庚","丑":"庚"
+};
+
+// 红鸾：年支查
+var SHENSHA_HONGLUAN = {
+  "子":"卯","丑":"寅","寅":"丑","卯":"子",
+  "辰":"亥","巳":"戌","午":"酉","未":"申",
+  "申":"未","酉":"午","戌":"巳","亥":"辰"
+};
+
+// 孤辰：年支查
+var SHENSHA_GUCHEN = {
+  "亥":"寅","子":"寅","丑":"寅",
+  "寅":"巳","卯":"巳","辰":"巳",
+  "巳":"申","午":"申","未":"申",
+  "申":"亥","酉":"亥","戌":"亥"
+};
+
+// 寡宿：年支查
+var SHENSHA_GUASHU = {
+  "亥":"戌","子":"戌","丑":"戌",
+  "寅":"丑","卯":"丑","辰":"丑",
+  "巳":"辰","午":"辰","未":"辰",
+  "申":"未","酉":"未","戌":"未"
+};
+
+// 金舆：日干查
+var SHENSHA_JINYU = {
+  "甲":"辰","乙":"巳","丙":"未","丁":"申",
+  "戊":"未","己":"申","庚":"戌","辛":"酉",
+  "壬":"寅","癸":"卯"
+};
+
+// 神煞描述字典（所有神煞的解释，供弹窗使用）
+var SHENSHA_DETAIL = {
+  "天乙贵人": { attr:"吉", desc:"天乙贵人是命中最吉之神，遇之主逢凶化吉、贵人相助。命中带天乙贵人者，多受人尊敬，危机时刻有人援手。" },
+  "文昌贵人": { attr:"吉", desc:"文昌贵主聪明好学、才华出众，利于学业考试和文艺创作。" },
+  "桃花": { attr:"中性", desc:"桃花主异性缘分、人缘魅力，但也主感情纠葛。吉则人见人爱，凶则感情困扰。" },
+  "华盖": { attr:"中性", desc:"华盖主孤高、艺术天赋、修行缘分。命带华盖者多才多艺，但也性格孤独。" },
+  "驿马": { attr:"中性", desc:"驿马主动荡、奔波、远行。吉则多动多得，事业扩展到外地；凶则劳碌奔波。" },
+  "劫煞": { attr:"凶", desc:"劫煞主破财、灾祸、竞争激烈。遇之需保守行事，不可冒进。" },
+  "亡神": { attr:"凶", desc:"亡神主官非、是非、精神压力。遇之需谨言慎行，避免卷入是非。" },
+  "天德贵人": { attr:"吉", desc:"天德贵人主福德、天助，逢凶化吉，一生福泽深厚。" },
+  "月德贵人": { attr:"吉", desc:"月德贵人主祥和、化解凶灾，与人友善。" },
+  "红鸾": { attr:"吉", desc:"红鸾主姻缘、喜事，特别利于感情婚姻。" },
+  "天喜": { attr:"吉", desc:"天喜主喜庆、好事、添丁进口，与红鸾相辅相成。" },
+  "孤辰": { attr:"凶", desc:"孤辰主孤独、六亲缘薄、性格孤僻。命带孤辰者内心孤独。" },
+  "寡宿": { attr:"凶", desc:"寡宿主寡居、清冷、感情缘分较浅。不宜早婚。" },
+  "金舆": { attr:"吉", desc:"金舆主富贵、车马、官运，象征富贵之基。" }
+};
+
+var SHENSHA_LONG_DESC = {
+  "天乙贵人": "天乙贵人乃紫微垣中一星，主近贵、得助、化险为夷。命带天乙贵人者，一生贵人运强，遇难有救，处事顺遂。贵人出现在年柱主祖上有德，月柱主青年得助，日柱主配偶贤良，时柱主晚年有福。",
+  "文昌贵人": "文昌贵人乃文曲星之化身，主文学艺术、科举功名。命带文昌者天资聪颖，有学习天赋，考试运佳，适合从事文化、教育、艺术等领域。",
+  "桃花": "桃花又名咸池，主人缘好、有魅力、异性缘佳。吉则人见人爱、社交能力强；凶则感情困扰、易生桃花劫。桃花在年柱主早年有异性缘，月柱主青年恋爱，日柱主配偶貌美，时柱主晚年桃花。",
+  "华盖": "华盖为艺术星，命带华盖者多才多艺、有艺术天赋，喜静思、有宗教哲学缘分。但华盖也主孤独，性格孤高不合群，适合从事艺术、研究、修行等需要独处的领域。",
+  "驿马": "驿马为奔波之星，主动、快、变化。命带驿马者一生多动、出差旅游多、变动频繁。吉则多动多得、事业扩展到外地；凶则劳碌奔波、居无定所。大运流年遇驿马多主变动。",
+  "劫煞": "劫煞为凶星，主突发性的破财、灾难、小人暗算。遇之需保守行事，不可冒进。但身旺劫煞有制反主果断勇猛、能成大事。",
+  "亡神": "亡神为凶星，主官非诉讼、精神压力、内心不安。遇之需谨言慎行，避免卷入是非。但有制化也可反主机智果断、能处理复杂局面。",
+  "天德贵人": "天德贵人乃上天福德之星，主一生福气深厚、遇难成祥。命带天德者心地善良、多行善事，危难之时常有贵人伸出援手。",
+  "月德贵人": "月德贵人乃太阴之德，主心地善良、性格温和、人缘佳。命带月德者灾祸较轻，易得他人相助，一生平安顺遂。",
+  "红鸾": "红鸾为喜星，主婚姻喜庆之事。命带红鸾者感情缘分佳，易遇良缘。大运流年遇红鸾则多主婚恋喜事。",
+  "天喜": "天喜与红鸾对宫，主管喜庆之事。命带天喜者一生喜事多，婚姻美满、添丁顺利。大运流年遇天喜多主喜事临门。",
+  "孤辰": "孤辰为孤独之星，命带孤辰者内心孤独，不喜社交，六亲缘分较淡。吉则能耐受孤独、专注事业；凶则孤苦无依、人际关系差。",
+  "寡宿": "寡宿与孤辰同类，主感情寂寞、缘分浅薄。命带寡宿者不宜早婚，晚婚反吉。大运流年遇之需注意感情关系。",
+  "金舆": "金舆为富贵之星，命带金舆者一生福禄不缺，出行有车马之便，官运亨通。金舆在年柱主祖业丰厚，在日柱主自身富贵。"
+};
+
+// ═════════════════════════════════════════════════
+// 八字 · 格局判断数据
+// ═════════════════════════════════════════════════
+var GEJU_DETAIL = {
+  "正官格": { condition:"月令主气为正官", character:"为人正直、有责任心、守规矩、重名誉，有领导能力", preference:"喜财星生官、喜印星护官，忌伤官克官", classic:"正官为贵气之星，得令则贵。正官格者多主清正廉明，适合公职、管理岗位。" },
+  "七杀格": { condition:"月令主气为七杀", character:"果断勇猛、有魄力、能担大任，但性格刚烈", preference:"喜食神制杀、印星化杀，忌财星生杀", classic:"七杀为威权之星，得令则势大。有制则为偏官，无制则为七杀。七杀格者多出武将、创业者、改革家。" },
+  "正印格": { condition:"月令主气为正印", character:"仁慈善良、聪明好学、有文化底蕴、性格温和", preference:"喜官星生印、比劫护印，忌财星坏印", classic:"正印为文星，得令则文采出众。正印格者学业优秀，多有学历文凭，适合教育、文化、研究类工作。" },
+  "偏印格": { condition:"月令主气为偏印", character:"思维独特、悟性高、有专研精神、性格偏孤僻", preference:"喜偏财制印、比劫助身，忌食神被夺", classic:"偏印为偏门之星，得令则出奇制胜。偏印格者思维跳脱，常有独特见解，适合研究、玄学、艺术等非传统领域。" },
+  "正财格": { condition:"月令主气为正财", character:"勤劳节俭、务实稳重、重视家庭、有理财观念", preference:"喜食神生财、官星护财，忌比劫夺财", classic:"正财为稳定之财，得令则家业丰足。正财格者财运稳定，适合从商、财务、管理等工作。" },
+  "偏财格": { condition:"月令主气为偏财", character:"慷慨大方、人脉广、善于投资、有冒险精神", preference:"喜食神生财、官星护财，忌比劫夺财", classic:"偏财为众人之财，得令则财源广进。偏财格者善于经营人脉，适合销售、贸易、投资等需人际交往的行业。" },
+  "食神格": { condition:"月令主气为食神", character:"温和善良、有才华、乐观开朗、有艺术天赋", preference:"喜食神生财、身旺能担，忌偏印夺食", classic:"食神为福气之星，得令则一生丰衣足食。食神格者有才华且有表现力，适合文艺、教育、餐饮等行业。" },
+  "伤官格": { condition:"月令主气为伤官", character:"才华横溢、思维创新、清高孤傲、不喜约束", preference:"喜伤官配印、伤官生财，忌伤官见官", classic:"伤官为才华之星，得令则才智超群。伤官格者聪明绝顶但恃才傲物，适合技术、艺术、科研等创新领域。" },
+  "建禄格": { condition:"月令为日主之禄（比肩）", character:"独立自主、自信自强、有领导力、性格刚强", preference:"喜官星制比、食伤泄秀，忌比劫夺财", classic:"建禄格者月令得禄，身强体健、精力充沛。但比肩旺也主竞争激烈，需看官杀制化。" },
+  "羊刃格": { condition:"月令为日主之刃（劫财）", character:"胆大勇猛、攻击性强、有大将之风", preference:"喜官杀制刃、食伤泄刃，忌财星生刃", classic:"羊刃为极旺之星，得令则气势如虹。羊刃格者多出武将、运动员、创业者。刃旺需制，否则易招灾祸。" },
+  "从旺格": { condition:"日主极旺，全局比劫印星占绝对主导，无官杀财星破局", character:"意志坚定、自信极强、不屈不挠", preference:"喜比劫、印星，忌官杀财星", classic:"从旺格者顺其旺势而行，宜从事独立性强的行业，不宜与人合作。从得真者大富大贵。" },
+  "从弱格": { condition:"日主极弱，全局财官食伤占绝对主导，无比劫印星助身", character:"顺应环境、适应力强、善于借力", preference:"喜财官食伤，忌比劫印星", classic:"从弱格者顺其弱势而行，宜合作、依附他人发展。从得真者多出辅佐之才。" }
+};
+
+// ═════════════════════════════════════════════════
+// 八字 · 旺衰分析数据
+// ═════════════════════════════════════════════════
+var WANGXIU_LUT = {
+  "木":{ "木":"旺", "火":"相", "水":"休", "金":"囚", "土":"死" },
+  "火":{ "火":"旺", "土":"相", "木":"休", "水":"囚", "金":"死" },
+  "土":{ "土":"旺", "金":"相", "火":"休", "木":"囚", "水":"死" },
+  "金":{ "金":"旺", "水":"相", "土":"休", "火":"囚", "木":"死" },
+  "水":{ "水":"旺", "木":"相", "金":"休", "土":"囚", "火":"死" }
+};
+var WANGXIU_COLOR = {
+  "旺": "color:#c0392b;font-weight:700", "相": "color:#e67e22;font-weight:600",
+  "休": "color:#7f8c8d", "囚": "color:#95a5a6", "死": "color:#bdc3c7"
+};
+
+// ═════════════════════════════════════════════════
 // TAB 3: 八字主流程
 // ═════════════════════════════════════════════════
 document.getElementById('bzBtn').addEventListener('click',function(){
@@ -1938,30 +2140,306 @@ function renderBaziAll(d){
   var wx=d.wuxing_stat,wo=['木','火','土','金','水'];
   document.getElementById('bzWuxing').innerHTML=wo.map(function(k){return '<div class="wuxing-classic-item"><div class="wx-label">'+k+'</div><div class="wx-count">'+wx[k]+'</div></div>';}).join('');
 
-  // 藏干
+  // 藏干（增强版：标注本气/中气/余气 + 十神）
   document.getElementById('bzCanggan').innerHTML=order.map(function(k){
-    var zhi=d.four_pillars[k].zhi,cg=(d.canggan[k]||[]).map(function(x){return x.gan+'('+x.shishen+')';}).join('、');
-    return '<div style="display:inline-block;margin:4px 10px 4px 0;padding:4px 10px;background:var(--paper-dark);border:1px solid var(--border-color)"><span style="font-weight:600;font-family:var(--font-title)">'+pm[k]+'支'+zhi+termHint('藏干')+'</span>：'+cg+'</div>';
+    var zhi=d.four_pillars[k].zhi,cg=d.canggan[k]||[];
+    var CANG_RANK=['本气','中气','余气'];
+    var cgHtml=cg.map(function(x,i){
+      var rankLabel=CANG_RANK[i]||'';
+      return '<span class="bz-canggan-item" data-gan="'+x.gan+'" data-shishen="'+x.shishen+'" style="cursor:pointer;border-bottom:1px dashed var(--border-color);padding:1px 3px;margin:0 2px">'+x.gan+'<span style="font-size:0.6rem;color:var(--ink-muted)">('+x.shishen+')</span><span style="font-size:0.55rem;color:'+(i===0?'var(--cinnabar)':'var(--ink-muted)')+';margin-left:2px;font-weight:'+(i===0?'700':'400')+'">['+rankLabel+']</span></span>';
+    }).join('');
+    return '<div style="display:inline-block;margin:4px 10px 4px 0;padding:4px 10px;background:var(--paper-dark);border:1px solid var(--border-color)"><span style="font-weight:600;font-family:var(--font-title)">'+pm[k]+'支'+zhi+termHint('藏干')+'</span>：'+cgHtml+'</div>';
   }).join('');
 
-  // 大运
-  document.getElementById('bzDayunInfo').innerHTML='<span>'+d.dayun.direction+' · '+d.dayun.start_age+'岁起运'+termHint('起运')+' · 每运10年'+termHint('大运')+'</span>';
+  // 大运（增强：起运具体年份 + 交运年份列表）
+  var birthYear=d.current_year?d.current_year.year:new Date().getFullYear();
+  // Try to extract birth year from bzDate field
+  (function(){
+    var dtEl=document.getElementById('bzDate');
+    if(dtEl&&dtEl.value){
+      var parts=dtEl.value.split('-');
+      if(parts[0]) birthYear=parseInt(parts[0]);
+    }
+  })();
+  var startYear=birthYear+d.dayun.start_age;
+  document.getElementById('bzDayunInfo').innerHTML='<span>'+d.dayun.direction+' · '+d.dayun.start_age+'岁起运<span class="bz-dayun-startyear" style="cursor:pointer;color:var(--cinnabar);border-bottom:1px dashed var(--cinnabar)" data-start-year="'+startYear+'" data-start-age="'+d.dayun.start_age+'">（'+startYear+'年起运）</span>'+termHint('起运')+' · 每运10年'+termHint('大运')+'</span>';
   var cy=d.dayun.start_age;
   document.getElementById('bzDayun').innerHTML=d.dayun.pills.map(function(p){
     var gan=p.ganzhi[0],zhi=p.ganzhi[1];
-    return '<div class="dayun-classic-item clickable-dayun-bazi'+(cy>=p.age_start&&cy<=p.age_end?' current-dayun':'')+'" data-ganzhi="'+p.ganzhi+'" data-age-start="'+p.age_start+'" data-age-end="'+p.age_end+'"><div class="dy-gz">'+p.ganzhi+'</div><div class="dy-age">'+p.age_start+'-'+p.age_end+'岁</div></div>';
+    var jiaoYear=startYear+p.age_start-d.dayun.start_age;
+    return '<div class="dayun-classic-item clickable-dayun-bazi'+(cy>=p.age_start&&cy<=p.age_end?' current-dayun':'')+'" data-ganzhi="'+p.ganzhi+'" data-age-start="'+p.age_start+'" data-age-end="'+p.age_end+'" data-jiao-year="'+jiaoYear+'"><div class="dy-gz">'+p.ganzhi+'</div><div class="dy-age">'+p.age_start+'-'+p.age_end+'岁</div><div class="dy-year" style="font-size:0.6rem;color:var(--ink-muted)">'+jiaoYear+'年</div></div>';
   }).join('');
 
-  // 流年
+  // 流年（增强：流年神煞 + 与大运的刑冲合害）
+  var lyGan=d.current_year.ganzhi[0],lyZhi=d.current_year.ganzhi[1];
+  var liuyearShensha=[];
+  // 流年桃花/华盖/驿马/劫煞/亡神（以年支查流年地支）
+  var lyYearZhi=d.four_pillars.year.zhi;
+  if(SHENSHA_TAOHUA[lyYearZhi]===lyZhi) liuyearShensha.push({n:'桃花',a:'中性'});
+  if(SHENSHA_HUAGAI[lyYearZhi]===lyZhi) liuyearShensha.push({n:'华盖',a:'中性'});
+  if(SHENSHA_YIMA[lyYearZhi]===lyZhi) liuyearShensha.push({n:'驿马',a:'中性'});
+  if(SHENSHA_JIESHA[lyYearZhi]===lyZhi) liuyearShensha.push({n:'劫煞',a:'凶'});
+  if(SHENSHA_WANGSHEN[lyYearZhi]===lyZhi) liuyearShensha.push({n:'亡神',a:'凶'});
+  if(SHENSHA_HONGLUAN[lyYearZhi]===lyZhi) liuyearShensha.push({n:'红鸾',a:'吉'});
+  var lyShenshaHtml=liuyearShensha.length?liuyearShensha.map(function(s){
+    return '<span class="bz-shensha-tag" data-shensha="'+s.n+'" style="cursor:pointer;border-bottom:1px dashed var(--border-color);margin:0 2px;color:'+(s.a==='吉'?'var(--cinnabar)':s.a==='凶'?'#c0392b':'var(--ink)')+'">'+s.n+'</span>';
+  }).join(''):'无特殊';
+  // 流年与大运的刑冲合害
+  var cy=d.dayun.start_age;
+  var currentDayunPill=null;
+  d.dayun.pills.forEach(function(p){
+    if(cy>=p.age_start&&cy<=p.age_end) currentDayunPill=p;
+  });
+  var dyLyRelation='';
+  if(currentDayunPill&&LIUCHONG){
+    var dyZhi=currentDayunPill.ganzhi[1];
+    if(LIUCHONG[lyZhi]===dyZhi) dyLyRelation='流年地支与当前大运地支<b>六冲</b>，主变动、冲突。';
+    else if(LIUHE&&LIUHE[lyZhi]===dyZhi) dyLyRelation='流年地支与当前大运地支<b>六合</b>，主合作顺遂。';
+  }
   document.getElementById('bzLiuYear').innerHTML=
     '<div class="detail-classic-item"><div class="dlabel">当前流年'+termHint('流年')+'</div><div class="dvalue">'+d.current_year.year+'年</div></div>'+
     '<div class="detail-classic-item"><div class="dlabel">干支</div><div class="dvalue">'+d.current_year.ganzhi+'</div></div>'+
-    '<div class="detail-classic-item"><div class="dlabel">流年十神</div><div class="dvalue">'+d.current_year.shishen+'</div></div>';
+    '<div class="detail-classic-item"><div class="dlabel">流年十神</div><div class="dvalue">'+d.current_year.shishen+'</div></div>'+
+    '<div class="detail-classic-item"><div class="dlabel">流年神煞</div><div class="dvalue">'+lyShenshaHtml+'</div></div>'+
+    (dyLyRelation?'<div class="detail-classic-item" style="grid-column:1/-1"><div class="dlabel">运年关系</div><div class="dvalue" style="font-size:0.78rem;line-height:1.6">'+dyLyRelation+'</div></div>':'');
 
   // 空亡
   document.getElementById('bzXun').innerHTML=order.map(function(k){
     return '<div class="detail-classic-item"><div class="dlabel">'+pm[k]+'柱空亡'+termHint('空亡')+'</div><div class="dvalue">'+d.xunkong[k]+'</div></div>';
   }).join('');
+
+  // ── 神煞系统 ──
+  var selShensha=document.getElementById('bzShensha'), secShensha=document.getElementById('bzShenshaContent');
+  var shenshaFound=[];
+  var yearZhi=d.four_pillars.year.zhi, dayZhi=d.four_pillars.day.zhi, monthZhi=d.four_pillars.month.zhi;
+  var dayGan=d.day_master;
+  // 1. 天乙贵人（日干查）
+  var tyList=SHENSHA_TIANYI_GUIREN[dayGan];
+  if(tyList){
+    tyList.forEach(function(z){
+      shenshaFound.push({name:'天乙贵人',zhi:z,source:'日干'+dayGan});
+    });
+  }
+  // 2. 文昌贵人（日干查）
+  var wc=SHENSHA_WENCHANG[dayGan];
+  if(wc) shenshaFound.push({name:'文昌贵人',zhi:wc,source:'日干'+dayGan});
+  // 3. 桃花（年支查）
+  var th=SHENSHA_TAOHUA[yearZhi];
+  if(th) shenshaFound.push({name:'桃花',zhi:th,source:'年支'+yearZhi});
+  // 4. 华盖（年支查）
+  var hg=SHENSHA_HUAGAI[yearZhi];
+  if(hg) shenshaFound.push({name:'华盖',zhi:hg,source:'年支'+yearZhi});
+  // 5. 驿马（年支查）
+  var ym=SHENSHA_YIMA[yearZhi];
+  if(ym) shenshaFound.push({name:'驿马',zhi:ym,source:'年支'+yearZhi});
+  // 6. 劫煞（年支查）
+  var js=SHENSHA_JIESHA[yearZhi];
+  if(js) shenshaFound.push({name:'劫煞',zhi:js,source:'年支'+yearZhi});
+  // 7. 亡神（年支查）
+  var ws=SHENSHA_WANGSHEN[yearZhi];
+  if(ws) shenshaFound.push({name:'亡神',zhi:ws,source:'年支'+yearZhi});
+  // 8. 天德贵人（月支查）
+  var td=SHENSHA_TIANDE[monthZhi];
+  if(td) shenshaFound.push({name:'天德贵人',zhi:td,source:'月支'+monthZhi});
+  // 9. 月德贵人（月支查）
+  var yd=SHENSHA_YUEDE[monthZhi];
+  if(yd) shenshaFound.push({name:'月德贵人',zhi:yd,source:'月支'+monthZhi});
+  // 10. 红鸾（年支查）
+  var hl=SHENSHA_HONGLUAN[yearZhi];
+  if(hl) shenshaFound.push({name:'红鸾',zhi:hl,source:'年支'+yearZhi});
+  // 11. 天喜（红鸾对宫）
+  if(hl && LIUCHONG[hl]) shenshaFound.push({name:'天喜',zhi:LIUCHONG[hl],source:'红鸾对宫'});
+  // 12. 孤辰（年支查）
+  var gc=SHENSHA_GUCHEN[yearZhi];
+  if(gc) shenshaFound.push({name:'孤辰',zhi:gc,source:'年支'+yearZhi});
+  // 13. 寡宿（年支查）
+  var gs=SHENSHA_GUASHU[yearZhi];
+  if(gs) shenshaFound.push({name:'寡宿',zhi:gs,source:'年支'+yearZhi});
+  // 14. 金舆（日干查）
+  var jy=SHENSHA_JINYU[dayGan];
+  if(jy) shenshaFound.push({name:'金舆',zhi:jy,source:'日干'+dayGan});
+  
+  // 检查哪些神煞的对应地支出现在四柱中
+  var allZhis=[d.four_pillars.year.zhi,d.four_pillars.month.zhi,d.four_pillars.day.zhi,d.four_pillars.hour.zhi];
+  var zhiLabels=['年','月','日','时'];
+  var matchedShensha=[];
+  shenshaFound.forEach(function(s){
+    allZhis.forEach(function(z,idx){
+      if(s.zhi===z){
+        matchedShensha.push({name:s.name,zhi:z,position:zhiLabels[idx]+'支',detail:SHENSHA_LONG_DESC[s.name]||''});
+      }
+    });
+  });
+  
+  if(matchedShensha.length){
+    selShensha.style.display='block';
+    secShensha.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px">'+
+      matchedShensha.map(function(s){
+        var sd=SHENSHA_DETAIL[s.name]||{};
+        var attrColor={'吉':'var(--cinnabar)','凶':'#c0392b','中性':'var(--ink-muted)'}[sd.attr]||'var(--ink)';
+        return '<div class="bz-shensha-card" data-shensha="'+s.name+'" style="cursor:pointer;padding:6px 10px;background:var(--paper-dark);border:1px solid var(--border-color);border-radius:4px">'+
+          '<div style="display:flex;justify-content:space-between;align-items:center">'+
+          '<span style="font-weight:600;color:'+attrColor+'">'+s.name+'</span>'+
+          '<span style="font-size:0.65rem;color:var(--ink-muted)">'+s.position+'</span></div>'+
+          '<div style="font-size:0.65rem;color:var(--ink-muted);margin-top:2px">'+(sd.desc||'')+'</div>'+
+          '</div>';
+      }).join('')+'</div>';
+  }else{selShensha.style.display='none';}
+
+  // ── 格局判断 ──
+  var selGeju=document.getElementById('bzGeju'), secGeju=document.getElementById('bzGejuContent');
+  // 月令主气 = 月支藏干第一个
+  var monthZhiMainGan=(d.canggan.month||[])[0];
+  var monthZhiShishen=monthZhiMainGan?monthZhiMainGan.shishen:'';
+  var gejuName='';
+  // 建禄格/羊刃格判断
+  var dayZhiGan=d.canggan.day&&d.canggan.day[0]?d.canggan.day[0].gan:'';
+  var monthZhiGan=d.canggan.month&&d.canggan.month[0]?d.canggan.month[0].gan:'';
+  var dayGanWx=TIANGAN_WUXING[d.day_master];
+  // Check if month zhi main gan is same as day master (建禄) or same wx diff yy (羊刃)
+  if(monthZhiMainGan&&monthZhiMainGan.gan===d.day_master){
+    gejuName='建禄格';
+  }else if(monthZhiShishen==='劫财'||monthZhiShishen==='七杀'){
+    // 羊刃：月令主气为劫财（同五行不同阴阳）
+    if(monthZhiShishen==='劫财') gejuName='羊刃格';
+    else if(monthZhiShishen==='七杀') gejuName='七杀格';
+    else gejuName='';
+  }
+  
+  // 根据月令主气的十神判断正格
+  var gejuByShishen={
+    '正官':'正官格','正印':'正印格','偏印':'偏印格',
+    '正财':'正财格','偏财':'偏财格',
+    '食神':'食神格','伤官':'伤官格'
+  };
+  if(!gejuName && gejuByShishen[monthZhiShishen]){
+    gejuName=gejuByShishen[monthZhiShishen];
+  }
+  // 如果月令主气是比肩但没匹配到建禄，或者劫财没匹配到羊刃
+  if(!gejuName && monthZhiShishen==='比肩') gejuName='建禄格';
+  
+  // 特殊格局简化判断
+  // 从旺/从弱 (简化版)
+  var totalYinBi=0,totalCaiGuan=0;
+  var allGans=[d.four_pillars.year.gan,d.four_pillars.month.gan,d.four_pillars.day.gan,d.four_pillars.hour.gan];
+  var allZhis=[d.four_pillars.year.zhi,d.four_pillars.month.zhi,d.four_pillars.day.zhi,d.four_pillars.hour.zhi];
+  var yinBiGans=['正印','偏印','比肩','劫财'];
+  var caiGuanGans=['正财','偏财','正官','七杀','食神','伤官'];
+  allGans.forEach(function(g){
+    var ss=d.shishen?getShiShen(d.day_master,g):'';
+    if(yinBiGans.indexOf(ss)!==-1) totalYinBi++;
+    if(caiGuanGans.indexOf(ss)!==-1) totalCaiGuan++;
+  });
+  // 藏干也算
+  ['year','month','day','hour'].forEach(function(pos){
+    (d.canggan[pos]||[]).forEach(function(x){
+      if(yinBiGans.indexOf(x.shishen)!==-1) totalYinBi++;
+      if(caiGuanGans.indexOf(x.shishen)!==-1) totalCaiGuan++;
+    });
+  });
+  
+  var specialGeju='';
+  if(!gejuName||gejuName==='建禄格'||gejuName==='羊刃格'){
+    if(totalYinBi>=totalCaiGuan+4) specialGeju='从旺格';
+    else if(totalCaiGuan>=totalYinBi+4) specialGeju='从弱格';
+  }
+  
+  var finalGeju=specialGeju||gejuName||'';
+  if(finalGeju && GEJU_DETAIL[finalGeju]){
+    selGeju.style.display='block';
+    var gj=GEJU_DETAIL[finalGeju];
+    secGeju.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start">'+
+      '<div class="bz-geju-card" data-geju="'+finalGeju+'" style="cursor:pointer;padding:8px 14px;background:var(--paper-dark);border:1px solid var(--cinnabar);border-radius:6px;flex:1;min-width:200px">'+
+      '<div style="font-weight:700;font-size:0.95rem;color:var(--cinnabar);font-family:var(--font-title)">'+finalGeju+'<span class="bz-geju-click" data-geju="'+finalGeju+'" style="margin-left:6px;font-size:0.7rem;color:var(--stone-blue);border-bottom:1px dashed var(--stone-blue)">[点击详解]</span></div>'+
+      '<div style="margin-top:4px;font-size:0.78rem;line-height:1.6">'+
+      '<div><strong>判断条件：</strong>'+gj.condition+'</div>'+
+      '<div><strong>性格特征：</strong>'+gj.character+'</div>'+
+      '<div><strong>喜忌倾向：</strong>'+gj.preference+'</div>'+
+      '</div></div>';
+  }else{selGeju.style.display='none';}
+
+  // ── 旺衰分析 ──
+  var selWx=document.getElementById('bzWangshuai'), secWx=document.getElementById('bzWangshuaiContent');
+  // 月令五行
+  var monthZhi=d.four_pillars.month.zhi;
+  // Map of 月支 to 五行 for month (spring=木, summer=火, etc)
+  var ZHI_MONTH_WUXING={'寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水','子':'水','丑':'土'};
+  var monthWx=ZHI_MONTH_WUXING[monthZhi]||'';
+  var dayWx=d.day_master_wuxing;
+  
+  // 1. 月令得令/失令
+  var wangxiuState='';
+  var wangxiuColor='';
+  if(monthWx&&dayWx&&WANGXIU_LUT[monthWx]){
+    wangxiuState=WANGXIU_LUT[monthWx][dayWx]||'平';
+    wangxiuColor=WANGXIU_COLOR[wangxiuState]||'';
+  }
+  var deLingText={'旺':'【得令】日主当旺，气势最盛','相':'【得生】得月令相生，气势较强','休':'【休囚】气势退守，力量减弱','囚':'【失令】被月令所克，力量受制','死':'【失令】被月令耗尽，力量最弱'};
+  
+  // 2. 通根情况
+  var tonggenList=[];
+  ['year','month','day','hour'].forEach(function(pos){
+    var cg=d.canggan[pos]||[];
+    cg.forEach(function(x){
+      if(x.gan===d.day_master){
+        var rank=(d.canggan[pos].indexOf(x)===0?'本气':d.canggan[pos].indexOf(x)===1?'中气':'余气');
+        tonggenList.push({position:pm[pos]+'支',rank:rank});
+      }
+    });
+  });
+  
+  // 3. 印比数量
+  var yinCount=0, biCount=0;
+  allGans.forEach(function(g){
+    var ss=d.shishen?getShiShen(d.day_master,g):'';
+    if(ss==='正印'||ss==='偏印') yinCount++;
+    if(ss==='比肩'||ss==='劫财') biCount++;
+  });
+  ['year','month','day','hour'].forEach(function(pos){
+    (d.canggan[pos]||[]).forEach(function(x){
+      if(x.shishen==='正印'||x.shishen==='偏印') yinCount++;
+      if(x.shishen==='比肩'||x.shishen==='劫财') biCount++;
+    });
+  });
+  
+  // 4. 综合判断
+  var strength='';
+  if(wangxiuState==='旺'||wangxiuState==='相'){
+    if(tonggenList.length>=2||biCount>=3) strength='<strong style="color:#c0392b">身强</strong>';
+    else if(tonggenList.length===0&&biCount===0) strength='<strong style="color:#7f8c8d">身弱</strong>';
+    else strength='<strong style="color:#e67e22">中和偏强</strong>';
+  }else if(wangxiuState==='休'||wangxiuState==='囚'||wangxiuState==='死'){
+    if(tonggenList.length>=2||biCount>=3) strength='<strong style="color:#e67e22">中和偏弱</strong>';
+    else if(tonggenList.length>=1) strength='<strong style="color:#7f8c8d">身弱</strong>';
+    else strength='<strong style="color:#95a5a6">身弱（无根）</strong>';
+  }else{
+    strength='<span style="color:#7f8c8d">需综合判断</span>';
+  }
+  
+  selWx.style.display='block';
+  secWx.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px;font-size:0.8rem">'+
+    '<div style="padding:8px;background:var(--paper-dark);border:1px solid var(--border-color);border-radius:4px">'+
+      '<div style="font-weight:600;margin-bottom:4px">月令得气</div>'+
+      '<div>月令：<b>'+monthZhi+'</b>（'+monthWx+'）</div>'+
+      '<div>日主五行：<b>'+dayWx+'</b></div>'+
+      '<div>状态：<span style="'+wangxiuColor+'">'+wangxiuState+'</span></div>'+
+      '<div style="font-size:0.65rem;color:var(--ink-muted);margin-top:2px">'+(deLingText[wangxiuState]||'')+'</div>'+
+    '</div>'+
+    '<div style="padding:8px;background:var(--paper-dark);border:1px solid var(--border-color);border-radius:4px">'+
+      '<div style="font-weight:600;margin-bottom:4px">通根情况</div>'+
+      (tonggenList.length?'<div>'+tonggenList.map(function(t){return '<span class="bz-tonggen-item" style="cursor:pointer;border-bottom:1px dashed var(--border-color);margin:0 1px">'+t.position+'（'+t.rank+'）</span>';}).join('、')+'</div>':'<div style="color:var(--ink-muted)">四支无日主根</div>')+
+    '</div>'+
+    '<div style="padding:8px;background:var(--paper-dark);border:1px solid var(--border-color);border-radius:4px">'+
+      '<div style="font-weight:600;margin-bottom:4px">印比数量</div>'+
+      '<div>印星（正印/偏印）：<b>'+yinCount+'</b></div>'+
+      '<div>比劫（比肩/劫财）：<b>'+biCount+'</b></div>'+
+    '</div>'+
+    '<div style="padding:8px;background:var(--paper-dark);border:1px solid var(--border-color);border-radius:4px;grid-column:1/-1">'+
+      '<div style="font-weight:600;margin-bottom:4px">综合判断</div>'+
+      '<div>日主'+d.day_master+' '+strength+'</div>'+
+      '<div class="guide-note" style="font-size:0.65rem;margin-top:4px">💡 身强宜克泄耗（官杀、食伤、财星），身弱宜生扶（印星、比劫）。</div>'+
+    '</div>'+
+    '</div>';
 
   var w=document.getElementById('bzWarn'),wl=document.getElementById('bzWarnList');
   if(d.warnings&&d.warnings.length){w.style.display='block';wl.innerHTML=d.warnings.map(function(x){return '<li>⚠ '+x+'</li>';}).join('');}else{w.style.display='none';}
@@ -2118,6 +2596,80 @@ function renderBaziAll(d){
         '<div class="ink-divider"></div>'+
         '<div class="guide-note" style="font-size:0.75rem">💡 纳音是干支组合的五行音律象，代表该柱的深层气质和能量特质。</div>';
       showDetail('纳音详解 · '+nayin, html);
+    };
+  });
+  // 绑定神煞点击事件
+  document.querySelectorAll('#bzShenshaContent .bz-shensha-card, .bz-shensha-tag').forEach(function(el){
+    el.onclick = function(){
+      var name = this.dataset.shensha;
+      if(!name){return;}
+      var sd=SHENSHA_DETAIL[name]||{};
+      var longDesc=SHENSHA_LONG_DESC[name]||'暂无详细解释';
+      var attrColor={'吉':'var(--cinnabar)','凶':'#c0392b','中性':'var(--ink-muted)'}[sd.attr]||'var(--ink)';
+      var html = '<div class="du-section"><div class="du-slabel">神煞</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:'+attrColor+'">'+name+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel" style="color:'+attrColor+'">属性</div><div class="du-value">'+(sd.attr||'?')+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">简要</div><div class="du-value">'+(sd.desc||'')+'</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="du-section"><div class="du-slabel">详解</div><div class="du-value" style="line-height:1.8">'+longDesc+'</div></div>';
+      showDetail('神煞详解 · '+name, html);
+    };
+  });
+  // 绑定格局点击事件
+  document.querySelectorAll('#bzGejuContent .bz-geju-card, .bz-geju-click').forEach(function(el){
+    el.onclick = function(){
+      var name = this.dataset.geju;
+      if(!name){return;}
+      var gj=GEJU_DETAIL[name];
+      if(!gj){showDetail('格局详解','<p>暂无「'+name+'」的详细解释</p>');return;}
+      var html = '<div class="du-section"><div class="du-slabel">格局</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+name+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">判断条件</div><div class="du-value">'+gj.condition+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">性格特征</div><div class="du-value">'+gj.character+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">喜忌倾向</div><div class="du-value">'+gj.preference+'</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="du-section"><div class="du-slabel">经典解释</div><div class="du-value" style="line-height:1.8">'+gj.classic+'</div></div>';
+      showDetail('格局详解 · '+name, html);
+    };
+  });
+  // 绑定藏干点击事件
+  document.querySelectorAll('.bz-canggan-item').forEach(function(el){
+    el.onclick = function(){
+      var gan=this.dataset.gan;
+      var ss=this.dataset.shishen;
+      var detail=SHISHEN_DETAIL[ss];
+      var ssHtml='';
+      if(detail){
+        ssHtml='<div class="du-section"><div class="du-slabel">十神·'+ss+'</div><div class="du-value">'+detail.meaning+'<br>吉：'+detail.good+'<br>凶：'+detail.bad+'</div></div>';
+      }
+      var html = '<div class="du-section"><div class="du-slabel">藏干</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+gan+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">十神</div><div class="du-value">'+ss+'</div></div>'+
+        ssHtml+
+        '<div class="ink-divider"></div>'+
+        '<div class="guide-note" style="font-size:0.75rem">💡 地支藏干代表该地支中暗藏的天干能量，本气最强，中气次之，余气最弱。</div>';
+      showDetail('藏干详解 · '+gan, html);
+    };
+  });
+  // 绑定起运年份点击事件
+  document.querySelectorAll('.bz-dayun-startyear').forEach(function(el){
+    el.onclick = function(){
+      var startYear=this.dataset.startYear;
+      var startAge=this.dataset.startAge;
+      var showYear=parseInt(startYear);
+      var yearList=[];
+      for(var i=0;i<8;i++){
+        yearList.push(showYear+i*10);
+      }
+      var yearListHtml='<table class="du-table"><tr><th>大运</th><th>起运年份</th><th>年龄</th></tr>';
+      d.dayun.pills.forEach(function(p,idx){
+        yearListHtml+='<tr><td>'+p.ganzhi+'</td><td>'+yearList[idx]+'年</td><td>'+p.age_start+'-'+p.age_end+'岁</td></tr>';
+      });
+      yearListHtml+='</table>';
+      var html = '<div class="du-section"><div class="du-slabel">起运年龄</div><div class="du-value">'+startAge+'岁</div></div>'+
+        '<div class="du-section"><div class="du-slabel">起运年份</div><div class="du-value">'+startYear+'年</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div style="font-size:0.82rem"><div style="font-weight:600;margin-bottom:6px">交运年份一览</div>'+yearListHtml+'</div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="guide-note" style="font-size:0.75rem">💡 大运每十年一换，交运之年运势变动较大，宜平稳过渡。</div>';
+      showDetail('起运交运详解', html);
     };
   });
 }
