@@ -10,7 +10,9 @@
   <title>术数工具箱 · 奇门遁甲 · 八字排盘 · 紫微斗数</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.4/lunar.min.js"></script>
   <script src="ziwei_calculator.js"></script>
+  <script src="bazi_calculator.js"></script>
   <style>
     /* ════════════════════════════════════════════
        术数 · 古书风格 — 宣纸底纹 · 朱砂 · 石青
@@ -1864,15 +1866,20 @@ var NAYIN_DETAIL = {
 // ═════════════════════════════════════════════════
 // TAB 3: 八字主流程
 // ═════════════════════════════════════════════════
-document.getElementById('bzBtn').addEventListener('click',async function(){
+document.getElementById('bzBtn').addEventListener('click',function(){
   var e=document.getElementById('bzErr');e.classList.remove('active');
   document.getElementById('bzResults').style.display='none';
   var l=document.getElementById('bzLoad');l.classList.add('active');this.disabled=true;
   try{
-    var dt=document.getElementById('bzDate').value+' '+document.getElementById('bzTime').value+':00';
+    var dt=document.getElementById('bzDate').value;
+    var tm=document.getElementById('bzTime').value;
+    var parts=dt.split('-');
+    var tparts=tm.split(':');
+    var year=parseInt(parts[0]),month=parseInt(parts[1]),day=parseInt(parts[2]);
+    var hour=parseInt(tparts[0]),minute=parseInt(tparts[1]);
     var g=document.getElementById('bzGen').value;
-    var r=await fetch('/api/bazi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({time_input:dt,calendar_type:'solar',gender:g,location:{country:'中国',timezone:'Asia/Shanghai'}})});
-    var d=await r.json();if(!r.ok||d.error)throw new Error(d.error||'失败');
+    if(!year||!month||!day) throw new Error('请输入有效日期');
+    var d=computeBaziLocal({year:year,month:month,day:day,hour:hour,minute:minute,gender:g});
     renderBaziAll(d);
   }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
   finally{l.classList.remove('active');this.disabled=false;}
