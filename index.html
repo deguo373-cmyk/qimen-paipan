@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="version" content="v2-20260622">
   <title>术数工具箱 · 奇门遁甲 · 八字排盘 · 紫微斗数</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -2027,75 +2031,89 @@ function renderBaziAll(d){
   // 大运提示
   var currentDayun = d.dayun.pills.filter(function(p){return cy>=p.age_start&&cy<=p.age_end;});
   if(currentDayun.length){
-    summaryHtml += '<p><strong>当前大运：</strong>'+currentDayun[0].ganzhi+'（'+currentDayun[0].age_start+'-'+currentDayun[0].age_end+'岁）<span class="clickable-dayun-bazi" data-ganzhi="'+currentDayun[0].ganzhi+'" data-age-start="'+currentDayun[0].age_start+'" data-age-end="'+currentDayun[0].age_end+'" style="cursor:pointer;color:var(--cinnabar);border-bottom:1px dashed var(--cinnabar);font-size:0.78rem">[点击详解]</span></p>';
+    summaryHtml += '<p><strong>当前大运：</strong>'+currentDayun[0].ganzhi+'（'+currentDayun[0].age_start+'-'+currentDayun[0].age_end+'岁）<span class="bz-summary-dayun" data-ganzhi="'+currentDayun[0].ganzhi+'" data-age-start="'+currentDayun[0].age_start+'" data-age-end="'+currentDayun[0].age_end+'" style="cursor:pointer;color:var(--cinnabar);border-bottom:1px dashed var(--cinnabar);font-size:0.78rem">[点击详解]</span></p>';
   }
   summaryHtml += '</div>';
   sc.innerHTML = summaryHtml;
 
   document.getElementById('bzResults').style.display='block';
   document.getElementById('bzResults').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // 绑定大运点击事件
+  document.querySelectorAll('#bzDayun .clickable-dayun-bazi').forEach(function(el){
+    el.onclick = function(){
+      var ganzhi = this.dataset.ganzhi;
+      var ageStart = this.dataset.ageStart || '?';
+      var ageEnd = this.dataset.ageEnd || '?';
+      if(!ganzhi){showDetail('大运详解','<p>无法获取数据</p>');return;}
+      var gan = ganzhi[0], zhi = ganzhi[1];
+      var ganMean = DAYUN_GAN_MEANING[gan] || gan+'干，需结合命局综合判断。';
+      var zhiMean = DAYUN_ZHI_MEANING[zhi] || zhi+'支，需结合命局综合判断。';
+      var html = '<div class="du-section"><div class="du-slabel">大运干支</div><div class="du-value" style="font-family:var(--font-title);font-size:1.2rem;font-weight:700;color:var(--cinnabar)">'+ganzhi+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">掌管时段</div><div class="du-value">'+ageStart+'岁 — '+ageEnd+'岁</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="du-section"><div class="du-slabel">天干·'+gan+'运</div><div class="du-value">'+ganMean+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">地支·'+zhi+'运</div><div class="du-value">'+zhiMean+'</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="guide-note" style="font-size:0.75rem">💡 大运每十年一换。天干管前半运，地支管后半运，干支结合为完整运势。</div>';
+      showDetail('大运详解 · '+ganzhi, html);
+    };
+  });
+  // 绑定命局总结中的大运点击
+  document.querySelectorAll('.bz-summary-dayun').forEach(function(el){
+    el.onclick = function(){
+      var ganzhi = this.dataset.ganzhi;
+      var ageStart = this.dataset.ageStart || '?';
+      var ageEnd = this.dataset.ageEnd || '?';
+      gan = ganzhi[0]; zhi = ganzhi[1];
+      ganMean = DAYUN_GAN_MEANING[gan] || gan+'干，需结合命局综合判断。';
+      zhiMean = DAYUN_ZHI_MEANING[zhi] || zhi+'支，需结合命局综合判断。';
+      var html = '<div class="du-section"><div class="du-slabel">大运干支</div><div class="du-value" style="font-family:var(--font-title);font-size:1.2rem;font-weight:700;color:var(--cinnabar)">'+ganzhi+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">掌管时段</div><div class="du-value">'+ageStart+'岁 — '+ageEnd+'岁</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="du-section"><div class="du-slabel">天干·'+gan+'运</div><div class="du-value">'+ganMean+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">地支·'+zhi+'运</div><div class="du-value">'+zhiMean+'</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="guide-note" style="font-size:0.75rem">💡 大运每十年一换。天干管前半运，地支管后半运，干支结合为完整运势。</div>';
+      showDetail('大运详解 · '+ganzhi, html);
+    };
+  });
+  // 绑定十神点击事件
+  document.querySelectorAll('#bzPillars .bz-shishen-click').forEach(function(el){
+    el.onclick = function(){
+      var shishen = this.dataset.shishen;
+      var detail = SHISHEN_DETAIL[shishen];
+      if(!detail){showDetail('十神详解','<p>暂无「'+shishen+'」的详细解释</p>');return;}
+      var html = '<div class="du-section"><div class="du-slabel">十神</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+shishen+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">核心含义</div><div class="du-value">'+detail.meaning+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel" style="color:var(--stone-blue)">吉象</div><div class="du-value">'+detail.good+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel" style="color:var(--cinnabar)">凶象</div><div class="du-value">'+detail.bad+'</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<table class="du-table">'+
+        '<tr><td>年柱</td><td>'+detail.year+'</td></tr>'+
+        '<tr><td>月柱</td><td>'+detail.month+'</td></tr>'+
+        '<tr><td>日柱</td><td>'+detail.day+'</td></tr>'+
+        '<tr><td>时柱</td><td>'+detail.hour+'</td></tr>'+
+        '</table>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="guide-note" style="font-size:0.75rem">💡 提示：'+detail.tip+'</div>';
+      showDetail('十神详解 · '+shishen, html);
+    };
+  });
+  // 绑定纳音点击事件
+  document.querySelectorAll('.bz-nayin-click').forEach(function(el){
+    el.onclick = function(){
+      var nayin = this.dataset.nayin;
+      var detail = NAYIN_DETAIL[nayin];
+      if(!detail){showDetail('纳音详解','<p>暂无「'+nayin+'」的解释</p>');return;}
+      var html = '<div class="du-section"><div class="du-slabel">纳音</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+nayin+'</div></div>'+
+        '<div class="du-section"><div class="du-slabel">含义</div><div class="du-value">'+detail+'</div></div>'+
+        '<div class="ink-divider"></div>'+
+        '<div class="guide-note" style="font-size:0.75rem">💡 纳音是干支组合的五行音律象，代表该柱的深层气质和能量特质。</div>';
+      showDetail('纳音详解 · '+nayin, html);
+    };
+  });
 }
-
-// 八字大运点击事件
-document.addEventListener('click', function(e){
-  var el = e.target.closest('.clickable-dayun-bazi');
-  if(el){
-    var ganzhi = el.dataset.ganzhi;
-    var ageStart = el.dataset.ageStart || '?';
-    var ageEnd = el.dataset.ageEnd || '?';
-    if(!ganzhi){showDetail('大运详解','<p>无法获取数据</p>');return;}
-    var gan = ganzhi[0], zhi = ganzhi[1];
-    var ganMean = DAYUN_GAN_MEANING[gan] || gan+'干，需结合命局综合判断。';
-    var zhiMean = DAYUN_ZHI_MEANING[zhi] || zhi+'支，需结合命局综合判断。';
-    var html = '<div class="du-section"><div class="du-slabel">大运干支</div><div class="du-value" style="font-family:var(--font-title);font-size:1.2rem;font-weight:700;color:var(--cinnabar)">'+ganzhi+'</div></div>'+
-      '<div class="du-section"><div class="du-slabel">掌管时段</div><div class="du-value">'+ageStart+'岁 — '+ageEnd+'岁</div></div>'+
-      '<div class="ink-divider"></div>'+
-      '<div class="du-section"><div class="du-slabel">天干·'+gan+'运</div><div class="du-value">'+ganMean+'</div></div>'+
-      '<div class="du-section"><div class="du-slabel">地支·'+zhi+'运</div><div class="du-value">'+zhiMean+'</div></div>'+
-      '<div class="ink-divider"></div>'+
-      '<div class="guide-note" style="font-size:0.75rem">💡 大运每十年一换。天干管前半运，地支管后半运，干支结合为完整运势。</div>';
-    showDetail('大运详解 · '+ganzhi, html);
-  }
-});
-
-// 八字十神点击事件
-document.addEventListener('click', function(e){
-  var el = e.target.closest('.bz-shishen-click');
-  if(el){
-    var shishen = el.dataset.shishen;
-    var detail = SHISHEN_DETAIL[shishen];
-    if(!detail){showDetail('十神详解','<p>暂无「'+shishen+'」的详细解释</p>');return;}
-    var html = '<div class="du-section"><div class="du-slabel">十神</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+shishen+'</div></div>'+
-      '<div class="du-section"><div class="du-slabel">核心含义</div><div class="du-value">'+detail.meaning+'</div></div>'+
-      '<div class="du-section"><div class="du-slabel" style="color:var(--stone-blue)">吉象</div><div class="du-value">'+detail.good+'</div></div>'+
-      '<div class="du-section"><div class="du-slabel" style="color:var(--cinnabar)">凶象</div><div class="du-value">'+detail.bad+'</div></div>'+
-      '<div class="ink-divider"></div>'+
-      '<table class="du-table">'+
-      '<tr><td>年柱</td><td>'+detail.year+'</td></tr>'+
-      '<tr><td>月柱</td><td>'+detail.month+'</td></tr>'+
-      '<tr><td>日柱</td><td>'+detail.day+'</td></tr>'+
-      '<tr><td>时柱</td><td>'+detail.hour+'</td></tr>'+
-      '</table>'+
-      '<div class="ink-divider"></div>'+
-      '<div class="guide-note" style="font-size:0.75rem">💡 提示：'+detail.tip+'</div>';
-    showDetail('十神详解 · '+shishen, html);
-  }
-});
-
-// 八字纳音点击事件
-document.addEventListener('click', function(e){
-  var el = e.target.closest('.bz-nayin-click');
-  if(el){
-    var nayin = el.dataset.nayin;
-    var detail = NAYIN_DETAIL[nayin];
-    if(!detail){showDetail('纳音详解','<p>暂无「'+nayin+'」的解释</p>');return;}
-    var html = '<div class="du-section"><div class="du-slabel">纳音</div><div class="du-value" style="font-family:var(--font-title);font-size:1.1rem;font-weight:700;color:var(--cinnabar)">'+nayin+'</div></div>'+
-      '<div class="du-section"><div class="du-slabel">含义</div><div class="du-value">'+detail+'</div></div>'+
-      '<div class="ink-divider"></div>'+
-      '<div class="guide-note" style="font-size:0.75rem">💡 纳音是干支组合的五行音律象，代表该柱的深层气质和能量特质。</div>';
-    showDetail('纳音详解 · '+nayin, html);
-  }
-});
 
 // ═════════════════════════════════════════════════
 // TAB 4: 紫微斗数
