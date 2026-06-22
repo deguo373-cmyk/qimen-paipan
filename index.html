@@ -389,6 +389,51 @@
     .detail-universal .du-box .du-content table.du-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
     .detail-universal .du-box .du-content table.du-table td { padding: 4px 8px; border: 1px solid var(--border-color); font-size: 0.8rem; vertical-align: top; }
     .detail-universal .du-box .du-content table.du-table td:first-child { font-family: var(--font-title); font-weight: 600; white-space: nowrap; color: var(--ink-light); background: var(--paper-dark); width: 80px; }
+    /* 术语悬停提示 [?] 按钮 */
+    .term-hint {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; font-size: 0.6rem; font-weight: 700;
+      color: var(--cinnabar); border: 1px solid var(--cinnabar);
+      cursor: pointer; margin-left: 3px; border-radius: 50%;
+      transition: background 0.25s, color 0.25s;
+      font-family: var(--font-title); line-height: 1;
+      vertical-align: middle; flex-shrink: 0;
+    }
+    .term-hint:hover {
+      background: var(--cinnabar); color: var(--paper-light);
+    }
+    /* 白话解读区块 */
+    .plain-talk {
+      padding: 14px 16px; background: #f0f4ec;
+      font-size: 0.85rem; line-height: 1.9;
+      border-left: 3px solid var(--stone-blue);
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(74,103,65,0.04) 1px, rgba(74,103,65,0.04) 3px);
+    }
+    .plain-talk p { margin-bottom: 6px; }
+    .plain-talk .pt-label {
+      font-family: var(--font-title); font-weight: 700;
+      color: var(--stone-blue); font-size: 0.82rem;
+      letter-spacing: 0.05em; display: block; margin-bottom: 4px;
+    }
+    .plain-talk .pt-suggest {
+      margin-top: 10px; padding-top: 8px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 0.8rem; color: var(--ink-muted);
+    }
+    .plain-talk .pt-suggest a {
+      color: var(--stone-blue); cursor: pointer;
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .plain-talk .pt-suggest a:hover { color: var(--cinnabar); }
+    /* 新手引导提示 */
+    .guide-note {
+      font-size: 0.78rem; color: var(--ink-muted);
+      padding: 10px 12px; margin-top: 10px;
+      background: var(--paper-dark);
+      border: 1px dashed var(--border-color);
+      line-height: 1.7;
+    }
+    .guide-note strong { color: var(--cinnabar); font-family: var(--font-title); }
   </style>
 </head>
 <body>
@@ -449,6 +494,9 @@
         <button class="btn-classic btn-cinnabar" id="qmBtn">起盘 + 解盘</button>
         <button class="btn-classic" id="qmNow">填当前时刻</button>
       </div>
+      <div class="guide-note">
+        <strong>💡 新手引导：</strong>设定你想问的时间。可以是现在、过去的某个时刻，也可以是未来的某个时间。奇门遁甲根据你设定的时间来判断当时的气场如何，适合做什么、不适合做什么。比如你可以问："今天下午谈合作好不好"，就设定今天下午的时间。如果不确定选什么，就点"填当前时刻"看此刻的盘面。
+      </div>
       <div class="loading-classic" id="qmLoad"><div class="spinner"></div><span>正在起盘…</span></div>
     </div>
     <div class="error-banner" id="qmErr"></div>
@@ -464,6 +512,16 @@
           <span class="folio-badge">卷二</span>
         </div>
         <div class="analysis-classic" id="qmGejuContent"></div>
+      </div>
+
+      <!-- 白话解读（面向新手） -->
+      <div class="folio" id="qmPlainTalk" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">白话解读</span>
+          <span class="folio-badge">📖 通俗版</span>
+        </div>
+        <div class="plain-talk" id="qmPlainTalkContent"></div>
       </div>
 
       <!-- 用神分析 -->
@@ -504,6 +562,9 @@
           <span class="folio-badge">卷六</span>
         </div>
         <div class="ref-classic-grid" id="qmRefGrid"></div>
+        <div class="guide-note" style="margin-top:10px;font-size:0.75rem">
+          <strong>📌 使用提示：</strong>断事参考是根据奇门传统经验总结的一些通用判断方法。具体到你自己，建议先选择顶部"问事"类型，系统会帮你匹配对应的用神分析。
+        </div>
       </div>
 
       <!-- 干支日历 -->
@@ -855,6 +916,64 @@
 const LOC_TZ={china:'Asia/Shanghai',utc8:'Asia/Singapore',japan:'Asia/Tokyo','us-east':'America/New_York','us-west':'America/Los_Angeles',uk:'Europe/London'};
 const LOC_CN={china:'中国',utc8:'',japan:'日本','us-east':'美国','us-west':'美国'};
 
+// ═════════════════════════════════════════════════
+// 奇门遁甲 · 术语词典（新手通俗解释）
+// ═════════════════════════════════════════════════
+var QIMEN_TERMS = {
+  "值符": "值符是当前时间段的'总指挥'——代表最有权威、最有主导力的力量方向。它的位置告诉你哪一方占据主导。",
+  "值使": "值使是当前时间段的'行动队长'——代表当下最适合做的事。它的门决定当前是适合主动推进、还是休养等待。",
+  "旬首": "旬首是当前时辰的'组长'，代表这个时间段的重要力量。",
+  "旬空": "旬空代表某些方向或领域'力量偏虚'——不是完全没用，而是当前时机不成熟，需要等待或补足。",
+  "三奇": "三奇（乙、丙、丁）是奇门中的吉星组合，代表转机、贵人、希望。三奇配吉门=事情有转机。",
+  "门受制": "门受制代表某个门被它的方位'克'了——想做的事会受到环境限制，推进比较费力。",
+  "青龙回首": "指丙奇与开门/生门配合，代表事有转机、柳暗花明，适合主动推进。",
+  "飞鸟跌穴": "指丁奇与杜门配合，代表'藏器待时'——现在不是最佳时机，先积累再出击。",
+  "太白入荧": "庚+丙组合，代表可能有外部干扰或冲突，需注意防人之心。",
+  "荧入太白": "丙+庚组合，代表内部可能会有问题暴露，先处理内部再对外。",
+  "值符得位": "值符在有力的位置上，代表主导权集中、容易得到关键人物支持。",
+  "白虎": "白虎代表冲突、压力、硬仗——遇白虎提示不要太强硬，避免正面硬碰。",
+  "玄武": "玄武代表隐情、虚假、暗中消耗——遇玄武提示注意核实信息、防小人。",
+  "休门": "休门是吉门，代表休息、修养、求财、婚嫁的好时机。适合谈合作、求稳定。",
+  "生门": "生门是大吉之门，代表生意、创业、求财。适合开始新项目、谈交易。",
+  "伤门": "伤门是凶门，代表争斗、损失、出行防损。不适合签合同、谈合作。",
+  "杜门": "杜门是平门，代表堵塞、保密、隐匿。适合做幕后工作、不宜公开行动。",
+  "景门": "景门是平门，代表文书、考试、信息。适合考试、签约、宣传。",
+  "死门": "死门是大凶之门，代表追捕、诉讼、安葬。不适合求财、出行、签约。",
+  "惊门": "惊门是凶门，代表惊恐、官司、口舌。不适合谈判、公开露面。",
+  "开门": "开门是大吉之门，代表开创、求职、远行。适合开始新事业、面试、签约。",
+  "天蓬": "天蓬星是凶星，代表盗贼、破财。遇此星注意财物安全。",
+  "天任": "天任星是吉星，代表稳重积累。适合长期规划。",
+  "天冲": "天冲星是平星，代表冲锋变动。适合快速行动但需注意后劲。",
+  "天辅": "天辅星是大吉星，代表文书教化。利考试、学习。",
+  "天英": "天英星是凶星，代表血光火灾。注意安全。",
+  "天芮": "天芮星是凶星，代表疾病问题。需关注健康。",
+  "天柱": "天柱星是凶星，代表毁坏口舌。注意人际。",
+  "天心": "天心星是大吉星，代表医疗谋划。适合策略思考。",
+  "天禽": "天禽星是大吉星，代表中正祥和。适合居中协调。",
+  "九天": "九天是吉神，代表高处、行动、适合主动出击。",
+  "九地": "九地代表低处、稳定、适合守成等待。",
+  "太阴": "太阴代表暗中相助、隐秘行动。适合私下运作。",
+  "六合": "六合代表合作、婚姻、多方协调。适合谈合作。",
+  "朱雀": "朱雀代表口舌文书，注意合同细节和沟通。",
+  "腾蛇": "腾蛇代表虚惊、变化、不确定。需反复确认。",
+  "太常": "太常代表喜庆、宴席。遇之可社交。",
+  "阳遁": "阳遁代表阳气上升的阶段（冬至到芒种），适合主动做事、向外发展。",
+  "阴遁": "阴遁代表阴气上升的阶段（夏至到大雪），适合修养内省、积蓄力量。",
+  "上元": "三元是把60天分成3段，每段20天。上元力量最强，中元次之，下元偏弱。",
+  "中元": "三元是把60天分成3段，每段20天。上元力量最强，中元次之，下元偏弱。",
+  "下元": "三元是把60天分成3段，每段20天。上元力量最强，中元次之，下元偏弱。",
+  "局": "局是奇门遁甲根据节气划分的'套模板'——阳遁有9局，阴遁也有9局，每局代表一种气场结构。数字不同，盘中各元素的排布也不同。"
+};
+
+// 辅助函数：生成一个带 [?] 的术语提示HTML
+function termHint(termName) {
+  var desc = QIMEN_TERMS[termName];
+  if (!desc) return '';
+  // Escape term name for safe use in onclick
+  var safeTerm = termName.replace(/'/g, "\\'");
+  return '<span class="term-hint" title="点击查看通俗解释" onclick="event.stopPropagation();showDetail(\''+safeTerm+'\', \'<p style=font-size:0.9rem;line-height:1.8>\'+QIMEN_TERMS[\''+safeTerm+'\']+\'</p>\');">?</span>';
+}
+
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function nowDate(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function nowTime(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
@@ -1036,8 +1155,85 @@ function renderGeju(chart) {
   ct.innerHTML=f.map(function(x){
     var cls={good:'good',bad:'bad',warn:'warn'}[x.type]||'';
     var icon={good:'✅',bad:'❌',warn:'⚠️'}[x.type]||'';
-    return '<span class="tag-classic '+cls+'">'+icon+'</span> '+x.text;
+    // Add term hints to pattern names in text
+    var text = x.text;
+    var patternTerms = ['青龙回首','飞鸟跌穴','太白入荧','荧入太白','值符得位','门受制','白虎','玄武','天辅','天芮','天心','天蓬','天英','天柱','死门','伤门','惊门','休门','生门','开门','杜门','景门'];
+    patternTerms.forEach(function(term){
+      if(text.indexOf(term) !== -1 && QIMEN_TERMS[term]){
+        text = text.split(term).join(term+'<span class="term-hint" title="点击查看通俗解释" onclick="event.stopPropagation();showDetail(\''+term+'\',\'<p style=font-size:0.9rem;line-height:1.8>\'+QIMEN_TERMS[\''+term+'\']+\'</p>\');">?</span>');
+      }
+    });
+    return '<span class="tag-classic '+cls+'">'+icon+'</span> '+text;
   }).join('<br>');
+}
+
+// ═════════════════════════════════════════════════
+// 奇门 — 白话解读（面向新手）
+// ═════════════════════════════════════════════════
+function renderPlainTalk(chart) {
+  var el=document.getElementById('qmPlainTalk'),ct=document.getElementById('qmPlainTalkContent');
+  var palaces=chart.palaces||[];
+  var lines=[];
+
+  // 1. 盘面总览
+  var dunType = chart.dun_type || '';
+  var dunDesc = (dunType === '阳遁') ? '阳气上升，适合主动行动、向外发展。' : '阴气上升，适合休养内省、积蓄力量。';
+  lines.push('<div class="pt-label">📋 盘面总览</div>');
+  lines.push('<p><b>当前是' + dunType + '</b>——' + dunDesc + '</p>');
+
+  // 值符和值使
+  var zf = chart.zhifu || {};
+  var zs = chart.zhishi || {};
+  if (zf.star && zf.palace) {
+    lines.push('<p><b>值符</b>（总指挥）在 <b>' + zf.star + ' ' + zf.palace + '宫</b>，代表主导力量在这个方位。' + termHint('值符') + '</p>');
+  }
+  if (zs.door && zs.palace) {
+    lines.push('<p><b>值使</b>（行动队长）是 <b>' + zs.door + ' ' + zs.palace + '宫</b>，提示当前适合做什么类型的行动。' + termHint('值使') + '</p>');
+  }
+
+  // 2. 关键结论
+  lines.push('<div class="pt-label" style="margin-top:10px">🔑 关键结论</div>');
+
+  // 吉凶统计
+  var goodCount=0,badCount=0,warnCount=0;
+  palaces.forEach(function(p){
+    if(p.is_center) return;
+    if(p.door && ['休门','生门','开门'].includes(p.door)) goodCount++;
+    if(p.door && ['死门','伤门','惊门'].includes(p.door)) badCount++;
+  });
+
+  if(goodCount > badCount){
+    lines.push('<p>✅ 整体来看，吉门偏多，当前时辰气场偏积极，适合主动推进事务。</p>');
+  } else if(badCount > goodCount){
+    lines.push('<p>⚠️ 整体来看，凶门偏多，当前时辰气场有压力，建议以守为主、不宜冒进。</p>');
+  } else {
+    lines.push('<p>⚖️ 吉凶门数量相当，当前时辰气场中性，需根据具体事项判断能否行动。</p>');
+  }
+
+  // 检查旬空
+  var kw = chart.kongwang_palaces || [];
+  if(kw.length){
+    var kwNames = kw.map(function(n){
+      var p = palaces.find(function(x){return x.palace===n;});
+      return p ? p.name : '';
+    }).filter(function(n){return n;}).join('、');
+    lines.push('<p>⏳ <b>' + kwNames + '</b>逢旬空，这些方位/领域的能量偏虚，事情可能容易落空或拖延，建议等时机。' + termHint('旬空') + '</p>');
+  }
+
+  // 3. 使用小贴士
+  lines.push('<div class="pt-suggest">');
+  lines.push('<b>💬 不知道问什么？试试这些：</b><br>');
+  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'career\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">💼 问事业</a> &nbsp;');
+  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'money\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">💰 问财运</a> &nbsp;');
+  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'love\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">❤️ 问感情</a> &nbsp;');
+  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'exam\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">📝 问考试</a> &nbsp;');
+  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'travel\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">✈️ 问出行</a> &nbsp;');
+  lines.push('<a onclick="document.getElementById(\'qmQType\').value=\'legal\';document.getElementById(\'qmQType\').dispatchEvent(new Event(\'change\'));">⚖️ 问诉讼</a>');
+  lines.push('<br><span style="font-size:0.75rem;color:var(--ink-muted)">（点击后自动切换问事类型，然后重新点"起盘+解盘"即可获得针对性分析）</span>');
+  lines.push('</div>');
+
+  ct.innerHTML = lines.join('');
+  el.style.display = 'block';
 }
 
 // ═════════════════════════════════════════════════
@@ -1073,7 +1269,7 @@ function analyzeYongshen(chart,qtype) {
 
   // Step 2: 落在哪一宫
   if(mainP){
-    lines.push('② 落在 <b>'+mainP.name+'</b>（'+mainP.direction+'），配星<b>'+mainP.star+'</b>、门<b>'+(mainP.door||'无')+'</b>、神<b>'+(mainP.god||'无')+'</b>、天干<b>'+(mainP.sky_stem||'')+''+(mainP.earth_stem||'')+'</b>');
+    lines.push('② 落在 <b>'+mainP.name+'</b>（'+mainP.direction+'），配星<b>'+mainP.star+'</b>'+termHint(mainP.star)+'、门<b>'+(mainP.door||'无')+'</b>'+termHint(mainP.door)+'、神<b>'+(mainP.god||'无')+'</b>'+termHint(mainP.god)+'、天干<b>'+(mainP.sky_stem||'')+''+(mainP.earth_stem||'')+'</b>');
 
     // Step 3: 宫内的门、星、神是帮它还是压它
     var help=[],harm=[];
@@ -1147,17 +1343,28 @@ async function qimenGo(){
 function renderQimenAll(d){
   var c=d.chart,g=d.ganzhi,cal=d.calendar;
 
-  // Info bar
-  document.getElementById('qmInfo').innerHTML=
-    '<div class="info-item"><span class="ilabel">节气</span><span class="ivalue">'+c.active_jie+'</span><span class="itag">'+c.dun_type+'</span></div>'+
-    '<div class="info-item"><span class="ilabel">局</span><span class="ivalue icinnabar">'+c.dun_type+c.ju_number+'局</span><span class="itag">'+c.yuan+'</span></div>'+
-    '<div class="info-item"><span class="ilabel">旬首</span><span class="ivalue">'+c.xunshou+'</span></div>'+
-    '<div class="info-item"><span class="ilabel">值符</span><span class="ivalue">'+c.zhifu.star+' '+c.zhifu.palace+'宫</span></div>'+
-    '<div class="info-item"><span class="ilabel">值使</span><span class="ivalue">'+c.zhishi.door+' '+c.zhishi.palace+'宫</span></div>'+
-    '<div class="info-item"><span class="ilabel">空亡</span><span class="ivalue">'+c.kongwang.join('、')+'</span></div>';
+  // Info bar with term hints
+  var dunTypeHint = termHint(c.dun_type);
+  var juHint = termHint('局');
+  var yuanKey = c.yuan || '';
+  var yuanHint = termHint(yuanKey);
+  var xunshouHint = termHint('旬首');
+  var zhifuHint = termHint('值符');
+  var zhishiHint = termHint('值使');
+  var kongHint = termHint('旬空');
+  document.getElementById('qmInfo').innerHTML =
+    '<div class="info-item"><span class="ilabel">节气</span><span class="ivalue">'+c.active_jie+'</span><span class="itag">'+c.dun_type+'</span>'+dunTypeHint+'</div>'+
+    '<div class="info-item"><span class="ilabel">局</span><span class="ivalue icinnabar">'+c.dun_type+c.ju_number+'局</span><span class="itag">'+c.yuan+'</span>'+yuanHint+juHint+'</div>'+
+    '<div class="info-item"><span class="ilabel">旬首</span><span class="ivalue">'+c.xunshou+'</span>'+xunshouHint+'</div>'+
+    '<div class="info-item"><span class="ilabel">值符</span><span class="ivalue">'+c.zhifu.star+' '+c.zhifu.palace+'宫</span>'+zhifuHint+termHint(c.zhifu.star)+'</div>'+
+    '<div class="info-item"><span class="ilabel">值使</span><span class="ivalue">'+c.zhishi.door+' '+c.zhishi.palace+'宫</span>'+zhishiHint+termHint(c.zhishi.door)+'</div>'+
+    '<div class="info-item"><span class="ilabel">空亡</span><span class="ivalue">'+c.kongwang.join('、')+'</span>'+kongHint+'</div>';
 
   // 格局
   renderGeju(c);
+
+  // 白话解读
+  renderPlainTalk(c);
 
   // 用神
   var qt=document.getElementById('qmQType').value;
@@ -1176,10 +1383,10 @@ function renderQimenAll(d){
     var kwClass=(c.kongwang_palaces||[]).includes(no)?' kong':'';
     return '<div class="palace-classic'+kwClass+'">'+
       '<div class="p-name">'+p.name+' <span class="p-dir">'+p.direction+'·'+p.element+'</span></div>'+
-      (p.god?'<div class="p-god">'+p.god+'</div>':'')+
-      '<div class="p-star">'+p.star+'</div>'+
-      '<div class="p-door">'+(p.door||'')+'</div>'+
-      ((c.kongwang_palaces||[]).includes(no)?'<div class="p-kong">空亡</div>':'')+
+      (p.god?'<div class="p-god">'+p.god+termHint(p.god)+'</div>':'')+
+      '<div class="p-star">'+p.star+termHint(p.star)+'</div>'+
+      '<div class="p-door">'+(p.door||'')+termHint(p.door)+'</div>'+
+      ((c.kongwang_palaces||[]).includes(no)?'<div class="p-kong">空亡'+termHint('旬空')+'</div>':'')+
       '<div class="p-stems"><span class="stem earth">'+(p.earth_stem||'')+'</span><span class="stem sky">'+(p.sky_stem||'')+'</span></div>'+
       '</div>';
   }).join('');
@@ -1218,7 +1425,7 @@ function renderQmDirections(c){
     var info=dd[d];if(!info)return'';
     var good=info.door==='生门'||info.door==='开门'||info.door==='休门';
     var bad=info.door==='死门'||info.door==='伤门'||info.door==='惊门';
-    return '<div class="dir-classic-card '+(good?'good-dir':bad?'bad-dir':'')+'"><div class="d-name">'+d+'</div><div class="d-detail">'+info.palace+'</div><div style="font-weight:700;margin:2px 0;font-family:var(--font-title)">'+info.door+'</div><div class="d-detail">'+info.desc+'</div></div>';
+    return '<div class="dir-classic-card '+(good?'good-dir':bad?'bad-dir':'')+'"><div class="d-name">'+d+'</div><div class="d-detail">'+info.palace+'</div><div style="font-weight:700;margin:2px 0;font-family:var(--font-title)">'+info.door+' '+termHint(info.door)+'</div><div class="d-detail">'+info.desc+'</div></div>';
   }).join('');
   el.style.display='block';
 }
@@ -1228,7 +1435,7 @@ function renderQmRef(c){
   var refs={'求财·事业':{doors:['生门','开门'],desc:'看生门、开门方位，结合日干落宫'},'感情·婚姻':{doors:['休门','六合'],desc:'休门主感情，六合主婚姻，乙庚看关系'},'出行·迁移':{doors:['开门','休门'],desc:'开门利远行，休门利搬家'},'考试·文书':{doors:['景门','天辅'],desc:'景门主文书，天辅星利考试'},'健康·疾病':{doors:['天芮','死门'],desc:'天芮为病星，死门测病不吉'},'官司·诉讼':{doors:['惊门','白虎'],desc:'惊门口舌官非，逢开门则吉'}};
   g.innerHTML=Object.entries(refs).map(function(kv){
     var k=kv[0],v=kv[1];
-    return '<div class="ref-classic-card"><div class="ref-title">'+k+'</div><div class="d-detail" style="font-size:0.75rem;margin-bottom:2px">'+v.doors.map(function(d){return '<span class="tag-classic" style="background:var(--paper-light);border:1px solid var(--border-color)">'+d+'</span>';}).join('')+'</div><div style="font-size:0.75rem;color:var(--ink-muted)">'+v.desc+'</div></div>';
+    return '<div class="ref-classic-card"><div class="ref-title">'+k+'</div><div class="d-detail" style="font-size:0.75rem;margin-bottom:2px">'+v.doors.map(function(d){return '<span class="tag-classic" style="background:var(--paper-light);border:1px solid var(--border-color)">'+d+termHint(d)+'</span>';}).join('')+'</div><div style="font-size:0.75rem;color:var(--ink-muted)">'+v.desc+'</div></div>';
   }).join('');
   el.style.display='block';
 }
@@ -1253,7 +1460,7 @@ document.getElementById('scBtn').addEventListener('click',async function(){
     var gg=document.getElementById('scGrid');
     gg.innerHTML=d.results.map(function(r){
       var rt=r.rating?.text||'?',cm={'大吉':'lev-daji','吉':'lev-ji','平':'lev-ping','凶':'lev-xiong','大凶':'lev-daxiong'};
-      return '<div class="shichen-classic-card '+(cm[rt]||'lev-ping')+'"><div class="sc-name">'+r.name+'</div><div class="sc-period">'+r.period+'</div><div class="sc-rating">'+(r.rating?.star||'')+' '+rt+'</div><div class="sc-door">'+(r.zhishi?.door||'')+'</div><div style="font-size:0.65rem;color:var(--ink-muted)">'+(r.time_ganzhi||'')+'</div></div>';
+      return '<div class="shichen-classic-card '+(cm[rt]||'lev-ping')+'"><div class="sc-name">'+r.name+'</div><div class="sc-period">'+r.period+'</div><div class="sc-rating">'+(r.rating?.star||'')+' '+rt+'</div><div class="sc-door">'+(r.zhishi?.door||'')+termHint(r.zhishi?.door)+'</div><div style="font-size:0.65rem;color:var(--ink-muted)">'+(r.time_ganzhi||'')+'</div></div>';
     }).join('');
     var st={};d.results.forEach(function(r){var t=r.rating?.text||'?';st[t]=(st[t]||0)+1;});
     document.getElementById('scStats').innerHTML=Object.entries(st).map(function(kv){return '<div class="detail-classic-item"><div class="dlabel">'+kv[0]+'</div><div class="dvalue">'+kv[1]+'个时辰</div></div>';}).join('');
