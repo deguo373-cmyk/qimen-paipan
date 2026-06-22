@@ -1817,7 +1817,11 @@ document.addEventListener('click', function(e) {
     var qtype = target.getAttribute('data-qtype');
     if (qtype) {
       document.getElementById('qmQType').value = qtype;
-      toast('已切换到「问'+{career:'事业',money:'财运',love:'感情',exam:'考试',travel:'出行',legal:'诉讼'}[qtype]+'」，点"起盘+解盘"查看分析');
+      toast('已切换到「问'+{career:'事业',money:'财运',love:'感情',exam:'考试',travel:'出行',legal:'诉讼'}[qtype]+'」，正在重新分析...');
+      // 自动重新起盘
+      if (typeof qimenGo === 'function') {
+        setTimeout(function(){ qimenGo(); }, 300);
+      }
     }
   }
 });
