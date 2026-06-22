@@ -12,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="ziwei_calculator.js"></script>
   <script src="bazi_calculator.js"></script>
+  <script src="qimen_calculator.js"></script>
   <style>
     /* ════════════════════════════════════════════
        术数 · 古书风格 — 宣纸底纹 · 朱砂 · 石青
@@ -1585,9 +1586,21 @@ async function qimenGo(){
   var ti,ct;
   if(typ==='now'){ti='now';ct='now';}else if(typ==='lunar'){ti=document.getElementById('qmDate').value+' '+document.getElementById('qmTime').value+':00';ct='lunar';}else{ti=document.getElementById('qmDate').value+' '+document.getElementById('qmTime').value+':00';ct='solar';}
   try{
-    var r=await fetch('/api/qimen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({time_input:ti,calendar_type:ct,location:{country:LOC_CN[loc]||'中国',timezone:LOC_TZ[loc]||'Asia/Shanghai'}})});
-    var d=await r.json();
-    if(!r.ok||d.error) throw new Error(d.error||'排盘失败');
+    var d;
+    if(typ==='now'){
+      var n=new Date();
+      var input={year:n.getFullYear(),month:n.getMonth()+1,day:n.getDate(),hour:n.getHours(),minute:n.getMinutes(),gender:'男',question_type:document.getElementById('qmQType').value};
+      d=computeQimenChart(input);
+    }else{
+      var parts=ti.split(/[ :\/-]+/);
+      if(parts.length>=5){
+        var y=parseInt(parts[0]),mo=parseInt(parts[1]),da=parseInt(parts[2]),h=parseInt(parts[3]),mi=parseInt(parts[4]);
+        var input={year:y,month:mo,day:da,hour:h,minute:mi,gender:'男',question_type:document.getElementById('qmQType').value};
+        d=computeQimenChart(input);
+      }else{
+        throw new Error('日期时间格式错误');
+      }
+    }
     renderQimenAll(d);
   }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
   finally{l.classList.remove('active');document.getElementById('qmBtn').disabled=false;}
