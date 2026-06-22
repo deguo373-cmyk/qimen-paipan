@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>术数 · 古书风格样板</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  <style>
+    /* ════════════════════════════════════════════
+       术数 · 古书风格系统 v1
+       ════════════════════════════════════════════ */
+    :root {
+      /* 纸墨 */
+      --paper: #f5f0e8;
+      --paper-dark: #e8e0d0;
+      --paper-light: #faf6ef;
+      --ink: #2c2416;
+      --ink-light: #5a4f3c;
+      --ink-muted: #8a7e6b;
+
+      /* 色彩 */
+      --cinnabar: #c23b22;
+      --cinnabar-light: #e85d4a;
+      --cinnabar-dark: #9a2e1a;
+      --stone-blue: #4a6741;
+      --gold: #b8933e;
+      --gold-light: #d4b26a;
+
+      /* 版式 */
+      --font-title: 'Noto Serif SC', 'SimSun', serif;
+      --font-body: 'Inter', 'Noto Serif SC', 'PingFang SC', sans-serif;
+      --font-hand: 'Ma Shan Zheng', 'ZCOOL XiaoWei', cursive;
+
+      /* 尺寸 */
+      --border-width: 1.5px;
+      --border-color: #c8b89a;
+      --radius: 0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══ 古书容器 ══ */
+    .book-page {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 48px 60px;
+      background: var(--paper-light);
+      border: var(--border-width) solid var(--border-color);
+      position: relative;
+      box-shadow: 0 2px 24px rgba(44, 36, 22, 0.06);
+    }
+
+    /* 双线古边框 */
+    .book-page::before {
+      content: '';
+      position: absolute;
+      top: 8px; left: 8px; right: 8px; bottom: 8px;
+      border: 1px solid var(--border-color);
+      pointer-events: none;
+    }
+
+    /* 天头地脚装饰线 */
+    .book-page::after {
+      content: '';
+      position: absolute;
+      top: 18px; left: 24px; right: 24px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--border-color) 20%, var(--border-color) 80%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* 底部装饰线 */
+    .book-footer-line {
+      position: absolute;
+      bottom: 18px; left: 24px; right: 24px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--border-color) 20%, var(--border-color) 80%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* ══ 印鉴章 ══ */
+    .seal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border: 2px solid var(--cinnabar);
+      color: var(--cinnabar);
+      font-family: var(--font-hand);
+      font-size: 0.9rem;
+      transform: rotate(-3deg);
+      flex-shrink: 0;
+      position: relative;
+      line-height: 1.2;
+      text-align: center;
+      padding: 4px;
+    }
+
+    .seal-sm {
+      width: 36px;
+      height: 36px;
+      font-size: 0.65rem;
+      border-width: 1.5px;
+    }
+
+    /* ══ 标题体系 ══ */
+    .book-title-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px;
+      position: relative;
+    }
+
+    .book-title-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 80px;
+      height: 1.5px;
+      background: var(--cinnabar);
+    }
+
+    .book-title {
+      flex: 1;
+    }
+
+    .book-title h1 {
+      font-family: var(--font-title);
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .book-title .subtitle {
+      font-family: var(--font-title);
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      margin-top: 4px;
+      letter-spacing: 0.15em;
+    }
+
+    .book-title .subtitle em {
+      font-style: normal;
+      color: var(--cinnabar);
+    }
+
+    /* ══ 卷标记 ══ */
+    .chapter-label {
+      display: inline-block;
+      font-family: var(--font-title);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.2em;
+      margin-bottom: 8px;
+      border-left: 2px solid var(--cinnabar);
+      padding-left: 10px;
+    }
+
+    .section-title {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title .decor {
+      width: 24px;
+      height: 1px;
+      background: var(--cinnabar);
+    }
+
+    /* ══ Tab 古书风格 ══ */
+    .tabs-classic {
+      display: flex;
+      gap: 0;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0;
+    }
+
+    .tab-classic {
+      padding: 10px 24px;
+      font-family: var(--font-title);
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--ink-muted);
+      position: relative;
+      transition: color 0.2s;
+      letter-spacing: 0.1em;
+    }
+
+    .tab-classic:hover {
+      color: var(--ink);
+    }
+
+    .tab-classic.active {
+      color: var(--ink);
+    }
+
+    .tab-classic.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 2px;
+      background: var(--cinnabar);
+    }
+
+    /* ══ 卡片 · 古书页 ══ */
+    .folio {
+      background: var(--paper-light);
+      border: 1px solid var(--border-color);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: folioIn 0.5s ease forwards;
+    }
+
+    .folio:nth-child(2) { animation-delay: 0.1s; }
+    .folio:nth-child(3) { animation-delay: 0.2s; }
+    .folio:nth-child(4) { animation-delay: 0.3s; }
+    .folio:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes folioIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .folio-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .folio-header .dot {
+      width: 6px; height: 6px;
+      border: 1px solid var(--cinnabar);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .folio-header .folio-title {
+      font-family: var(--font-title);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 0.05em;
+    }
+
+    .folio-header .folio-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+      border: 1px solid var(--border-color);
+      padding: 1px 8px;
+      font-family: var(--font-title);
+    }
+
+    /* ══ 表单 · 古风 ══ */
+    .form-classic {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .field-group {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .field-group label {
+      display: block;
+      font-family: var(--font-title);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.1em;
+    }
+
+    .field-group input,
+    .field-group select {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid var(--border-color);
+      background: var(--paper);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 0;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus {
+      border-color: var(--cinnabar);
+    }
+
+    /* ══ 按钮 · 古印 ══ */
+    .btn-classic {
+      padding: 8px 24px;
+      font-family: var(--font-title);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      border: 1px solid var(--border-color);
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 0;
+    }
+
+    .btn-classic:hover {
+      border-color: var(--cinnabar);
+      color: var(--cinnabar);
+      background: #faf2ef;
+      transform: translateY(-1px);
+    }
+
+    .btn-classic:active {
+      transform: translateY(0);
+    }
+
+    .btn-cinnabar {
+      background: var(--cinnabar);
+      color: var(--paper-light);
+      border-color: var(--cinnabar);
+    }
+
+    .btn-cinnabar:hover {
+      background: var(--cinnabar-dark);
+      border-color: var(--cinnabar-dark);
+      color: var(--paper-light);
+    }
+
+    .btn-cinnabar:disabled {
+      background: #d4bfb0;
+      border-color: #d4bfb0;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-hand {
+      font-family: var(--font-hand);
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══ 罗盘九宫 ══ */
+    .luopan {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border-color);
+      border: 2px solid var(--border-color);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .palace-classic {
+      background: var(--paper-light);
+      padding: 10px 8px;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .palace-classic:hover {
+      background: #f0e8dc;
+    }
+
+    .palace-classic.is-center {
+      justify-content: center;
+      align-items: center;
+      background: var(--paper-dark);
+    }
+
+    .palace-classic .p-name {
+      font-family: var(--font-title);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+
+    .palace-classic .p-name .p-dir {
+      font-weight: 400;
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      background: var(--paper-dark);
+      padding: 0 6px;
+    }
+
+    .palace-classic .p-god {
+      font-size: 0.72rem;
+      color: var(--cinnabar);
+      font-weight: 600;
+    }
+
+    .palace-classic .p-star {
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: var(--font-title);
+    }
+
+    .palace-classic .p-door {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--stone-blue);
+      font-family: var(--font-title);
+    }
+
+    .palace-classic .p-stems {
+      margin-top: auto;
+      display: flex;
+      gap: 6px;
+      font-size: 0.78rem;
+    }
+
+    .palace-classic .p-stems .stem {
+      background: var(--paper-dark);
+      padding: 0 6px;
+      font-family: var(--font-title);
+    }
+
+    .palace-classic .p-stems .stem.earth { color: #6b4f3a; }
+    .palace-classic .p-stems .stem.sky { color: var(--stone-blue); }
+
+    .palace-classic .p-kong {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* 旬空宫位标记 */
+    .palace-classic.kong {
+      background: #f0e8dc;
+    }
+
+    .palace-classic.kong::after {
+      content: '旬空';
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      font-size: 0.55rem;
+      color: var(--ink-muted);
+      font-family: var(--font-title);
+      opacity: 0.5;
+    }
+
+    /* 中宫 */
+    .palace-classic .center-txt {
+      text-align: center;
+      font-family: var(--font-title);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+    }
+
+    .palace-classic .center-txt strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      margin-bottom: 2px;
+    }
+
+    /* ══ 信息条 ══ */
+    .info-classic {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 20px;
+      padding: 12px 16px;
+      background: var(--paper-dark);
+      margin-bottom: 16px;
+      font-size: 0.82rem;
+    }
+
+    .info-classic .info-item .ilabel {
+      color: var(--ink-muted);
+      font-family: var(--font-title);
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+
+    .info-classic .info-item .ivalue {
+      font-weight: 600;
+      font-family: var(--font-title);
+    }
+
+    .info-classic .info-item .icinnabar {
+      color: var(--cinnabar);
+    }
+
+    .info-classic .info-item .itag {
+      display: inline-block;
+      font-size: 0.65rem;
+      border: 1px solid var(--border-color);
+      padding: 0 6px;
+      margin-left: 4px;
+    }
+
+    /* ══ 分析区块 ══ */
+    .analysis-classic {
+      padding: 14px 16px;
+      background: var(--paper-dark);
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+
+    .analysis-classic .tag-classic {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 7px;
+      margin: 1px 2px;
+      font-family: var(--font-title);
+    }
+
+    .tag-classic.good { background: #e8efe6; color: var(--stone-blue); border: 1px solid #c8d8c4; }
+    .tag-classic.bad { background: #f5e8e6; color: var(--cinnabar); border: 1px solid #e8c8c4; }
+    .tag-classic.warn { background: #f5f0e0; color: #8a7a3e; border: 1px solid #e0d8b8; }
+
+    /* ══ 方位卡 ══ */
+    .dir-classic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .dir-classic-card {
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 0.8rem;
+      transition: transform 0.15s;
+    }
+
+    .dir-classic-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .dir-classic-card .d-name {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+
+    .dir-classic-card .d-detail {
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+    }
+
+    .dir-classic-card.good-dir {
+      background: #e8efe6;
+    }
+
+    .dir-classic-card.bad-dir {
+      background: #f5e8e6;
+    }
+
+    /* ══ 时辰卡 ══ */
+    .shichen-classic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
+    }
+
+    .shichen-classic-card {
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+      transition: transform 0.15s;
+      cursor: default;
+    }
+
+    .shichen-classic-card:hover {
+      transform: scale(1.02);
+    }
+
+    .shichen-classic-card .sc-name {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .shichen-classic-card .sc-period {
+      font-size: 0.62rem;
+      color: var(--ink-muted);
+    }
+
+    .shichen-classic-card.lev-daji { background: #e8efe6; }
+    .shichen-classic-card.lev-ji { background: #f0f3ec; }
+    .shichen-classic-card.lev-ping { background: var(--paper-dark); }
+    .shichen-classic-card.lev-xiong { background: #f5e8e6; }
+    .shichen-classic-card.lev-daxiong { background: #f0e0de; }
+
+    /* ══ 八字四柱 ══ */
+    .bazi-classic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border-color);
+      margin: 12px 0;
+    }
+
+    .bazi-classic-cell {
+      padding: 12px 8px;
+      background: var(--paper-light);
+      text-align: center;
+      min-height: 80px;
+    }
+
+    .bazi-classic-cell .bz-label {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      font-family: var(--font-title);
+      letter-spacing: 0.1em;
+    }
+
+    .bazi-classic-cell .bz-ganzhi {
+      font-family: var(--font-title);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .bazi-classic-cell .bz-shishen {
+      font-size: 0.72rem;
+      color: var(--cinnabar);
+      font-weight: 600;
+      font-family: var(--font-title);
+    }
+
+    .bazi-classic-cell .bz-nayin {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+    }
+
+    .bazi-classic-cell.self {
+      background: var(--paper-dark);
+    }
+
+    /* ══ 大运条 ══ */
+    .dayun-classic-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .dayun-classic-item {
+      padding: 6px 12px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+      min-width: 68px;
+      transition: transform 0.15s;
+    }
+
+    .dayun-classic-item .dy-gz {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .dayun-classic-item .dy-age {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+    }
+
+    .dayun-classic-item.current-dayun {
+      background: #e8efe6;
+      border-color: var(--stone-blue);
+    }
+
+    /* ══ 五行统计 ══ */
+    .wuxing-classic-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .wuxing-classic-item {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      font-size: 0.82rem;
+    }
+
+    .wuxing-classic-item .wx-label {
+      font-family: var(--font-title);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+    }
+
+    .wuxing-classic-item .wx-count {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    /* ══ 参考卡片 ══ */
+    .ref-classic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .ref-classic-card {
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      background: var(--paper-dark);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      transition: transform 0.15s;
+    }
+
+    .ref-classic-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .ref-classic-card .ref-title {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+    }
+
+    /* ══ 墨迹分隔线 ══ */
+    .ink-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--border-color) 15%, var(--border-color) 85%, transparent 100%);
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .ink-divider::after {
+      content: '◆';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--border-color);
+      font-size: 0.5rem;
+      background: var(--paper-light);
+      padding: 0 12px;
+    }
+
+    /* ══ 底部 ══ */
+    .book-colophon {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    .book-colophon a {
+      color: var(--cinnabar);
+      text-decoration: none;
+    }
+
+    .book-colophon a:hover {
+      text-decoration: underline;
+    }
+
+    /* ══ Toast ══ */
+    .toast-classic {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: var(--paper-light);
+      padding: 10px 24px;
+      font-family: var(--font-title);
+      font-size: 0.8rem;
+      z-index: 999;
+      border: 1px solid var(--border-color);
+      animation: toastFade 0.3s ease;
+    }
+
+    .toast-classic.show { display: block; }
+
+    @keyframes toastFade {
+      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ══ 响应式 ══ */
+    @media (max-width: 640px) {
+      .book-page { padding: 24px 16px; margin: 16px; }
+      .book-page::before { top: 4px; left: 4px; right: 4px; bottom: 4px; }
+      .book-title h1 { font-size: 1.4rem; }
+      .folio { padding: 16px; }
+      .dir-classic-grid { grid-template-columns: repeat(2, 1fr); }
+      .wuxing-classic-grid { grid-template-columns: repeat(3, 1fr); }
+      .tab-classic { padding: 8px 12px; font-size: 0.82rem; }
+    }
+
+    /* ══ Tag容器 ══ */
+    .tags-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+
+    /* ══ 细节网格 ══ */
+    .detail-classic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+
+    .detail-classic-item {
+      padding: 6px 10px;
+      background: var(--paper-dark);
+    }
+
+    .detail-classic-item .dlabel {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .detail-classic-item .dvalue {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-top: 1px;
+      font-family: var(--font-title);
+    }
+  </style>
+</head>
+<body>
+
+<div class="book-page">
+  <div class="book-footer-line"></div>
+
+  <!-- 标题 + 印鉴 -->
+  <div class="book-title-wrap">
+    <div class="seal" style="width:56px;height:56px;font-size:0.85rem;padding:6px">术数<br>集要</div>
+    <div class="book-title">
+      <h1>术数工具箱</h1>
+      <div class="subtitle">奇门遁甲 · 八字排盘 · 紫微斗数 · 择时推演 · <em>格局用神</em>鉴赏</div>
+    </div>
+  </div>
+
+  <!-- Tab -->
+  <div class="tabs-classic">
+    <button class="tab-classic active">🔮 奇门排盘</button>
+    <button class="tab-classic">⏰ 择时推荐</button>
+    <button class="tab-classic">📜 八字排盘</button>
+    <button class="tab-classic">✨ 紫微斗数</button>
+  </div>
+
+  <!-- 第一卷：设定 -->
+  <div class="folio">
+    <div class="folio-header">
+      <div class="dot"></div>
+      <span class="folio-title">设定推演时间</span>
+      <span class="folio-badge">卷一</span>
+    </div>
+    <div class="form-classic">
+      <div class="field-group" style="flex:0 0 auto;min-width:80px">
+        <label>历法</label>
+        <select><option>公历</option><option>农历</option><option>即时</option></select>
+      </div>
+      <div class="field-group">
+        <label>日期</label>
+        <input type="date" value="2026-06-22">
+      </div>
+      <div class="field-group" style="flex:0 0 auto;min-width:90px">
+        <label>时辰</label>
+        <select><option>午时 11:00-12:59</option><option>未时 13:00-14:59</option></select>
+      </div>
+      <div class="field-group" style="flex:0 0 auto;min-width:100px">
+        <label>地分</label>
+        <select><option>中国大陆</option><option>UTC+8</option></select>
+      </div>
+      <div class="field-group" style="flex:0 0 auto;min-width:120px">
+        <label>问事</label>
+        <select><option>只看盘面数据</option><option>事业 · 工作</option><option>求财 · 交易</option><option>感情 · 姻缘</option></select>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px">
+      <button class="btn-classic btn-cinnabar">起盘  +  解盘</button>
+      <button class="btn-classic">填当前时刻</button>
+    </div>
+  </div>
+
+  <!-- 第二卷：信息条 -->
+  <div class="info-classic" style="animation-delay:0.1s">
+    <div class="info-item"><span class="ilabel">节气</span> <span class="ivalue">芒种</span> <span class="itag">阳遁</span></div>
+    <div class="info-item"><span class="ilabel">局</span> <span class="ivalue icinnabar">阳遁三局</span> <span class="itag">下元</span></div>
+    <div class="info-item"><span class="ilabel">旬首</span> <span class="ivalue">甲申</span></div>
+    <div class="info-item"><span class="ilabel">值符</span> <span class="ivalue">天冲 震三宫</span></div>
+    <div class="info-item"><span class="ilabel">值使</span> <span class="ivalue">伤门 震三宫</span></div>
+    <div class="info-item"><span class="ilabel">空亡</span> <span class="ivalue">午、未</span></div>
+  </div>
+
+  <!-- 第三卷：格局分析 -->
+  <div class="folio">
+    <div class="folio-header">
+      <div class="dot"></div>
+      <span class="folio-title">格局分析</span>
+      <span class="folio-badge">卷二</span>
+    </div>
+    <div class="analysis-classic">
+      <span class="tag-classic good">✅</span> 离宫：丙奇（三奇）配景门，<b>文事可成</b>，考试、文书、签约皆利。<br>
+      <span class="tag-classic good">✅</span> 值符（天冲）与值使（伤门）同宫震三，<b>主导权集中</b>，关键人物已在局中。<br>
+      <span class="tag-classic bad">❌</span> 兑宫逢白虎，<b>注意口舌是非</b>，避免硬碰硬。<br>
+      <span class="tag-classic bad">❌</span> 坎宫死门被宫位所克，<b>推进易受卡</b>，宜守不宜攻。<br>
+      <span class="tag-classic warn">⚠️</span> 坤二宫、离九宫逢旬空，<b>力量偏虚</b>，待时机填实。
+    </div>
+  </div>
+
+  <!-- 第四卷：用神分析 -->
+  <div class="folio">
+    <div class="folio-header">
+      <div class="dot"></div>
+      <span class="folio-title">用神分析 · 事业</span>
+      <span class="folio-badge">卷三</span>
+    </div>
+    <div class="analysis-classic" style="background:var(--paper-light)">
+      主用神取 <b>开门</b>：事业推进，看开门得不得力，日干能不能接住。<br>
+      落 <b>乾六宫</b>（西北），配星 <b>天心</b>、门 <b>开门</b>、神 <b>太阴</b><br>
+      <span class="tag-classic good">✅</span> 吉门加临，用神得力，<b>事业运佳</b><br>
+      <span class="tag-classic good">✅</span> 吉星帮扶，能量正向<br>
+      <span class="tag-classic good">✅</span> 太阴辅佐，谋略可成
+    </div>
+  </div>
+
+  <!-- 第五卷：九宫罗盘 -->
+  <div class="folio">
+    <div class="folio-header">
+      <div class="dot"></div>
+      <span class="folio-title">罗盘九宫</span>
+      <span class="folio-badge">卷四</span>
+    </div>
+    <div class="luopan">
+      <div class="palace-classic">
+        <div class="p-name">巽四 <span class="p-dir">东南·木</span></div>
+        <div class="p-god">白虎</div>
+        <div class="p-star">天辅</div>
+        <div class="p-door">杜门</div>
+        <div class="p-stems"><span class="stem earth">癸</span><span class="stem sky">己</span></div>
+      </div>
+      <div class="palace-classic">
+        <div class="p-name">离九 <span class="p-dir">南·火</span></div>
+        <div class="p-god">六合</div>
+        <div class="p-star">天英</div>
+        <div class="p-door">景门</div>
+        <div class="p-stems"><span class="stem earth">壬</span><span class="stem sky">丙</span></div>
+      </div>
+      <div class="palace-classic">
+        <div class="p-name">坤二 <span class="p-dir">西南·土</span></div>
+        <div class="p-god">太常</div>
+        <div class="p-star">天芮</div>
+        <div class="p-door">死门</div>
+        <div class="p-stems"><span class="stem earth">戊</span><span class="stem sky">辛</span></div>
+        <div class="p-kong">旬空</div>
+      </div>
+      <div class="palace-classic">
+        <div class="p-name">震三 <span class="p-dir">东·木</span></div>
+        <div class="p-god">值符</div>
+        <div class="p-star">天冲</div>
+        <div class="p-door">伤门</div>
+        <div class="p-stems"><span class="stem earth">丁</span><span class="stem sky">癸</span></div>
+      </div>
+      <div class="palace-classic is-center">
+        <div class="center-txt"><strong>中宫</strong>天禽<br><span>阳遁三局</span></div>
+      </div>
+      <div class="palace-classic">
+        <div class="p-name">兑七 <span class="p-dir">西·金</span></div>
+        <div class="p-god">腾蛇</div>
+        <div class="p-star">天柱</div>
+        <div class="p-door">惊门</div>
+        <div class="p-stems"><span class="stem earth">辛</span><span class="stem sky">壬</span></div>
+      </div>
+      <div class="palace-classic kong">
+        <div class="p-name">艮八 <span class="p-dir">东北·土</span></div>
+        <div class="p-god">朱雀</div>
+        <div class="p-star">天任</div>
+        <div class="p-door">生门</div>
+        <div class="p-stems"><span class="stem earth">庚</span><span class="stem sky">丁</span></div>
+      </div>
+      <div class="palace-classic">
+        <div class="p-name">坎一 <span class="p-dir">北·水</span></div>
+        <div class="p-god">九天</div>
+        <div class="p-star">天蓬</div>
+        <div class="p-door">休门</div>
+        <div class="p-stems"><span class="stem earth">乙</span><span class="stem sky">戊</span></div>
+      </div>
+      <div class="palace-classic">
+        <div class="p-name">乾六 <span class="p-dir">西北·金</span></div>
+        <div class="p-god">太阴</div>
+        <div class="p-star">天心</div>
+        <div class="p-door">开门</div>
+        <div class="p-stems"><span class="stem earth">己</span><span class="stem sky">甲</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第六卷：吉凶方位 -->
+  <div class="folio">
+    <div class="folio-header">
+      <div class="dot"></div>
+      <span class="folio-title">吉凶方位</span>
+      <span class="folio-badge">卷五</span>
+    </div>
+    <div class="dir-classic-grid">
+      <div class="dir-classic-card good-dir"><div class="d-name">北</div><div class="d-detail">坎一</div><div style="font-weight:700;margin:2px 0">休门</div><div class="d-detail">休息求财</div></div>
+      <div class="dir-classic-card good-dir"><div class="d-name">东北</div><div class="d-detail">艮八</div><div style="font-weight:700;margin:2px 0">生门</div><div class="d-detail">生意创业</div></div>
+      <div class="dir-classic-card bad-dir"><div class="d-name">东</div><div class="d-detail">震三</div><div style="font-weight:700;margin:2px 0">伤门</div><div class="d-detail">争斗防损</div></div>
+      <div class="dir-classic-card"><div class="d-name">东南</div><div class="d-detail">巽四</div><div style="font-weight:700;margin:2px 0">杜门</div><div class="d-detail">隐匿保密</div></div>
+      <div class="dir-classic-card"><div class="d-name">南</div><div class="d-detail">离九</div><div style="font-weight:700;margin:2px 0">景门</div><div class="d-detail">文书考试</div></div>
+      <div class="dir-classic-card bad-dir"><div class="d-name">西南</div><div class="d-detail">坤二</div><div style="font-weight:700;margin:2px 0">死门</div><div class="d-detail">追捕诉讼</div></div>
+      <div class="dir-classic-card bad-dir"><div class="d-name">西</div><div class="d-detail">兑七</div><div style="font-weight:700;margin:2px 0">惊门</div><div class="d-detail">惊恐官司</div></div>
+      <div class="dir-classic-card good-dir"><div class="d-name">西北</div><div class="d-detail">乾六</div><div style="font-weight:700;margin:2px 0">开门</div><div class="d-detail">开创求职</div></div>
+    </div>
+  </div>
+
+  <!-- 第七卷：八字样章 -->
+  <div class="folio">
+    <div class="folio-header">
+      <div class="dot"></div>
+      <span class="folio-title">八字四柱 · 样例</span>
+      <span class="folio-badge">卷六</span>
+    </div>
+    <div class="bazi-classic-grid">
+      <div class="bazi-classic-cell"><div class="bz-label">年柱</div><div class="bz-ganzhi">丙午</div><div class="bz-shishen">正官</div><div class="bz-nayin">天河水</div></div>
+      <div class="bazi-classic-cell"><div class="bz-label">月柱</div><div class="bz-ganzhi">甲午</div><div class="bz-shishen">偏印</div><div class="bz-nayin">沙中金</div></div>
+      <div class="bazi-classic-cell self"><div class="bz-label">日柱</div><div class="bz-ganzhi">己未</div><div class="bz-shishen">日主</div><div class="bz-nayin">天上火</div></div>
+      <div class="bazi-classic-cell"><div class="bz-label">时柱</div><div class="bz-ganzhi">庚午</div><div class="bz-shishen">伤官</div><div class="bz-nayin">路旁土</div></div>
+    </div>
+  </div>
+
+  <!-- 第八卷：时辰择时 -->
+  <div class="folio">
+    <div class="folio-header">
+      <div class="dot"></div>
+      <span class="folio-title">择时 · 十二时辰</span>
+      <span class="folio-badge">卷七</span>
+    </div>
+    <div class="shichen-classic-grid">
+      <div class="shichen-classic-card lev-daji"><div class="sc-name">子时</div><div class="sc-period">23:00-00:59</div><div style="font-weight:700;font-size:0.82rem">⭐⭐⭐ 大吉</div><div style="font-size:0.72rem">开门</div></div>
+      <div class="shichen-classic-card lev-ji"><div class="sc-name">丑时</div><div class="sc-period">01:00-02:59</div><div style="font-weight:700;font-size:0.82rem">⭐⭐ 吉</div><div style="font-size:0.72rem">休门</div></div>
+      <div class="shichen-classic-card lev-ping"><div class="sc-name">寅时</div><div class="sc-period">03:00-04:59</div><div style="font-weight:700;font-size:0.82rem">⭐ 平</div><div style="font-size:0.72rem">杜门</div></div>
+      <div class="shichen-classic-card lev-xiong"><div class="sc-name">卯时</div><div class="sc-period">05:00-06:59</div><div style="font-weight:700;font-size:0.82rem">🌙 凶</div><div style="font-size:0.72rem">惊门</div></div>
+      <div class="shichen-classic-card lev-daxiong"><div class="sc-name">辰时</div><div class="sc-period">07:00-08:59</div><div style="font-weight:700;font-size:0.82rem">🌑 大凶</div><div style="font-size:0.72rem">死门</div></div>
+      <div class="shichen-classic-card lev-ji"><div class="sc-name">巳时</div><div class="sc-period">09:00-10:59</div><div style="font-weight:700;font-size:0.82rem">⭐⭐ 吉</div><div style="font-size:0.72rem">生门</div></div>
+    </div>
+  </div>
+
+  <!-- 卷末 -->
+  <div class="book-colophon">
+    数据基于 <a href="https://github.com/FANzR-arch/Numerologist_skills" target="_blank">Numerologist Skills</a> · 
+    格局 · 用神 · 刑冲合害 参考来自仓库 references/<br>
+    仅供传统文化研究参考 · 癸卯年夏刊
+  </div>
+</div>
+
+</body>
+</html>
