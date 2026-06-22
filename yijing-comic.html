@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📖 易经漫画 · 大白话六十四卦</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <style>
+    /* ════════════════════════════════════════════
+       易经漫画 · 古书漫画风
+       ════════════════════════════════════════════ */
+    :root {
+      --paper: #f5f0e8;
+      --paper-dark: #e8e0d0;
+      --paper-light: #faf6ef;
+      --ink: #2c2416;
+      --ink-light: #5a4f3c;
+      --ink-muted: #8a7e6b;
+      --cinnabar: #c23b22;
+      --cinnabar-light: #e85d4a;
+      --cinnabar-dark: #9a2e1a;
+      --stone-blue: #4a6741;
+      --stone-blue-light: #6b8f5c;
+      --gold: #b8933e;
+      --gold-light: #d4b05a;
+      --border-color: #c8b89a;
+      --font-title: 'Noto Serif SC', 'SimSun', serif;
+      --font-body: 'Inter', 'Noto Serif SC', 'PingFang SC', sans-serif;
+      --font-hand: 'Ma Shan Zheng', cursive;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    /* 宣纸底纹 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,119,90,0.03) 2px, rgba(139,119,90,0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(139,119,90,0.02) 3px, rgba(139,119,90,0.02) 6px),
+        radial-gradient(ellipse at 20% 50%, rgba(139,119,90,0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(139,119,90,0.03) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ────── 页眉 ────── */
+    .header {
+      text-align: center;
+      padding: 32px 20px 24px;
+      margin-bottom: 32px;
+      position: relative;
+    }
+    .header::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cinnabar), var(--gold));
+      margin: 16px auto 0;
+      border-radius: 2px;
+    }
+    .header h1 {
+      font-family: var(--font-title);
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: 4px;
+    }
+    .header h1 .emoji-big { font-size: 2.8rem; }
+    .header .subtitle {
+      font-family: var(--font-hand);
+      font-size: 1.3rem;
+      color: var(--ink-muted);
+      margin-top: 4px;
+      letter-spacing: 2px;
+    }
+    .header .sub-desc {
+      font-size: 0.95rem;
+      color: var(--ink-light);
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    /* ────── 工具栏 ────── */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+      padding: 16px 20px;
+      background: var(--paper-light);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(44,36,22,0.05);
+    }
+    .filter-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 6px 18px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--ink-light);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .filter-btn:hover {
+      border-color: var(--stone-blue);
+      color: var(--stone-blue);
+      background: rgba(74,103,65,0.06);
+    }
+    .filter-btn.active {
+      background: var(--stone-blue);
+      color: #fff;
+      border-color: var(--stone-blue);
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      background: #fff;
+      flex: 0 1 260px;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus-within {
+      border-color: var(--cinnabar);
+    }
+    .search-box input {
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 6px 0;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--ink);
+      width: 100%;
+    }
+    .search-box .search-icon {
+      color: var(--ink-muted);
+      font-size: 0.9rem;
+    }
+    .result-count {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      padding: 4px 10px;
+      background: var(--paper-dark);
+      border-radius: 12px;
+    }
+
+    /* ────── 六十四卦网格 ────── */
+    .hexagram-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    /* ────── 卦卡（折叠态） ────── */
+    .hex-card {
+      background: var(--paper-light);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hex-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cinnabar), var(--gold));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .hex-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(44,36,22,0.1);
+      border-color: var(--gold);
+    }
+    .hex-card:hover::before { opacity: 1; }
+    .hex-card .symbol {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 4px;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+    .hex-card .name {
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .hex-card .id-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      background: var(--paper-dark);
+      padding: 1px 8px;
+      border-radius: 8px;
+      margin-top: 2px;
+    }
+    .hex-card .cat-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      color: var(--stone-blue);
+      padding: 0 6px;
+      margin-top: 2px;
+    }
+    .hex-card .tags-mini {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3px;
+    }
+    .hex-card .tags-mini span {
+      font-size: 0.6rem;
+      background: rgba(74,103,65,0.08);
+      color: var(--stone-blue);
+      padding: 1px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .hex-card .click-hint {
+      font-size: 0.6rem;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.2s;
+      margin-top: 2px;
+    }
+    .hex-card:hover .click-hint { opacity: 1; }
+
+    /* ────── 展开的详情面板（漫画风格） ────── */
+    .detail-panel {
+      display: none;
+      grid-column: 1 / -1;
+      background: var(--paper-light);
+      border: 2px dashed var(--gold);
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin: 4px 0 8px;
+      position: relative;
+      animation: panelSlide 0.35s ease;
+      box-shadow: 0 4px 24px rgba(184,147,62,0.1);
+    }
+    @keyframes panelSlide {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .detail-panel.open { display: block; }
+
+    .detail-close {
+      position: absolute;
+      top: 12px; right: 16px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--ink-muted);
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      line-height: 1;
+    }
+    .detail-close:hover { color: var(--cinnabar); }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1.5px solid var(--border-color);
+    }
+    .detail-header .symbol-big {
+      font-size: 3.2rem;
+      line-height: 1;
+    }
+    .detail-header .name-box h2 {
+      font-family: var(--font-title);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--ink);
+    }
+    .detail-header .name-box .pinyin {
+      font-family: var(--font-hand);
+      font-size: 1.2rem;
+      color: var(--ink-muted);
+    }
+    .detail-header .trigram-info {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+    .detail-header .trigram-info span {
+      background: rgba(74,103,65,0.08);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin: 0 2px;
+    }
+
+    /* 漫画解说板块 */
+    .comic-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 700px) {
+      .comic-section { grid-template-columns: 1fr; }
+    }
+
+    .comic-panel {
+      background: #fff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px 22px;
+      position: relative;
+    }
+    .comic-panel::before {
+      content: attr(data-label);
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      background: var(--paper-light);
+      padding: 0 8px;
+      font-family: var(--font-hand);
+      font-size: 0.9rem;
+      color: var(--cinnabar);
+      font-weight: 700;
+    }
+
+    .core-line {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--cinnabar-dark);
+      margin-bottom: 12px;
+      padding: 8px 14px;
+      background: rgba(194,59,34,0.06);
+      border-left: 3px solid var(--cinnabar);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .comic-explanation {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: var(--ink);
+    }
+    .comic-explanation p {
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    .advice-box {
+      background: linear-gradient(135deg, rgba(74,103,65,0.06), rgba(184,147,62,0.06));
+      border: 1.5px solid var(--stone-blue);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-top: 16px;
+    }
+    .advice-box .advice-label {
+      font-family: var(--font-hand);
+      font-size: 1rem;
+      color: var(--stone-blue);
+      font-weight: 700;
+    }
+    .advice-box .advice-text {
+      font-size: 0.95rem;
+      color: var(--ink);
+      margin-top: 4px;
+    }
+
+    .tags-list {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tags-list span {
+      padding: 4px 12px;
+      background: rgba(184,147,62,0.1);
+      color: var(--gold);
+      border: 1px solid rgba(184,147,62,0.25);
+      border-radius: 16px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    /* 右侧趣味元素：小漫画插图 */
+    .comic-illustration {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 20px;
+      background: rgba(245,240,232,0.5);
+      border-radius: 12px;
+      min-height: 140px;
+    }
+    .comic-illustration .big-emoji {
+      font-size: 3.5rem;
+      line-height: 1;
+    }
+    .comic-illustration .speech-bubble {
+      max-width: 220px;
+      background: #fff;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px 16px;
+      position: relative;
+      font-size: 0.9rem;
+      text-align: center;
+      color: var(--ink);
+      box-shadow: 0 2px 8px rgba(44,36,22,0.06);
+    }
+    .comic-illustration .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #fff;
+    }
+    .comic-illustration .speech-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 12px solid var(--border-color);
+      z-index: -1;
+    }
+
+    /* ────── 响应式 ────── */
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.7rem; }
+      .hexagram-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+      .hex-card { padding: 10px 6px; }
+      .hex-card .symbol { font-size: 1.6rem; }
+      .hex-card .name { font-size: 0.9rem; }
+      .detail-panel { padding: 20px 16px; }
+      .detail-header .symbol-big { font-size: 2.4rem; }
+      .detail-header .name-box h2 { font-size: 1.3rem; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search-box { flex: 1; }
+    }
+    @media (max-width: 480px) {
+      .hexagram-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    }
+
+    /* ────── 无结果 ────── */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      color: var(--ink-muted);
+      font-family: var(--font-hand);
+      font-size: 1.3rem;
+    }
+
+    /* ────── 滚动条美化 ────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--paper-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ink-muted); }
+
+    /* ────── 打印 ────── */
+    @media print {
+      body::before { display: none; }
+      .hex-card { break-inside: avoid; }
+      .detail-panel { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══ 页眉 ═══ -->
+  <div class="header">
+    <h1><span class="emoji-big">📖</span> 易经漫画</h1>
+    <div class="subtitle">六十四卦 · 大白话解说</div>
+    <div class="sub-desc">👇 点击任意卦象，看看它在说什么 &nbsp;·&nbsp; 没有文言文，只有大实话</div>
+  </div>
+
+  <!-- ═══ 工具栏 ═══ -->
+  <div class="toolbar">
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="all">📜 全部</button>
+      <button class="filter-btn" data-filter="上经">☰ 上经 · 天道（1–30）</button>
+      <button class="filter-btn" data-filter="下经">☷ 下经 · 人事（31–64）</button>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="搜索卦名、关键词…" autocomplete="off">
+    </div>
+    <span class="result-count" id="resultCount">64 / 64</span>
+  </div>
+
+  <!-- ═══ 卦象网格 ═══ -->
+  <div class="hexagram-grid" id="hexGrid"></div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// 六十四卦数据
+// ═══════════════════════════════════════════════════════════════
+
+const HEXAGRAMS = [
+  // ─── 上经 (1-30) ───
+  {
+    id: 1, symbol: '\u4DC0', name: '乾', pinyin: 'qián',
+    core: '⛰️ 天行健——自强不息的终极能量',
+    comic_explanation: '想象你就是一条飞在天上的龙🐉，没有什么能拦住你！乾卦讲的就是——当你充满干劲、目标明确的时候，整个世界都会为你让路。它就像你早上醒来精力满满的那股劲儿，谁也别想泼你冷水。记住：真正的强者不是欺负别人，而是不断超越昨天的自己。',
+    advice: '💪 现在正是你大展拳脚的时候！大胆去干，别犹豫。但也要注意别太骄傲，保持谦虚才能飞得更高。',
+    tags: ['开创', '领导', '自强'],
+    category: '上经',
+    trigram_upper: '乾☰（天）', trigram_lower: '乾☰（天）',
+    emoji: '🐉'
+  },
+  {
+    id: 2, symbol: '\u4DC1', name: '坤', pinyin: 'kūn',
+    core: '🌍 地势坤——厚德载物的包容之力',
+    comic_explanation: '坤卦就像大地妈妈🌏，默默地承载一切，从不抱怨。它告诉我们：有时候最强大的力量不是冲在最前面，而是在背后稳稳地托住所有人。就像你身边那个总是默默付出、从不邀功的朋友——这种"柔中带刚"的力量，才是真正让人敬佩的。',
+    advice: '🤝 遇到冲突别急着争对错，试着用包容的心态去理解对方。有时候退一步，反而能赢得更多。',
+    tags: ['包容', '承载', '柔顺'],
+    category: '上经',
+    trigram_upper: '坤☷（地）', trigram_lower: '坤☷（地）',
+    emoji: '🌏'
+  },
+  {
+    id: 3, symbol: '\u4DC2', name: '屯', pinyin: 'zhūn',
+    core: '🌱 万事开头难——就像种子破土而出',
+    comic_explanation: '想象一颗小种子🌱在泥土里挣扎着要发芽，上头压着石头，下面缺水——这就是屯卦的感觉！任何事情的开始都特别不容易，你会遇到各种意想不到的困难。但别怕，这些困难恰恰说明你在成长。就像学骑自行车🚲，摔几跤很正常，关键是别放弃！',
+    advice: '🎯 刚开始新项目或新阶段时，别追求完美。先做起来，边做边调整，困难自然会慢慢化解。',
+    tags: ['开始', '艰难', '萌芽'],
+    category: '上经',
+    trigram_upper: '坎☵（水）', trigram_lower: '震☳（雷）',
+    emoji: '🌱'
+  },
+  {
+    id: 4, symbol: '\u4DC3', name: '蒙', pinyin: 'méng',
+    core: '🧒 启蒙时刻——不会就学，不懂就问',
+    comic_explanation: '蒙卦就像小朋友第一次上学🎒，啥都不懂，但又充满好奇。它想告诉你：承认自己"不懂"一点也不丢人，不懂装懂才可怕。生活中我们每个人都是"蒙童"，遇到不懂的事就大胆去问、去学。记住，最聪明的人往往是那个最愿意说"请教一下"的人。',
+    advice: '📚 遇到不懂的事情，别自己瞎琢磨。找个懂的人问一问，或者查查资料，学习本身就是一种成长。',
+    tags: ['学习', '启蒙', '谦虚'],
+    category: '上经',
+    trigram_upper: '艮☶（山）', trigram_lower: '坎☵（水）',
+    emoji: '🧒'
+  },
+  {
+    id: 5, symbol: '\u4DC4', name: '需', pinyin: 'xū',
+    core: '⏳ 耐心等待——好饭不怕晚',
+    comic_explanation: '需卦就是告诉你——别急，慢慢来！它就像在等一碗刚下锅的面🍜，你不停掀锅盖只会让它更难熟。生活中有些事急不得，等一等反而结果更好。比如等一个好时机、等一个对的人、等一个成熟的方案。耐心不是消极，而是在正确的时间做正确的事。',
+    advice: '🧘 现在如果觉得进展慢，别焦虑。把该做的准备做好，然后安心等待。时机成熟了，自然水到渠成。',
+    tags: ['等待', '耐心', '时机'],
+    category: '上经',
+    trigram_upper: '坎☵（水）', trigram_lower: '乾☰（天）',
+    emoji: '⏳'
+  },
+  {
+    id: 6, symbol: '\u4DC5', name: '讼', pinyin: 'sòng',
+    core: '⚖️ 争论不休——赢了对错，输了感情',
+    comic_explanation: '讼卦讲的是打官司、吵架、争对白。你有没有遇到过这种情况——明明自己是对的，但争赢了反而更难受？😤 讼卦就是提醒你：争论很多时候没有真正的赢家。与其花时间和人较劲，不如想想有没有更好的解决办法。有时候，退一步不是认输，而是给自己留更多空间。',
+    advice: '🕊️ 如果正在和人争执，先冷静下来想想：这件事值得争吗？有没有双赢的方案？避免无谓的冲突。',
+    tags: ['争论', '诉讼', '化解'],
+    category: '上经',
+    trigram_upper: '乾☰（天）', trigram_lower: '坎☵（水）',
+    emoji: '⚖️'
+  },
+  {
+    id: 7, symbol: '\u4DC6', name: '师', pinyin: 'shī',
+    core: '⚔️ 众志成城——团结就是力量',
+    comic_explanation: '师卦原本是讲打仗的，但在生活中它代表"团队的力量"。就像拔河比赛🤝，一个人再使劲也比不上大家一起用力。当你遇到一个大难题时，别一个人扛着——把大家的力量聚在一起，再难的事也能搞定。关键是大家要心往一处想、劲往一处使！',
+    advice: '👥 别单打独斗！找对合作伙伴，把合适的人放到合适的位置上，团队的威力会让你惊讶。',
+    tags: ['团队', '领导', '纪律'],
+    category: '上经',
+    trigram_upper: '坤☷（地）', trigram_lower: '坎☵（水）',
+    emoji: '⚔️'
+  },
+  {
+    id: 8, symbol: '\u4DC7', name: '比', pinyin: 'bǐ',
+    core: '🤝 亲如一家——找到你的"自己人"',
+    comic_explanation: '比卦讲的是人与人之间的亲近和团结。就像一群大雁🦆排成人字形飞行，互相借力，一起飞得更远。它告诉我们：人生路上一定要有自己的"圈子"——那些信得过、合得来的人。别做孤狼，学会融入群体，也学会选择值得亲近的人。好的关系能让你走得更远。',
+    advice: '❤️ 花时间经营你的核心关系。主动联系老朋友，也对新朋友保持开放。真诚是最好的社交密码。',
+    tags: ['亲和', '团结', '互助'],
+    category: '上经',
+    trigram_upper: '坎☵（水）', trigram_lower: '坤☷（地）',
+    emoji: '🤝'
+  },
+  {
+    id: 9, symbol: '\u4DC8', name: '小畜', pinyin: 'xiǎo xù',
+    core: '🐾 小步积累——慢慢来，比较快',
+    comic_explanation: '小畜就是说"少量的积蓄"。就像一只小松鼠🐿️，秋天里一个橡果一个橡果地攒，冬天才能吃得饱。你想要的东西不是一下子就能得到的，得一点点攒——攒钱、攒技能、攒人脉。别嫌慢，每天进步一点点，积少成多，回头看已经走了很远的路。',
+    advice: '💰 别想一口吃成胖子。定个小目标，每天做一点，坚持三个月，你会发现自己已经变强了很多。',
+    tags: ['积累', '渐进', '耐心'],
+    category: '上经',
+    trigram_upper: '巽☴（风）', trigram_lower: '乾☰（天）',
+    emoji: '🐿️'
+  },
+  {
+    id: 10, symbol: '\u4DC9', name: '履', pinyin: 'lǚ',
+    core: '👣 脚踏实地——走好脚下的每一步',
+    comic_explanation: '履卦就是"走路"的意思。就像你踩在薄冰上行走🧊，每一步都得小心翼翼的。它提醒我们：不管你的梦想有多大，最终都要落实到每天的日常行动中。别老想着一步登天——踏踏实实做好眼前的事，该来的自然会来。就像老虎🐯走路，看起来慢，但每一步都稳稳当当。',
+    advice: '👟 别想太远，关注你今天能做好的三件事。把每一步走稳了，路自然就出来了。',
+    tags: ['行动', '谨慎', '务实'],
+    category: '上经',
+    trigram_upper: '乾☰（天）', trigram_lower: '兑☱（泽）',
+    emoji: '👣'
+  },
+  {
+    id: 11, symbol: '\u4DCA', name: '泰', pinyin: 'tài',
+    core: '🌈 国泰民安——万事顺遂的好时光',
+    comic_explanation: '泰卦是易经里最吉利的卦之一！它就像春天的阳光☀️照在身上，暖洋洋的，什么事都顺顺利利的。天在上、地在下，阴阳交汇，万物生长。你在生活中遇到泰卦，说明现在正是好时候——工作顺利、人际关系和谐、心情也不错。好好享受这段好时光吧！',
+    advice: '🌟 趁现在运势好，多做点有意义的事。但也别得意忘形，好的时候要为将来做点储备。',
+    tags: ['顺遂', '和谐', '昌盛'],
+    category: '上经',
+    trigram_upper: '坤☷（地）', trigram_lower: '乾☰（天）',
+    emoji: '🌈'
+  },
+  {
+    id: 12, symbol: '\u4DCB', name: '否', pinyin: 'pǐ',
+    core: '🌧️ 天寒地冻——不顺的时候怎么办',
+    comic_explanation: '否卦和泰卦正好相反，是"不通"的意思。就像冬天❄️，天寒地冻的，啥都长不出来。你在生活中遇到否卦，可能感觉做什么都不顺——被卡住了、被误解了、被拒绝了。别慌！冬天总会过去的。否卦不是诅咒，而是提醒你：不顺的时候，别硬来，先蛰伏起来，保存实力。',
+    advice: '🛌 如果现在事事不顺，别硬撑。先停下来休息，把精力收回来。等时机变了再动，不要逆势而为。',
+    tags: ['阻滞', '逆境', '蛰伏'],
+    category: '上经',
+    trigram_upper: '乾☰（天）', trigram_lower: '坤☷（地）',
+    emoji: '🌧️'
+  },
+  {
+    id: 13, symbol: '\u4DCC', name: '同人', pinyin: 'tóng rén',
+    core: '🔥 志同道合——找到懂你的人',
+    comic_explanation: '同人卦讲的是"同心同德"的人聚在一起。就像一堆篝火🔥，一个人只能发出一点点光和热，但一堆人围在一起，就能照亮整个夜空。它告诉我们：找到那些和你志趣相投、三观一致的人特别重要。不管是工作还是生活，和懂你的人在一起，再难的事也能笑着面对。',
+    advice: '🌻 主动走出去认识新朋友，参加你感兴趣的圈子。对的人和事会在你行动的过程中自然出现。',
+    tags: ['合作', '志同道合', '光明'],
+    category: '上经',
+    trigram_upper: '乾☰（天）', trigram_lower: '离☲（火）',
+    emoji: '🔥'
+  },
+  {
+    id: 14, symbol: '\u4DCD', name: '大有', pinyin: 'dà yǒu',
+    core: '🏆 收获满满——你值得拥有这一切',
+    comic_explanation: '大有卦就是"什么都有"的意思！就像秋天的果园🍎，树上挂满了果实，满满的收获感。你努力工作、用心生活，现在终于到了丰收的时刻。但大有卦也提醒你：有钱有资源了之后，怎么用才是关键。是只顾自己享受，还是拿出来帮助身边的人？真正的富有是懂得分享。',
+    advice: '🎁 感恩你现在拥有的一切，并且主动分享。越分享越富有——这不只是鸡汤，这是宇宙的规律。',
+    tags: ['富足', '丰收', '分享'],
+    category: '上经',
+    trigram_upper: '离☲（火）', trigram_lower: '乾☰（天）',
+    emoji: '🏆'
+  },
+  {
+    id: 15, symbol: '\u4DCE', name: '谦', pinyin: 'qiān',
+    core: '🙇 虚怀若谷——越厉害的人越谦虚',
+    comic_explanation: '谦卦是易经里唯一一个"六爻皆吉"的卦！什么意思？就是说谦虚这件事，怎么做都对。就像一棵挂满果实的树🍊，枝头总是低垂的——越充实的人越不会张扬。你身边那些真正有本事的人，往往是最低调的。谦虚不是装出来的，而是因为见过了更大的世界，知道自己还差得远。',
+    advice: '🎋 做了好事别到处说，有了成绩别飘。保持谦逊，你会发现更多的人愿意帮你、跟你合作。',
+    tags: ['谦虚', '低调', '美德'],
+    category: '上经',
+    trigram_upper: '坤☷（地）', trigram_lower: '艮☶（山）',
+    emoji: '🙇'
+  },
+  {
+    id: 16, symbol: '\u4DCF', name: '豫', pinyin: 'yù',
+    core: '🎵 欢愉时刻——该放松就放松',
+    comic_explanation: '豫卦讲的是"快乐"和"预备"。就像听到一首超好听的歌🎶，身体不由自主地跟着节奏摇摆——这就是豫卦的感觉。生活不只有工作和责任，也要有享受和放松。但同时，豫卦也提醒你别"乐不思蜀"——开心可以，但别过头了。该玩的玩，该准备的也得准备着。',
+    advice: '🎉 最近辛苦了，奖励自己一下吧！看场电影、吃顿好的、出去走走。但别浪过头，明天还有正事呢。',
+    tags: ['快乐', '放松', '预备'],
+    category: '上经',
+    trigram_upper: '震☳（雷）', trigram_lower: '坤☷（地）',
+    emoji: '🎵'
+  },
+  {
+    id: 17, symbol: '\u4DD0', name: '随', pinyin: 'suí',
+    core: '🚶 顺势而为——跟着节奏走',
+    comic_explanation: '随卦就是"跟随"的意思。就像在大海里冲浪🏄，你得顺着海浪的方向走，不能硬跟海浪对着干。生活中也是一样——有时候你需要主动带节奏，有时候你需要跟着大部队走。随卦教你的不是盲从，而是审时度势的能力：这个阶段该跟就跟，该停就停。',
+    advice: '🌊 别太固执。看看周围的变化，顺应大势去做事。灵活一点，你会发现很多事情变得简单了。',
+    tags: ['随顺', '适应', '灵活'],
+    category: '上经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '震☳（雷）',
+    emoji: '🚶'
+  },
+  {
+    id: 18, symbol: '\u4DD1', name: '蛊', pinyin: 'gǔ',
+    core: '🪱 整治腐败——烂摊子也能变好',
+    comic_explanation: '蛊卦听起来有点吓人——"蛊"是虫子🐛的意思，代表腐败和混乱。但你想想，一锅汤坏了，是直接倒掉还是想办法救一下？蛊卦就是告诉你：当生活出现烂摊子的时候，别逃避，动手清理！不管是坏习惯、糟糕的关系还是混乱的工作，只要你有心整治，就一定能好转。',
+    advice: '🧹 看看你生活中有没有"积锈"的地方？是时候来个"大扫除"了——从整理房间或者改掉一个小坏习惯开始。',
+    tags: ['整顿', '改革', '除弊'],
+    category: '上经',
+    trigram_upper: '艮☶（山）', trigram_lower: '巽☴（风）',
+    emoji: '🪱'
+  },
+  {
+    id: 19, symbol: '\u4DD2', name: '临', pinyin: 'lín',
+    core: '👁️ 亲临其境——机会就在眼前',
+    comic_explanation: '临卦就是"来到、面对"的意思。就像你站在一片广阔的草原前🌿，眼前是无限的可能。它告诉我们：机会已经来到你面前了，关键是你要主动去面对、去把握。别躲着、别等着，事到临头要勇敢站出来。不管是好的还是坏的，来了就接住，这就是临卦的智慧。',
+    advice: '🎯 别再做旁观者了。有事找上门就好好面对，有好事就大方接纳。主动一点，好运才会找到你。',
+    tags: ['面对', '机遇', '主动'],
+    category: '上经',
+    trigram_upper: '坤☷（地）', trigram_lower: '兑☱（泽）',
+    emoji: '👁️'
+  },
+  {
+    id: 20, symbol: '\u4DD3', name: '观', pinyin: 'guān',
+    core: '🔭 静观其变——看清楚了再出手',
+    comic_explanation: '观卦就是"观察、审视"。就像你站在山顶上看风景🏔️，视野开阔，一切尽收眼底。生活中遇到复杂情况时，别急着跳进去——先站在高处看清楚全局。就像下棋♟️，高手总是多看几步。观卦教我们：在行动之前，先花时间观察、思考、理解。看明白了，做事就能一击即中。',
+    advice: '👀 先别急着做决定。多观察、多问、多听。把情况摸透了再行动，比你瞎忙活要高效得多。',
+    tags: ['观察', '审慎', '洞察'],
+    category: '上经',
+    trigram_upper: '巽☴（风）', trigram_lower: '坤☷（地）',
+    emoji: '🔭'
+  },
+  {
+    id: 21, symbol: '\u4DD4', name: '噬嗑', pinyin: 'shì hé',
+    core: '🦷 咬碎障碍——有困难就解决它',
+    comic_explanation: '噬嗑卦的卦象就像一张嘴🫦里咬着东西。什么意思呢？就是你的生活中遇到"拦路虎"了——可能是棘手的麻烦，也可能是一直逃避的问题。别怕，张开嘴把它嚼碎了吞下去！遇到障碍不要绕道走，直面它、解决它。就像🍖啃骨头，虽然费劲，但啃完特别有成就感。',
+    advice: '⚡ 你一直在回避的那个问题，今天就面对它。下定决心去解决，你会发现它没有想象中那么可怕。',
+    tags: ['决断', '克服', '障碍'],
+    category: '上经',
+    trigram_upper: '离☲（火）', trigram_lower: '震☳（雷）',
+    emoji: '🦷'
+  },
+  {
+    id: 22, symbol: '\u4DD5', name: '贲', pinyin: 'bì',
+    core: '🎨 装饰点缀——好看但不浮夸',
+    comic_explanation: '贲卦讲的是"装饰、美化"。就像你穿了一件漂亮的衣服👘出门，把自己收拾得体面一点，心情也会变好。但贲卦也提醒你：装饰是锦上添花，但不能本末倒置。一个人最重要的是内涵和本质，外表包装得再好，里面是空的也没用。适度美化生活可以，但别活在表面。',
+    advice: '🌸 把自己收拾得干净得体，这是对别人的尊重。但记住，真正的魅力来自你的内在——多读书、多思考。',
+    tags: ['装饰', '文采', '本质'],
+    category: '上经',
+    trigram_upper: '艮☶（山）', trigram_lower: '离☲（火）',
+    emoji: '🎨'
+  },
+  {
+    id: 23, symbol: '\u4DD6', name: '剥', pinyin: 'bō',
+    core: '🧅 层层剥落——该放手的就放手',
+    comic_explanation: '剥卦就像剥洋葱🧅，一层一层地剥开，最后可能什么也不剩了。它代表了"失去、剥落"的过程。你可能会经历一些失去——丢了一份工作、结束了一段关系、或者放弃了一个执念。听起来很伤感？但剥卦也告诉你：旧的不去新的不来。就像大树秋天落叶🍂，看似萧条，实则是为了来年更好地生长。',
+    advice: '🍃 有些东西正在离开你的生活，别死死抓着不放。放手也是一种智慧，腾出空间，更好的才能进来。',
+    tags: ['剥落', '放手', '更新'],
+    category: '上经',
+    trigram_upper: '艮☶（山）', trigram_lower: '坤☷（地）',
+    emoji: '🧅'
+  },
+  {
+    id: 24, symbol: '\u4DD7', name: '复', pinyin: 'fù',
+    core: '🔄 冬去春来——一切都会好起来的',
+    comic_explanation: '复卦是"回归、恢复"的意思，是剥卦的翻转。就像冬至那天❄️，最冷的时候到了，但其实春天已经在路上了。当你觉得跌到谷底的时候，复卦就是那个让你看到希望的信标。它告诉我们：没有过不去的冬天，也没有到不了的春天。你现在经历的困难，很快就会过去，一切都会好起来的🌸。',
+    advice: '🌱 即使现在很难，也别放弃。每一天都是新的开始，从一件小事做起，慢慢恢复你的节奏。',
+    tags: ['复苏', '回归', '希望'],
+    category: '上经',
+    trigram_upper: '坤☷（地）', trigram_lower: '震☳（雷）',
+    emoji: '🔄'
+  },
+  {
+    id: 25, symbol: '\u4DD8', name: '无妄', pinyin: 'wú wàng',
+    core: '🎯 顺其自然——别想太多，做就对了',
+    comic_explanation: '无妄卦就是"不要胡思乱想、不要妄动"。就像你种下一颗种子🌻，天天挖出来看看长没长，反而害了它。生活中很多时候我们想得太多、算计太多，结果反而把事情搞砸了。无妄卦告诉你：做该做的事，然后顺其自然。不要太刻意追求结果，诚心诚意地去努力，老天自有安排。',
+    advice: '🧘 放下那些过度的焦虑和算计。做好你该做的，别总想着"万一……"，专注当下就够了。',
+    tags: ['自然', '真诚', '不妄'],
+    category: '上经',
+    trigram_upper: '乾☰（天）', trigram_lower: '震☳（雷）',
+    emoji: '🎯'
+  },
+  {
+    id: 26, symbol: '\u4DD9', name: '大畜', pinyin: 'dà chù',
+    core: '🏦 厚积薄发——默默积蓄，一鸣惊人',
+    comic_explanation: '大畜就是"大大的积蓄"。和小畜不同，大畜是更大规模地积累——就像建造一个巨大的粮仓🏛️，或者像武侠小说里的高手，闭关修炼几年，一出关就天下无敌。现在你可能在默默地学习、工作、积累，外人看起来不起眼，但你自己知道你在"练内功"。坚持下去，爆发的那一天会很震撼。',
+    advice: '📚 现在的你就像海绵一样吸水。多学多攒，别急着出风头。你的积累会在某一天全部兑现。',
+    tags: ['积蓄', '沉淀', '厚积'],
+    category: '上经',
+    trigram_upper: '艮☶（山）', trigram_lower: '乾☰（天）',
+    emoji: '🏦'
+  },
+  {
+    id: 27, symbol: '\u4DDA', name: '颐', pinyin: 'yí',
+    core: '🍎 养精蓄锐——吃好睡好，身体是革命的本钱',
+    comic_explanation: '颐卦看起来就像一张嘴🫦在吃东西，所以它讲的是"养生、滋养"。你想想，手机还要天天充电呢，何况是人？现在的人太拼了，熬夜加班、暴饮暴食、精神紧绷……颐卦就是你的身体在跟你说：哥们儿，悠着点！好好吃饭、好好睡觉、照顾好自己的身体，这才是所有幸福的基础。',
+    advice: '😴 别透支身体。今天开始，准时吃饭、早点睡觉、适当运动。身体好了，做什么都有劲。',
+    tags: ['养生', '滋养', '休息'],
+    category: '上经',
+    trigram_upper: '艮☶（山）', trigram_lower: '震☳（雷）',
+    emoji: '🍎'
+  },
+  {
+    id: 28, symbol: '\u4DDB', name: '大过', pinyin: 'dà guò',
+    core: '🏋️ 过犹不及——太过了反而坏事',
+    comic_explanation: '大过就是"过度、过头"。就像你煮饭🍚水放太多了会变成粥，做事情太过了反而会出问题。努力工作是好事，但拼命到住院就不对了。喜欢一个人是好事，但控制欲太强就会把人吓跑。大过卦提醒你：凡事有度，盛极必衰。发现自己在某个方面"过头"了，赶紧收一收。',
+    advice: '⚖️ 检查一下你最近有没有在某件事上"用力过猛"？不管是对工作、感情还是某个习惯，适当调整到平衡状态。',
+    tags: ['过度', '极端', '平衡'],
+    category: '上经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '巽☴（风）',
+    emoji: '🏋️'
+  },
+  {
+    id: 29, symbol: '\u4DDC', name: '坎', pinyin: 'kǎn',
+    core: '🌊 一波三折——在困难中学会游泳',
+    comic_explanation: '坎卦是两个水摞在一起💧💧，代表"重重险难"。就像一个坑接着一个坑，刚爬出来又掉进去了。你是不是也有这种时候？觉得老天在跟你开玩笑，一件事接一件事地出问题。坎卦告诉你：别怕，水虽然危险，但水也是最温柔的——它懂得绕路、渗透、等待。面对困难，学学水的智慧，能冲就冲，不能冲就绕。',
+    advice: '🏊 别被困难吓倒。一次解决一个问题，别想着一下子全搞定。保持信心，你比你以为的要坚强得多。',
+    tags: ['险难', '坚韧', '适应'],
+    category: '上经',
+    trigram_upper: '坎☵（水）', trigram_lower: '坎☵（水）',
+    emoji: '🌊'
+  },
+  {
+    id: 30, symbol: '\u4DDD', name: '离', pinyin: 'lí',
+    core: '🔥 光芒万丈——做自己的太阳',
+    comic_explanation: '离卦是两个火摞在一起🔥🔥，代表"光明、依附"。就像太阳🌞一直发光，给万物带来温暖和能量。离卦鼓励你：做一个小太阳，温暖自己，也照亮别人。但离卦也有"依附"的意思——火需要燃料才能燃烧，人也需要相互依存。独立自主是好的，但也要学会依靠身边的人。',
+    advice: '☀️ 发挥你的热情和才华，主动去照亮周围的人。同时也要记得，好的关系是互相成就，不是单方面付出。',
+    tags: ['光明', '热情', '依附'],
+    category: '上经',
+    trigram_upper: '离☲（火）', trigram_lower: '离☲（火）',
+    emoji: '🔥'
+  },
+
+  // ─── 下经 (31-64) ───
+  {
+    id: 31, symbol: '\u4DDE', name: '咸', pinyin: 'xián',
+    core: '💞 心有灵犀——那种怦然心动的感觉',
+    comic_explanation: '咸卦就是"感应、吸引"。就像两个人第一次对视👀，电光火石之间，心跳加速——这就是咸卦的感觉！它讲的是人与人之间的情感连接，特别是爱情💕。但咸卦也提醒你：感情是相互的，不是一个人的独角戏。不管是爱情还是友情，真诚地感应对方、理解对方，才能建立真正的连接。',
+    advice: '💌 如果你心里有想靠近的人，大胆表达你的真诚。好的关系从一次真诚的交流开始。',
+    tags: ['感应', '爱情', '吸引'],
+    category: '下经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '艮☶（山）',
+    emoji: '💞'
+  },
+  {
+    id: 32, symbol: '\u4DDF', name: '恒', pinyin: 'héng',
+    core: '🌲 持之以恒——坚持到底就是胜利',
+    comic_explanation: '恒卦就是"长久、恒定"。就像一棵老松树🌲，在悬崖上站了几百年，风吹雨打都不动摇。生活中最缺的就是"坚持"——健身卡办了去三天、学英语学了一周就放弃……恒卦告诉你：任何值得做的事，都值得坚持做下去。三天打鱼两天晒网，永远做不成大事。每天进步一点点，长期下来就是巨大的变化。',
+    advice: '🎯 选一件你一直想做但没坚持下来的事，今天就重新开始。不要追求完美，追求"天天做"。',
+    tags: ['坚持', '恒心', '长久'],
+    category: '下经',
+    trigram_upper: '震☳（雷）', trigram_lower: '巽☴（风）',
+    emoji: '🌲'
+  },
+  {
+    id: 33, symbol: '\u4DE0', name: '遁', pinyin: 'dùn',
+    core: '🏃 激流勇退——有时候退一步是智慧',
+    comic_explanation: '遁卦就是"退避、隐退"。别误会，这不是叫你当逃兵！就像爬山⛰️爬到一半发现天气突变，明智的选择是先下山避一避，而不是硬冲上去送死。生活中有些时候，硬扛不是勇敢，退一步才是真正的智慧。比如一段消耗你的关系、一个不适合你的工作，撤退不是失败，而是给更好的选择腾地方。',
+    advice: '🕊️ 如果某件事让你持续痛苦，停下来想想是不是该放手了。退一步海阔天空，这不是认输。',
+    tags: ['退避', '隐退', '审时'],
+    category: '下经',
+    trigram_upper: '乾☰（天）', trigram_lower: '艮☶（山）',
+    emoji: '🏃'
+  },
+  {
+    id: 34, symbol: '\u4DE1', name: '大壮', pinyin: 'dà zhuàng',
+    core: '🐏 如日中天——趁势而为，别蛮干',
+    comic_explanation: '大壮就是"非常强壮"。就像一头公羊🐏，头顶两只大角，气势汹汹的。你现在可能正处于力量的巅峰期——精力充沛、信心满满、干什么都顺。但大壮卦也给了你一个警告：别仗着自己壮就乱撞！羊用角撞墙，墙没事，羊自己倒疼了。有力量是好事，但要用对地方，别冲动行事。',
+    advice: '💪 你现在的能量很强，适合做大事。但要智取不要蛮干——动脑子比动手更管用。',
+    tags: ['强盛', '力量', '谨慎'],
+    category: '下经',
+    trigram_upper: '震☳（雷）', trigram_lower: '乾☰（天）',
+    emoji: '🐏'
+  },
+  {
+    id: 35, symbol: '\u4DE2', name: '晋', pinyin: 'jìn',
+    core: '☀️ 旭日东升——前途一片光明',
+    comic_explanation: '晋卦就是"前进、晋升"。就像早上的太阳☀️从地平线升起，光芒万丈，照亮整个世界。你最近是不是感觉运势在上升？工作有进展、学习有进步、心情也变好了——这就是晋卦的状态！它鼓励你大胆往前走，因为光明就在前方。但别忘了，太阳虽然耀眼，也要一步步升起来，别想一蹴而就。',
+    advice: '🚀 你现在正走在上升期，抓住机会大胆向前。保持这个势头，但别骄傲，稳步前进才能走得远。',
+    tags: ['前进', '晋升', '光明'],
+    category: '下经',
+    trigram_upper: '离☲（火）', trigram_lower: '坤☷（地）',
+    emoji: '☀️'
+  },
+  {
+    id: 36, symbol: '\u4DE3', name: '明夷', pinyin: 'míng yí',
+    core: '🌑 韬光养晦——光芒暂时被遮蔽',
+    comic_explanation: '明夷就是"光明受伤了"。就像太阳落山🌇，天慢慢黑下来。你可能有这样的时刻：明明有才华却得不到认可，明明努力了却没有回报。别沮丧！明夷卦告诉你：这只是暂时的。太阳虽然下山了，但明天还会升起来。在低谷的时候，最重要的是保护好自己，默默积蓄力量，等时机一到再发光。',
+    advice: '🌙 现在不是出风头的时候。低头做事、少说话、多积累。黑夜虽长，黎明总会来的。',
+    tags: ['隐藏', '忍耐', '低谷'],
+    category: '下经',
+    trigram_upper: '坤☷（地）', trigram_lower: '离☲（火）',
+    emoji: '🌑'
+  },
+  {
+    id: 37, symbol: '\u4DE4', name: '家人', pinyin: 'jiā rén',
+    core: '🏠 家和万事兴——家是最温暖的港湾',
+    comic_explanation: '家人卦就是讲"家庭"的。想象一下：周末的晚上，一家人围在一起吃火锅🥘，说说笑笑，那种温暖的感觉~ 家人卦提醒我们，不管在外面多累多忙，家永远是你的避风港。但家也需要经营——多陪陪家人、多沟通、多包容。一个和睦的家庭，是你人生最坚实的后盾。',
+    advice: '🏡 今天给家人打个电话，或者早点回家吃顿饭。事业再忙，也别忘了最在乎你的人。',
+    tags: ['家庭', '和睦', '亲情'],
+    category: '下经',
+    trigram_upper: '巽☴（风）', trigram_lower: '离☲（火）',
+    emoji: '🏠'
+  },
+  {
+    id: 38, symbol: '\u4DE5', name: '睽', pinyin: 'kuí',
+    core: '👀 求同存异——不一样也没关系',
+    comic_explanation: '睽卦就是"背离、差异"的意思。就像两个人看同一件事👥，一个说好一个说不好，意见完全相反。你是不是也有跟人合不来的时候？睽卦告诉你：人和人不一样，这太正常了！就像🌓月亮有阴晴圆缺，世界上没有两片完全相同的树叶。关键是——在差异中找到共同点，尊重不同，但不妨碍合作。',
+    advice: '🤝 遇到和你不合拍的人，别急着否定。试着站在对方的角度想一想，差异反而能带来新的视角。',
+    tags: ['差异', '求同', '包容'],
+    category: '下经',
+    trigram_upper: '离☲（火）', trigram_lower: '兑☱（泽）',
+    emoji: '👀'
+  },
+  {
+    id: 39, symbol: '\u4DE6', name: '蹇', pinyin: 'jiǎn',
+    core: '🏔️ 跋山涉水——困难重重但别停',
+    comic_explanation: '蹇卦就是"行走艰难"。就像你要翻一座大山⛰️，前面还有一条大河🌊，走一步都很费劲。你现在可能正在经历这种"每一步都不容易"的阶段。但蹇卦告诉你一个好消息：虽然路难走，但只要你在往前走，就一定到得了目的地。遇到困难就停下来看看方向，调整一下姿势，然后继续走。慢一点没关系，别停。',
+    advice: '🥾 眼前的困难虽然多，但一个个来解决。别怕慢，怕的是站在原地不动。走一步就离目标近一步。',
+    tags: ['艰难', '坚持', '跋涉'],
+    category: '下经',
+    trigram_upper: '坎☵（水）', trigram_lower: '艮☶（山）',
+    emoji: '🏔️'
+  },
+  {
+    id: 40, symbol: '\u4DE7', name: '解', pinyin: 'jiě',
+    core: '🔓 云开雾散——困局终于解开了',
+    comic_explanation: '解卦就是"解除、化解"。就像一场大雨过后🌧️，天空放晴，出现彩虹🌈——之前的闷热和压抑一下子全没了！你之前遇到的麻烦事、卡住的地方，终于找到了突破口。解卦告诉你：问题总有解决的办法，关键是找到那个"关键点"。就像解开一团乱麻，找到了线头，一切都迎刃而解。',
+    advice: '🔑 如果你正在被一个难题困扰，换个角度想想。有时候答案不在问题本身，而在你看问题的视角上。',
+    tags: ['解脱', '化解', '释放'],
+    category: '下经',
+    trigram_upper: '震☳（雷）', trigram_lower: '坎☵（水）',
+    emoji: '🔓'
+  },
+  {
+    id: 41, symbol: '\u4DE8', name: '损', pinyin: 'sǔn',
+    core: '✂️ 有舍才有得——减法的智慧',
+    comic_explanation: '损卦就是"减少、损失"。听起来不太好，但你想想——衣柜里那些一年都没穿的衣服🧥，是不是该扔了？手机里那些不用的APP📱，是不是该删了？损卦讲的就是"断舍离"的智慧。有时候我们拥有的太多了，反而成了负担。减少不必要的社交、放弃不切实际的幻想、戒掉坏习惯……表面上是"损"，实际上是"得"。',
+    advice: '🗑️ 今天做一次"精简"——清理手机、整理房间、或者退出那些从不看的群聊。少了反而轻松了。',
+    tags: ['减损', '精简', '舍得'],
+    category: '下经',
+    trigram_upper: '艮☶（山）', trigram_lower: '兑☱（泽）',
+    emoji: '✂️'
+  },
+  {
+    id: 42, symbol: '\u4DE9', name: '益', pinyin: 'yì',
+    core: '📈 雪中送炭——好事正在向你走来',
+    comic_explanation: '益卦就是"增益、好处"。就像你正在爬坡🚵，突然有人从后面推了你一把，一下子轻松了好多！益卦说的是好事、贵人、机会正在向你靠近。可能是老板给你的一个新机会、朋友伸出的援手、或者一个突然的灵感💡。但益卦也提醒你：得到帮助之后，别忘了也去帮助别人。善的循环就是这样开始的。',
+    advice: '🎁 接受别人的帮助不是软弱。大方地说"谢谢"，并且记住这份善意。以后有机会也要传递出去。',
+    tags: ['增益', '互助', '成长'],
+    category: '下经',
+    trigram_upper: '巽☴（风）', trigram_lower: '震☳（雷）',
+    emoji: '📈'
+  },
+  {
+    id: 43, symbol: '\u4DEA', name: '夬', pinyin: 'guài',
+    core: '⚡ 当机立断——该断不断，反受其乱',
+    comic_explanation: '夬卦就是"决断、果断"。就像你站在悬崖边上，身后有一群狼🐺在追你——你必须跳过去！没时间犹豫了！生活中有些关键时刻，犹豫比做错选择更致命。夬卦告诉你：该做决定的时候，就大胆地做。拖拖拉拉、犹犹豫豫，只会让情况更糟。相信你的直觉，斩钉截铁地往前走。',
+    advice: '✂️ 有一件你拖了很久的事，今天就做个了断。不管结果如何，做了决定就比悬而未决好一百倍。',
+    tags: ['决断', '果断', '行动'],
+    category: '下经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '乾☰（天）',
+    emoji: '⚡'
+  },
+  {
+    id: 44, symbol: '\u4DEB', name: '姤', pinyin: 'gòu',
+    core: '💨 不期而遇——意料之外的相遇',
+    comic_explanation: '姤卦就是"相遇、邂逅"。就像你在街角转弯🚶，一不小心撞到了某个人——抬头一看，哇！这不是……姤卦讲的是那些意外的相遇。可能是一个新朋友、一个新机会、或者一段新的感情💕。这些"意外"看似偶然，其实都是你生命中的必然。姤卦提醒你：对外面的世界保持开放，你永远不知道下一个转角会遇到什么惊喜。',
+    advice: '🚪 多出去走走，参加一些新活动。下一个改变你人生的机会，可能就在一次"偶然"的相遇中。',
+    tags: ['相遇', '邂逅', '机会'],
+    category: '下经',
+    trigram_upper: '乾☰（天）', trigram_lower: '巽☴（风）',
+    emoji: '💨'
+  },
+  {
+    id: 45, symbol: '\u4DEC', name: '萃', pinyin: 'cuì',
+    core: '👥 群英荟萃——好风凭借力',
+    comic_explanation: '萃卦就是"聚集、荟萃"。就像百川归海🌊，所有的河流都汇聚到一起，形成了浩瀚的海洋。生活中最美好的事情之一，就是和一群优秀的人在一起。萃卦鼓励你多参与集体活动，加入好的团队，因为你身边的人决定了你的层次。一个人走得快，一群人走得远。找到你的"群"，一起往前走。',
+    advice: '🤗 别总是一个人待着。加入一个社群、参加一次聚会、或者组织一次团建。好的圈子能给你无尽的力量。',
+    tags: ['聚集', '团队', '荟萃'],
+    category: '下经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '坤☷（地）',
+    emoji: '👥'
+  },
+  {
+    id: 46, symbol: '\u4DED', name: '升', pinyin: 'shēng',
+    core: '🚀 步步高升——芝麻开花节节高',
+    comic_explanation: '升卦就是"上升、提升"。就像竹笋🌱一天一个样，蹭蹭地往上长。你的职业生涯、学习进度、或者某个项目，正在稳步上升中。升卦告诉你：只要方向对了，往上走是自然而然的事。就像往杯子里倒水💧，水位自然会升高。别急，保持你的节奏，好事会一件接一件地到来。升卦是吉卦，说明你正走在正确的路上。',
+    advice: '📈 继续你现在的节奏，别松懈。但也别忘了打好基础——根基越深，才能长得越高。',
+    tags: ['上升', '进步', '发展'],
+    category: '下经',
+    trigram_upper: '坤☷（地）', trigram_lower: '巽☴（风）',
+    emoji: '🚀'
+  },
+  {
+    id: 47, symbol: '\u4DEE', name: '困', pinyin: 'kùn',
+    core: '😰 山穷水尽——绝境中也有出路',
+    comic_explanation: '困卦就是"困窘、走投无路"。就像你被困在一口枯井里🕳️，四周都是光溜溜的墙壁，怎么爬都爬不上去。这种感觉太糟糕了——钱不够花、工作不顺、感情受挫……但困卦有一个非常重要的提醒：即使在最绝望的时候，也不要放弃希望。井虽然枯了，但井底可能还有一眼泉⛲。绝境中的你，其实比你自己想象中更有办法。',
+    advice: '💡 如果现在真的很困难，那就接受"现在就是很难"这个事实。然后问自己：哪怕只有1%的可能，我能做什么？',
+    tags: ['困境', '忍耐', '希望'],
+    category: '下经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '坎☵（水）',
+    emoji: '😰'
+  },
+  {
+    id: 48, symbol: '\u4DEF', name: '井', pinyin: 'jǐng',
+    core: '⛲ 井水不枯——你的内在资源取之不尽',
+    comic_explanation: '井卦讲的是"资源、源泉"。就像一口老井⛲，不管外面多旱，井里的水永远清甜可口。每个人内心都有一口"井"——你的才华、你的善良、你的韧性。外在环境可能会变，但你内在的核心价值是稳定的。井卦也提醒你：井需要定期淘洗，人也需要不断学习和反省。别让你的"井"荒废了。',
+    advice: '💎 相信你内在的价值。不管你现在的处境如何，你的核心能力是谁也夺不走的。多投资自己。',
+    tags: ['资源', '内在', '稳定'],
+    category: '下经',
+    trigram_upper: '坎☵（水）', trigram_lower: '巽☴（风）',
+    emoji: '⛲'
+  },
+  {
+    id: 49, symbol: '\u4DF0', name: '革', pinyin: 'gé',
+    core: '🦋 脱胎换骨——改变才能重生',
+    comic_explanation: '革卦就是"革命、变革"。就像毛毛虫🐛变成蝴蝶🦋，不经历破茧的痛苦，怎么能展翅高飞？革卦告诉你：当旧的方式已经行不通的时候，别死守着不放，大胆改变！换工作、换城市、换心态——任何有意义的改变都需要勇气。革卦是"破旧立新"的卦，它鼓励你打破陈规，创造新的可能。',
+    advice: '🦋 如果现在的生活让你觉得"这样下去不行了"，那就是改变的信号。勇敢迈出第一步，破茧才能成蝶。',
+    tags: ['变革', '革新', '突破'],
+    category: '下经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '离☲（火）',
+    emoji: '🦋'
+  },
+  {
+    id: 50, symbol: '\u4DF1', name: '鼎', pinyin: 'dǐng',
+    core: '🏺 革故鼎新——创造属于你的成就',
+    comic_explanation: '鼎卦讲的是"建立、创造"。在古代，鼎是做饭的锅🍲，也是权力的象征。革卦把旧的打破了，鼎卦就来建新的。就像你拆掉了一间旧房子🏚️，现在要建一栋新别墅🏡。鼎卦鼓励你：在变革之后，要大胆地建立新秩序。不管是创业、写书、还是打造一个新团队——你有能力创造真正有价值的东西。',
+    advice: '🏗️ 变革之后别闲下来。现在正是大展身手、建立新格局的好时机。把你想做的那个"大项目"启动了。',
+    tags: ['创立', '建设', '成就'],
+    category: '下经',
+    trigram_upper: '离☲（火）', trigram_lower: '巽☴（风）',
+    emoji: '🏺'
+  },
+  {
+    id: 51, symbol: '\u4DF2', name: '震', pinyin: 'zhèn',
+    core: '💥 惊天动地——突如其来的变化',
+    comic_explanation: '震卦就是"震惊、震动"。就像晴天霹雳⚡，轰隆一声，把所有人都吓一跳。你可能刚刚经历了一件让你措手不及的事——突然的变动、意外的消息、或者一记当头棒喝。震卦告诉你：震惊之后别慌！雷声再大也就响那一会儿。深吸一口气，冷静下来，看看发生了什么。震动虽然可怕，但也能把你从麻木中惊醒，让你重新看清楚什么才是重要的。',
+    advice: '🧘 不管发生了什么让你震惊的事，先做三次深呼吸。冷静下来之后，你才知道该怎么应对。',
+    tags: ['震动', '惊醒', '应变'],
+    category: '下经',
+    trigram_upper: '震☳（雷）', trigram_lower: '震☳（雷）',
+    emoji: '💥'
+  },
+  {
+    id: 52, symbol: '\u4DF3', name: '艮', pinyin: 'gèn',
+    core: '🧘 止于至善——知道什么时候该停下来',
+    comic_explanation: '艮卦就是"停止、静止"。两座山⛰️⛰️摞在一起，意思是"该停了，别再往前走了"。这可能是整部易经里最难做到的智慧——知道什么时候该停下来。我们总是被教育要"努力、奋斗、坚持"，但很少有人告诉我们：有些时候，停下来才是最好的选择。艮卦教你：在合适的时候喊停，是一种高级的智慧。',
+    advice: '🛑 如果你感觉自己一直在奔跑但很疲惫，今天就停下来休息一下。不要有负罪感——停是为了更好地出发。',
+    tags: ['停止', '静定', '内省'],
+    category: '下经',
+    trigram_upper: '艮☶（山）', trigram_lower: '艮☶（山）',
+    emoji: '🧘'
+  },
+  {
+    id: 53, symbol: '\u4DF4', name: '渐', pinyin: 'jiàn',
+    core: '🐢 循序渐进——慢就是稳，稳就是快',
+    comic_explanation: '渐卦就是"渐进、慢慢来"。就像大雁南飞🦆，飞一段休息一段，不急不慢地到达目的地。你想要的改变不是一夜之间发生的——减重十斤要几个月，学会一门技能要几年，建立一个事业要更久。渐卦告诉你：别着急！只要你每天在正确的方向上前进，哪怕步子小一点，最终也会到达。龟兔赛跑🐢🐰，赢的是乌龟。',
+    advice: '🐢 别跟别人比速度，只跟自己比进步。今天比昨天好一点点，就值得给自己点赞。',
+    tags: ['渐进', '缓慢', '稳定'],
+    category: '下经',
+    trigram_upper: '巽☴（风）', trigram_lower: '艮☶（山）',
+    emoji: '🐢'
+  },
+  {
+    id: 54, symbol: '\u4DF5', name: '归妹', pinyin: 'guī mèi',
+    core: '💒 嫁娶之喜——人生新阶段的开始',
+    comic_explanation: '归妹卦原意是"少女出嫁"，但放到今天，它代表的是"人生的重大转折"——结婚、同居、或者任何一段重要的结合🌸。就像两个人决定一起过日子，有甜蜜也有需要磨合的地方。归妹卦提醒你：任何重要的结合都要真心实意，不能勉强。不管是进入一段婚姻还是开启一段合作，想想你是真的准备好了，还是被"推着走的"。',
+    advice: '💍 如果你正面临一个重要的"结合"决定（结婚、合伙、签约），确保这是你内心真正想要的，而不是为了迎合别人。',
+    tags: ['结合', '婚嫁', '转折'],
+    category: '下经',
+    trigram_upper: '震☳（雷）', trigram_lower: '兑☱（泽）',
+    emoji: '💒'
+  },
+  {
+    id: 55, symbol: '\u4DF6', name: '丰', pinyin: 'fēng',
+    core: '🌻 如日中天——鼎盛时期要居安思危',
+    comic_explanation: '丰卦就是"丰盛、盛大"。就像夏天的正午☀️，阳光最强烈的时候，万物生长得最茂盛。你现在可能正处于人生的高光时刻——事业有成、家庭和睦、心情大好！但丰卦给了你一个重要的提醒：太阳到了正午就要开始偏西了。在最好的时候，别得意忘形。趁现在资源多、能量足，多为以后做打算。盛极必衰是自然规律，但你可以做好准备。',
+    advice: '🌾 珍惜现在的好时光，但也要未雨绸缪。在丰收的时候留一些"余粮"，未来才不会慌张。',
+    tags: ['丰盛', '鼎盛', '警戒'],
+    category: '下经',
+    trigram_upper: '震☳（雷）', trigram_lower: '离☲（火）',
+    emoji: '🌻'
+  },
+  {
+    id: 56, symbol: '\u4DF7', name: '旅', pinyin: 'lǚ',
+    core: '🧳 人在旅途——漂泊中的成长',
+    comic_explanation: '旅卦就是"旅行、客居他乡"。就像你背着背包🎒来到一个陌生的城市，举目无亲，一切从头开始。旅卦代表的是那些"不在家"的时刻——出差、旅行、搬家、或者刚到一个新环境。旅卦告诉你：在外漂泊别灰心，旅途中虽然辛苦，但也能看到不一样的风景🌄。保持谦逊、友好、谨慎，你会在陌生的地方也找到属于自己的位置。',
+    advice: '🧭 如果你感觉自己像"外地人"，别怕。保持开放和友善，主动认识新朋友，慢慢就会找到归属感。',
+    tags: ['旅行', '漂泊', '适应'],
+    category: '下经',
+    trigram_upper: '离☲（火）', trigram_lower: '艮☶（山）',
+    emoji: '🧳'
+  },
+  {
+    id: 57, symbol: '\u4DF8', name: '巽', pinyin: 'xùn',
+    core: '🌬️ 随风潜入夜——以柔克刚的渗透力',
+    comic_explanation: '巽卦就是"风、顺服"。风🌬️看起来是最温柔的东西，但它能吹倒大树、能磨平岩石、能渗透到每一个缝隙里。巽卦教你的就是这种"以柔克刚"的智慧。别总是硬碰硬，试着像风一样——温柔地坚持、灵活地渗透。想要说服一个人？别拍桌子，像春风一样轻轻吹拂。想要改变一件事？别强推，从细微处慢慢入手。',
+    advice: '🍃 遇到阻力时别硬闯。试着用更温和的方式去影响别人。柔能克刚，风能穿石。',
+    tags: ['柔顺', '渗透', '灵活'],
+    category: '下经',
+    trigram_upper: '巽☴（风）', trigram_lower: '巽☴（风）',
+    emoji: '🌬️'
+  },
+  {
+    id: 58, symbol: '\u4DF9', name: '兑', pinyin: 'duì',
+    core: '😊 笑口常开——快乐是最好的能量',
+    comic_explanation: '兑卦就是"喜悦、开口笑"。两个泽💧💧连在一起，互相滋润，开开心心的。兑卦是易经里最能让人开心的卦——它告诉你：快乐不是奢侈品，而是必需品！你笑起来的时候😄，整个世界都会跟着明亮起来。兑卦也提醒你：真正的快乐来自内心，不是来自外在的物质。和朋友聊聊天、做点喜欢的事、帮助一下别人——这些简单的快乐，才是最珍贵的。',
+    advice: '😊 今天多笑笑。不管遇到什么事，保持好心情。爱笑的人运气不会太差，这是真的！',
+    tags: ['喜悦', '沟通', '快乐'],
+    category: '下经',
+    trigram_upper: '兑☱（泽）', trigram_lower: '兑☱（泽）',
+    emoji: '😊'
+  },
+  {
+    id: 59, symbol: '\u4DFA', name: '涣', pinyin: 'huàn',
+    core: '🌊 冰消雪融——心结解开了',
+    comic_explanation: '涣卦就是"涣散、消散"。就像冬天的冰块🧊被春风吹化，变成了流动的河水🌊。你心里可能有一些积压了很久的情绪——委屈、愤怒、恐惧——现在终于开始化解了。涣卦是个好兆头，说明那些让你不舒服的事正在慢慢消散。就像乌云散开☁️☀️，阳光重新照进来。别担心，一切都会好起来的。',
+    advice: '💧 如果心里有什么一直放不下的事，试着和信任的人聊聊。说出来，心结就解开了一半。',
+    tags: ['消散', '释放', '和解'],
+    category: '下经',
+    trigram_upper: '巽☴（风）', trigram_lower: '坎☵（水）',
+    emoji: '🌊'
+  },
+  {
+    id: 60, symbol: '\u4DFB', name: '节', pinyin: 'jié',
+    core: '📏 行止有度——自律才能自由',
+    comic_explanation: '节卦就是"节制、节奏"。就像竹子🎋，一节一节的，每一节都长得刚刚好，既不太长也不太短。生活也是一样——吃七分饱、睡八小时、工作劳逸结合，这就是"节"的智慧。节卦提醒你：没有节制，再好的东西也会变成负担。刷手机停不下来📱、花钱大手大脚💸、工作狂到凌晨……这些都是"无节"的表现。学会给自己设限，才是真正的自由。',
+    advice: '📋 找出一个你觉得"过度"的习惯（熬夜、吃糖、刷手机），给自己定一个合理的限度。自律一周看看效果。',
+    tags: ['节制', '自律', '适度'],
+    category: '下经',
+    trigram_upper: '坎☵（水）', trigram_lower: '兑☱（泽）',
+    emoji: '📏'
+  },
+  {
+    id: 61, symbol: '\u4DFC', name: '中孚', pinyin: 'zhōng fú',
+    core: '🕊️ 真心诚意——用真诚打动世界',
+    comic_explanation: '中孚卦就是"内心的诚信"。就像一只白鸽🕊️，纯洁无瑕，代表真诚和信任。你相信吗？其实大多数人都能感觉到你是不是真心的。中孚卦告诉你：无论做什么，发自内心最有用。真诚地道歉、真诚地赞美、真诚地做事——你不需要花言巧语，真心就是最好的"话术"。中孚卦也像两颗心💕互相感应，当你真诚待人时，别人也会真诚待你。',
+    advice: '💝 今天对身边的人说一句真心话。不用花哨，真诚就好。你会发现，真诚的力量比你想象的大。',
+    tags: ['真诚', '诚信', '信任'],
+    category: '下经',
+    trigram_upper: '巽☴（风）', trigram_lower: '兑☱（泽）',
+    emoji: '🕊️'
+  },
+  {
+    id: 62, symbol: '\u4DFD', name: '小过', pinyin: 'xiǎo guò',
+    core: '🐦 小事谨慎——细节决定成败',
+    comic_explanation: '小过就是"小的过头"。就像小鸟🐦飞得太高了，虽然也能飞，但不是它的舒适区。小过卦告诉你：在小事上要特别留意，因为大问题往往出在小细节上。你可能觉得"差不多就行了"，但偏偏就是那个"差不多"害了你。不过别紧张——小过只是提醒，不是警告。只要你在小事上多用点心，就不会出大问题。',
+    advice: '🔍 今天做事多留个心眼。写邮件多检查一遍、出门前多看一眼有没有带钥匙。小细节能省大麻烦。',
+    tags: ['谨慎', '细节', '适度'],
+    category: '下经',
+    trigram_upper: '震☳（雷）', trigram_lower: '艮☶（山）',
+    emoji: '🐦'
+  },
+  {
+    id: 63, symbol: '\u4DFE', name: '既济', pinyin: 'jì jì',
+    core: '✅ 完美收官——但别忘记居安思危',
+    comic_explanation: '既济就是"已经成功了"。就像你终于跑完了一场马拉松🏁，冲过终点线的那一刻，又累又爽！事情做成了、目标达到了、梦想实现了——既济卦是"完满"的象征。但有意思的是，易经把既济放在第63位（不是最后一位），为什么？因为"完满"之后如果不小心，就会开始走下坡路。既济卦教你：成功了当然要庆祝🎉，但别忘了庆祝完之后，新的挑战已经在路上了。',
+    advice: '🏆 恭喜你！你做到了。好好庆祝一下你的成就。但休息好了之后，别忘了开始计划下一步。',
+    tags: ['完成', '成功', '警戒'],
+    category: '下经',
+    trigram_upper: '坎☵（水）', trigram_lower: '离☲（火）',
+    emoji: '✅'
+  },
+  {
+    id: 64, symbol: '\u4DFF', name: '未济', pinyin: 'wèi jì',
+    core: '🔮 未完待续——结束就是新的开始',
+    comic_explanation: '未济就是"还没完成"。易经64卦，以"未济"结尾，真的太妙了！它告诉你：人生永远没有"终点"。一件事做完了，下一件事马上就会开始。就像你看完了一部超棒的剧📺，结局了有点失落，但别担心——新的剧已经在等你看了！未济卦是希望之卦，它告诉你：只要故事还没结束，一切皆有可能。你的潜力是无穷的，继续向前走吧🚶‍♂️！',
+    advice: '🌅 一件事做完了就让它过去吧。别沉浸在"完成"的满足感里太久，精彩的故事永远在下一次冒险中。',
+    tags: ['未竟', '希望', '循环'],
+    category: '下经',
+    trigram_upper: '离☲（火）', trigram_lower: '坎☵（水）',
+    emoji: '🔮'
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// 渲染引擎
+// ═══════════════════════════════════════════════════════════════
+
+let currentFilter = 'all';
+let currentSearch = '';
+let openDetailId = null;
+
+function getFilteredData() {
+  return HEXAGRAMS.filter(h => {
+    // 分类过滤
+    if (currentFilter !== 'all' && h.category !== currentFilter) return false;
+    // 搜索过滤
+    if (currentSearch) {
+      const kw = currentSearch.toLowerCase();
+      const matchName = h.name.includes(currentSearch);
+      const matchPinyin = h.pinyin.toLowerCase().includes(kw);
+      const matchCore = h.core.includes(currentSearch);
+      const matchTags = h.tags.some(t => t.includes(currentSearch));
+      const matchExpl = h.comic_explanation.includes(currentSearch);
+      const matchAdvice = h.advice.includes(currentSearch);
+      if (!matchName && !matchPinyin && !matchCore && !matchTags && !matchExpl && !matchAdvice) return false;
+    }
+    return true;
+  });
+}
+
+function render() {
+  const grid = document.getElementById('hexGrid');
+  const filtered = getFilteredData();
+  const countEl = document.getElementById('resultCount');
+  countEl.textContent = `${filtered.length} / ${HEXAGRAMS.length}`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">😅 没找到匹配的卦……换个关键词试试？</div>';
+    return;
+  }
+
+  let html = '';
+  for (const h of filtered) {
+    // 卡片
+    const isOpen = openDetailId === h.id;
+    html += `
+      <div class="hex-card ${isOpen ? 'active' : ''}" data-id="${h.id}" onclick="toggleDetail(${h.id})">
+        <span class="symbol">${h.symbol}</span>
+        <div class="name">${h.name}</div>
+        <span class="id-badge">#${h.id}</span>
+        <span class="cat-badge">${h.category === '上经' ? '☰' : '☷'} ${h.category}</span>
+        <div class="tags-mini">${h.tags.map(t => `<span>${t}</span>`).join('')}</div>
+        <div class="click-hint">▼ 点击展开</div>
+      </div>
+    `;
+
+    // 详情面板
+    if (isOpen) {
+      html += renderDetail(h);
+    }
+  }
+
+  grid.innerHTML = html;
+}
+
+function renderDetail(h) {
+  return `
+    <div class="detail-panel open" id="detail-${h.id}">
+      <button class="detail-close" onclick="event.stopPropagation(); toggleDetail(${h.id})" title="收起">✕</button>
+
+      <div class="detail-header">
+        <div class="symbol-big">${h.symbol}</div>
+        <div class="name-box">
+          <h2>${h.name} <span class="pinyin">${h.pinyin}</span></h2>
+          <div class="trigram-info">
+            <span>上 ${h.trigram_upper}</span> · <span>下 ${h.trigram_lower}</span>
+            · ${h.category}
+          </div>
+        </div>
+      </div>
+
+      <div class="comic-section">
+        <div class="comic-panel" data-label="📖 大白话解说">
+          <div class="core-line">${h.core}</div>
+          <div class="comic-explanation">
+            ${h.comic_explanation.split('\n').filter(l => l.trim()).map(p => `<p>${p.trim()}</p>`).join('')}
+          </div>
+          <div class="advice-box">
+            <div class="advice-label">💡 给你的建议</div>
+            <div class="advice-text">${h.advice}</div>
+          </div>
+          <div class="tags-list">
+            ${h.tags.map(t => `<span>🏷️ ${t}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="comic-illustration">
+          <div class="big-emoji">${h.emoji || '📜'}</div>
+          <div class="speech-bubble">
+            ${getSpeechBubble(h)}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function getSpeechBubble(h) {
+  const bubbles = {
+    1: '我就是天选之子！🐉',
+    2: '来，我托着你～ 🌍',
+    3: '破土好难，但我不放弃！🌱',
+    4: '不懂就问，谁还不是个宝宝🧒',
+    5: '别急，好饭不怕晚～ ⏳',
+    6: '赢了道理，输了感情…算了🤷',
+    7: '大家一起来！🤝',
+    8: '咱们是自己人！❤️',
+    9: '每天攒一点点～ 🐿️',
+    10: '一步一步，稳稳的走👣',
+    11: '今天天气真好啊～ ☀️',
+    12: '冬天来了，春天还会远吗❄️',
+    13: '找到懂你的人，一起发光🔥',
+    14: '丰收啦！一起分享吧🎉',
+    15: '越厉害的人越低调🙇',
+    16: '开心就对了！🎶',
+    17: '跟着感觉走～ 🚶',
+    18: '烂摊子也能变好！💪',
+    19: '机会来了，上！👁️',
+    20: '先看清楚再说👀',
+    21: '咬碎它！嚼烂它！💪',
+    22: '内外兼修才是真✨',
+    23: '旧的不去新的不来🍃',
+    24: '一切都会好起来的🌸',
+    25: '别想太多，做就对了🎯',
+    26: '我在偷偷变强🤫',
+    27: '吃好睡好，身体第一😴',
+    28: '过犹不及，收一收🏋️',
+    29: '坑坑洼洼我也能过🌊',
+    30: '做自己的小太阳☀️',
+    31: '怦然心动～ 💕',
+    32: '坚持就是胜利！🌲',
+    33: '撤一步，海阔天空🏃',
+    34: '我很强，但我很温柔🐏',
+    35: '前途光明，冲吧！☀️',
+    36: '天黑请闭眼，我在蓄力🌙',
+    37: '家是最暖的港湾🏠',
+    38: '不一样？那又怎样👀',
+    39: '路再难，也要走下去⛰️',
+    40: '终于解开了！爽！🔓',
+    41: '舍掉不要的，才有位置给好的✂️',
+    42: '有人在帮你呢！🎁',
+    43: '该断就断！⚡',
+    44: '转角遇到爱💨',
+    45: '和优秀的人在一起👥',
+    46: '一步一个台阶往上走📈',
+    47: '绝境中也有希望💡',
+    48: '我内在的能量取之不尽⛲',
+    49: '改变，是为了重生🦋',
+    50: '创造属于你的传奇🏺',
+    51: '别慌！雷声大雨点小💥',
+    52: '停下来，想一想🧘',
+    53: '慢一点也没关系🐢',
+    54: '开启人生新篇章💒',
+    55: '好日子要懂珍惜🌻',
+    56: '流浪的路上也有风景🧳',
+    57: '像风一样温柔却有力量🌬️',
+    58: '笑一个，好运自然来😊',
+    59: '心结解开了，轻松了🌊',
+    60: '自律才是真自由📏',
+    61: '真心是必杀技🕊️',
+    62: '细节别马虎🐦',
+    63: '我成功了！但……继续走🏆',
+    64: '故事还没结束呢～ 🔮'
+  };
+  return bubbles[h.id] || '嗯…你懂的～ 😊';
+}
+
+function toggleDetail(id) {
+  if (openDetailId === id) {
+    openDetailId = null;
+  } else {
+    openDetailId = id;
+  }
+  // 滚动到该卡片
+  render();
+  if (openDetailId) {
+    setTimeout(() => {
+      const el = document.querySelector(`.hex-card[data-id="${openDetailId}"]`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+
+// ────── 搜索与过滤 ──────
+function setupUI() {
+  // 过滤按钮
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentFilter = this.dataset.filter;
+      openDetailId = null;
+      render();
+    });
+  });
+
+  // 搜索
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', function() {
+    currentSearch = this.value.trim();
+    openDetailId = null;
+    render();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 启动
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  setupUI();
+  render();
+});
+</script>
+
+</body>
+</html>
