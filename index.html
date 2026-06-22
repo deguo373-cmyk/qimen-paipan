@@ -969,9 +969,7 @@ var QIMEN_TERMS = {
 function termHint(termName) {
   var desc = QIMEN_TERMS[termName];
   if (!desc) return '';
-  // Escape term name for safe use in onclick
-  var safeTerm = termName.replace(/'/g, "\\'");
-  return '<span class="term-hint" title="点击查看通俗解释" onclick="event.stopPropagation();showDetail(\''+safeTerm+'\', \'<p style=font-size:0.9rem;line-height:1.8>\'+QIMEN_TERMS[\''+safeTerm+'\']+\'</p>\');">?</span>';
+  return '<span class="term-hint" data-term="'+termName.replace(/"/g,'&quot;')+'">?</span>';
 }
 
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
@@ -1353,7 +1351,7 @@ function renderQimenAll(d){
   var zhishiHint = termHint('值使');
   var kongHint = termHint('旬空');
   document.getElementById('qmInfo').innerHTML =
-    '<div class="info-item"><span class="ilabel">节气</span><span class="ivalue">'+c.active_jie+'</span><span class="itag">'+c.dun_type+'</span>'+dunTypeHint+'</div>'+
+    '<div class="info-item"><span class="ilabel">节气</span><span class="ivalue">'+(c.active_jie||'——')+'</span><span class="itag">'+c.dun_type+'</span>'+termHint(c.dun_type)+'</div>'+
     '<div class="info-item"><span class="ilabel">局</span><span class="ivalue icinnabar">'+c.dun_type+c.ju_number+'局</span><span class="itag">'+c.yuan+'</span>'+yuanHint+juHint+'</div>'+
     '<div class="info-item"><span class="ilabel">旬首</span><span class="ivalue">'+c.xunshou+'</span>'+xunshouHint+'</div>'+
     '<div class="info-item"><span class="ilabel">值符</span><span class="ivalue">'+c.zhifu.star+' '+c.zhifu.palace+'宫</span>'+zhifuHint+termHint(c.zhifu.star)+'</div>'+
@@ -1769,6 +1767,17 @@ document.getElementById('zwUDClose').addEventListener('click', function() {
 });
 document.getElementById('zwUniversalDetail').addEventListener('click', function(e) {
   if (e.target === this) this.classList.remove('active');
+});
+
+// 术语 [?] 点击委托监听
+document.addEventListener('click', function(e) {
+  var target = e.target;
+  if (target.classList && target.classList.contains('term-hint')) {
+    var term = target.getAttribute('data-term');
+    if (term && QIMEN_TERMS[term]) {
+      showDetail(term, '<p style="font-size:0.9rem;line-height:1.9;color:var(--ink)">'+QIMEN_TERMS[term]+'</p>');
+    }
+  }
 });
 
 function renderZiWeiAll(result){
