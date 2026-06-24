@@ -1451,16 +1451,739 @@ function analyzeGeju(panData, yongshenResult) {
   };
 }
 
+// ═══════════════════════════════════════════════
+//  方向吉凶分析
+// ═══════════════════════════════════════════════
+
+/** 吉门列表 */
+var QM_DOOR_JI = ["开门","休门","生门"];
+/** 凶门列表 */
+var QM_DOOR_XIONG = ["死门","伤门","惊门"];
+/** 吉星列表 */
+var QM_STAR_JI = ["天心","天辅","天任","天禽"];
+/** 凶星列表 */
+var QM_STAR_XIONG = ["天蓬","天英","天芮","天柱"];
+/** 吉神列表 */
+var QM_GOD_JI = ["值符","太阴","六合","九天","九地"];
+/** 凶神列表 */
+var QM_GOD_XIONG = ["白虎","玄武","螣蛇"];
+/** 马星地支（申子辰马在寅，亥卯未马在巳，寅午戌马在申，巳酉丑马在亥）*/
+var QM_MA_STAR = {"申":"寅","子":"寅","辰":"寅","亥":"巳","卯":"巳","未":"巳","寅":"申","午":"申","戌":"申","巳":"亥","酉":"亥","丑":"亥"};
+
+/**
+ * 分析8个方位的吉凶
+ * @param {Object} chart - computeQimenChart 返回的 chart 对象
+ * @returns {Array<Object>} [{direction, palace, score, level, detail, items}]
+ */
+function analyzeDirection(chart) {
+  if (!chart || !chart.palaces) return [];
+  
+  var directions = [
+    {dir:"北", palaceNo:1},
+    {dir:"东北", palaceNo:8},
+    {dir:"东", palaceNo:3},
+    {dir:"东南", palaceNo:4},
+    {dir:"南", palaceNo:9},
+    {dir:"西南", palaceNo:2},
+    {dir:"西", palaceNo:7},
+    {dir:"西北", palaceNo:6}
+  ];
+  
+  var zhifuPalace = chart.zhifu ? chart.zhifu.palace : null;
+  var kongPalaces = chart.kongwang_palaces || [];
+  var timeZhi = chart.ganzhi ? chart.ganzhi.time ? chart.ganzhi.time[1] : "" : "";
+  
+  // 获取马星所在宫位
+  var maPalace = -1;
+  if (timeZhi && QM_MA_STAR[timeZhi]) {
+    maPalace = QM_BRANCH_TO_PALACE[QM_MA_STAR[timeZhi]] || -1;
+  }
+  
+  var results = [];
+  
+  for (var di = 0; di < directions.length; di++) {
+    var d = directions[di];
+    var palace = null;
+    for (var pi = 0; pi < chart.palaces.length; pi++) {
+      if (chart.palaces[pi].palace === d.palaceNo) {
+        palace = chart.palaces[pi];
+        break;
+      }
+    }
+    
+    if (!palace || palace.is_center) {
+      results.push({
+        direction: d.dir,
+        palace: d.palaceNo,
+        score: 0,
+        level: "平",
+        detail: "无数据",
+        items: []
+      });
+      continue;
+    }
+    
+    var score = 0;
+    var items = [];
+    
+    // 1. 门吉凶判断（权重最高）
+    if (palace.door) {
+      if (QM_DOOR_JI.indexOf(palace.door) !== -1) {
+        score += 3;
+        items.push({type:"good", text:palace.door + "（吉门）"});
+      } else if (QM_DOOR_XIONG.indexOf(palace.door) !== -1) {
+        score -= 2;
+        items.push({type:"bad", text:palace.door + "（凶门）"});
+      } else {
+        items.push({type:"neutral", text:palace.door + "（平门）"});
+      }
+      // 门受制检查
+      if (palace.element && QM_DOOR_WUXING && QM_DOOR_WUXING[palace.door]) {
+        var rel = qmWuxingRelation(palace.element, QM_DOOR_WUXING[palace.door]);
+        if (rel === "克我") {
+          score -= 1;
+          items.push({type:"bad", text:"门受宫克"});
+        } else if (rel === "我克") {
+          score += 1;
+          items.push({type:"good", text:"门克宫（得力）"});
+        }
+      }
+    }
+    
+    // 2. 神吉凶判断
+    if (palace.god) {
+      if (QM_GOD_JI.indexOf(palace.god) !== -1) {
+        score += 2;
+        items.push({type:"good", text:palace.god + "（吉神）"});
+      } else if (QM_GOD_XIONG.indexOf(palace.god) !== -1) {
+        score -= 2;
+        items.push({type:"bad", text:palace.god + "（凶神）"});
+      }
+    }
+    
+    // 3. 星吉凶判断
+    if (palace.star) {
+      if (QM_STAR_JI.indexOf(palace.star) !== -1) {
+        score += 1.5;
+        items.push({type:"good", text:palace.star + "（吉星）"});
+      } else if (QM_STAR_XIONG.indexOf(palace.star) !== -1) {
+        score -= 1;
+        items.push({type:"bad", text:palace.star + "（凶星）"});
+      }
+    }
+    
+    // 4. 三奇加分（乙丙丁在天盘）
+    if (palace.sky_stem && ["乙","丙","丁"].indexOf(palace.sky_stem) !== -1) {
+      score += 2;
+      items.push({type:"good", text:palace.sky_stem + "奇（三奇）"});
+    }
+    
+    // 5. 空亡减分
+    if (palace.is_kong || kongPalaces.indexOf(palace.palace) !== -1) {
+      score -= 1.5;
+      items.push({type:"bad", text:"逢空亡"});
+    }
+    
+    // 6. 值符所在宫加分（最强方向）
+    if (zhifuPalace === palace.palace) {
+      score += 3;
+      items.push({type:"good", text:"值符所在（主导）"});
+    }
+    
+    // 7. 马星（动象）
+    if (maPalace === palace.palace) {
+      score += 1.5;
+      items.push({type:"good", text:"马星动（变动有利）"});
+    }
+    
+    // 综合评级
+    var level = "平";
+    var detail = "";
+    if (score >= 5) {
+      level = "大吉";
+      detail = "此方位气场旺盛，诸事顺遂，优先选择。";
+    } else if (score >= 2) {
+      level = "吉";
+      detail = "此方位偏吉，可酌情使用。";
+    } else if (score >= -1) {
+      level = "平";
+      detail = "此方位中性，无功无过。";
+    } else if (score >= -3) {
+      level = "凶";
+      detail = "此方位有阻，宜谨慎回避。";
+    } else {
+      level = "大凶";
+      detail = "此方位气场恶劣，切莫使用。";
+    }
+    
+    results.push({
+      direction: d.dir,
+      palace: d.palaceNo,
+      score: score,
+      level: level,
+      detail: detail,
+      items: items
+    });
+  }
+  
+  // 按分数排序
+  results.sort(function(a, b) { return b.score - a.score; });
+  
+  return results;
+}
+
+// ═══════════════════════════════════════════════
+//  时辰吉凶分析
+// ═══════════════════════════════════════════════
+
+/** 时辰五行 */
+var QM_HOUR_WUXING = {
+  "子":"水","丑":"土","寅":"木","卯":"木","辰":"土","巳":"火",
+  "午":"火","未":"土","申":"金","酉":"金","戌":"土","亥":"水"
+};
+
+/** 适合做的事 by question type */
+var QM_TIME_SUITABLE = {
+  career: ["行动推进","拜访上级","谈判签约","提方案"],
+  money: ["交易下单","谈判价格","收款进账","投资决策"],
+  love: ["约会见面","表白沟通","送礼物","修复关系"],
+  exam: ["集中复习","模拟测试","报班咨询"],
+  health: ["休息调养","就医检查","冥想放松"],
+  travel: ["出发上路","订票规划","查看攻略"],
+  legal: ["提交材料","咨询律师","整理证据"]
+};
+
+/** 不适合做的事 by question type */
+var QM_TIME_UNSUITABLE = {
+  career: ["冲动决策","辞职跳槽","签署大合同"],
+  money: ["大额投资","冲动消费","借钱给人"],
+  love: ["争吵冷战","翻旧账","逼迫对方"],
+  exam: ["临时抱佛脚","熬夜","机械刷题"],
+  health: ["过度运动","暴饮暴食","熬夜"],
+  travel: ["急于赶路","深夜出行","取消行程"],
+  legal: ["直接对质","情绪决策","跳过咨询"]
+};
+
+var QM_TIME_DESC = {
+  career: { good: "适合行动推进，气场偏向开拓。", bad: "不宜做重要职场决策，宜观察等待。" },
+  money: { good: "财气较旺，适合交易和谈判。", bad: "财星受制，不宜大额财务动作。" },
+  love: { good: "感情气场柔和，适合沟通交流。", bad: "情绪容易波动，不宜谈敏感话题。" },
+  exam: { good: "文昌星得力，学习效率高。", bad: "脑力运转慢，不宜高强度学习。" },
+  health: { good: "气场偏稳，适合调养。", bad: "能量偏弱，注意休息。" },
+  travel: { good: "出行气场顺遂，适合动身。", bad: "途中可能有阻，宜另择时日。" },
+  legal: { good: "公事气场有利，适合推进。", bad: "官非信号强，宜暂缓。" }
+};
+
+/**
+ * 分析当前时辰的吉凶
+ * @param {Object} chart
+ * @param {string} questionType - 问事类型
+ * @returns {Object} { overall, suitable, unsuitable, analysis, fiveElement }
+ */
+function analyzeTimeLuck(chart, questionType) {
+  if (!chart) return { overall: "平", suitable: [], unsuitable: [], analysis: "缺少数据" };
+  
+  var qtype = questionType || "career";
+  var palaces = chart.palaces || [];
+  var timeGZ = chart.ganzhi ? chart.ganzhi.time : "";
+  var timeStem = timeGZ ? timeGZ[0] : "";
+  var timeZhi = timeGZ ? timeGZ[1] : "";
+  var dunType = chart.dun_type || "";
+  
+  // 判断时辰五行
+  var hourWx = QM_HOUR_WUXING[timeZhi] || "";
+  
+  // 计算时干落宫状态
+  var timeStemPalace = null;
+  for (var i = 0; i < palaces.length; i++) {
+    if (palaces[i].earth_stem === timeStem || palaces[i].sky_stem === timeStem) {
+      timeStemPalace = palaces[i];
+      break;
+    }
+  }
+  
+  // 评估分数
+  var score = 0;
+  var analysisParts = [];
+  
+  // 1. 遁类判断
+  if (dunType === "阳遁") {
+    score += 1;
+    analysisParts.push("阳遁·阳气上升，宜主动。");
+  } else {
+    analysisParts.push("阴遁·阴气上升，宜守成。");
+  }
+  
+  // 2. 时干落宫状态
+  if (timeStemPalace) {
+    if (timeStemPalace.door && QM_DOOR_JI.indexOf(timeStemPalace.door) !== -1) {
+      score += 2;
+      analysisParts.push("时干落" + timeStemPalace.name + "宫配" + timeStemPalace.door + "（吉门得力）。");
+    } else if (timeStemPalace.door && QM_DOOR_XIONG.indexOf(timeStemPalace.door) !== -1) {
+      score -= 1;
+      analysisParts.push("时干落" + timeStemPalace.name + "宫配" + timeStemPalace.door + "（凶门受制）。");
+    }
+    if (timeStemPalace.is_kong) {
+      score -= 1;
+      analysisParts.push("时干落空亡宫，事易虚。");
+    }
+    if (timeStemPalace.god === "白虎" || timeStemPalace.god === "玄武") {
+      score -= 1;
+      analysisParts.push("时干临" + timeStemPalace.god + "（有干扰）。");
+    }
+    if (timeStemPalace.sky_stem && ["乙","丙","丁"].indexOf(timeStemPalace.sky_stem) !== -1) {
+      score += 1.5;
+      analysisParts.push("时干临三奇（" + timeStemPalace.sky_stem + "），有转机。");
+    }
+  } else {
+    analysisParts.push("时干" + (timeStem || "?") + "落宫未定位。");
+  }
+  
+  // 3. 吉门/凶门整体统计
+  var goodDoorCount = 0, badDoorCount = 0;
+  for (var i = 0; i < palaces.length; i++) {
+    if (palaces[i].is_center) continue;
+    if (palaces[i].door) {
+      if (QM_DOOR_JI.indexOf(palaces[i].door) !== -1) goodDoorCount++;
+      if (QM_DOOR_XIONG.indexOf(palaces[i].door) !== -1) badDoorCount++;
+    }
+  }
+  if (goodDoorCount > badDoorCount) {
+    score += 1;
+    analysisParts.push("盘中吉门偏多，整体气场积极。");
+  } else if (badDoorCount > goodDoorCount) {
+    score -= 1;
+    analysisParts.push("盘中凶门偏多，气场有压力。");
+  }
+  
+  // 综合评级
+  var overall = "平";
+  if (score >= 3) overall = "吉";
+  else if (score >= 5) overall = "大吉";
+  else if (score <= -1) overall = "凶";
+  else if (score <= -3) overall = "大凶";
+  
+  // 适合/不适合做的事
+  var suitable = QM_TIME_SUITABLE[qtype] || QM_TIME_SUITABLE.career;
+  var unsuitable = QM_TIME_UNSUITABLE[qtype] || QM_TIME_UNSUITABLE.career;
+  
+  // 根据评分调整建议
+  if (overall === "大凶" || overall === "凶") {
+    suitable = ["不宜行动，宜等待观察"];
+  } else if (overall === "大吉") {
+    unsuitable = []; // 大吉时无忌
+  }
+  
+  // 综合描述
+  var timeDesc = QM_TIME_DESC[qtype] || QM_TIME_DESC.career;
+  var finalAnalysis = (overall === "吉" || overall === "大吉" ? timeDesc.good : timeDesc.bad) + " ";
+  finalAnalysis += analysisParts.join("");
+  
+  return {
+    overall: overall,
+    suitable: suitable,
+    unsuitable: unsuitable,
+    analysis: finalAnalysis,
+    fiveElement: hourWx,
+    timeGZ: timeGZ,
+    score: score
+  };
+}
+
+// ═══════════════════════════════════════════════
+//  化解与调理方案
+// ═══════════════════════════════════════════════
+
+/** 各事类的化解调理方案 */
+var QM_REMEDIES_DATA = {
+  career: {
+    title: "事业工作",
+    directionalTips: {
+      good: ["东方（震宫）","西北方（乾宫）"],
+      avoid: ["西南方（坤宫）"]
+    },
+    timing: "选择吉门所在的时辰行动，避开白虎/玄武临宫的时辰。",
+    actions: [
+      { type:"do", text:"主动向上级汇报工作，展示成果" },
+      { type:"do", text:"拜访重要合作伙伴，促进项目落地" },
+      { type:"do", text:"整理工作计划和方案，为下一步做准备" },
+      { type:"dont", text:"避免与同事发生正面冲突" },
+      { type:"dont", text:"不宜在凶门方位办公或谈判" },
+      { type:"dont", text:"不要冲动跳槽或递交辞职信" }
+    ],
+    placement: "在办公桌的吉位（开门方位）放置绿色植物或水晶，增强气场。",
+    color: "宜穿白色、金色、蓝色系衣服，忌穿红色。",
+    psychology: "保持积极主动的心态，但不要急于求成。好的机会需要时间和耐心。"
+  },
+  money: {
+    title: "财运求财",
+    directionalTips: {
+      good: ["正西（兑宫）","西北（乾宫）"],
+      avoid: ["正北（坎宫）"]
+    },
+    timing: "生门、开门旺相的时辰最利求财交易。",
+    actions: [
+      { type:"do", text:"适宜进行投资决策和交易谈判" },
+      { type:"do", text:"追收欠款或确认应收款项" },
+      { type:"do", text:"开拓新客户或渠道" },
+      { type:"dont", text:"避免冲动消费和大额借贷" },
+      { type:"dont", text:"不宜参与高风险投机" },
+      { type:"dont", text:"不要借钱给不太熟的人" }
+    ],
+    placement: "在家中或办公室的财位（生门方位）摆放黄水晶或聚宝盆。",
+    color: "宜穿黄色、金色系，忌穿黑色。",
+    psychology: "财运需要把握时机，但也要有长远规划。不要因为一时的得失影响判断。"
+  },
+  love: {
+    title: "感情姻缘",
+    directionalTips: {
+      good: ["东南（巽宫）","正南（离宫）"],
+      avoid: ["正北（坎宫）"]
+    },
+    timing: "六合、太阴所在的时辰适合约会和沟通。",
+    actions: [
+      { type:"do", text:"主动约对方出门交流" },
+      { type:"do", text:"准备小惊喜或礼物增进感情" },
+      { type:"do", text:"坦诚沟通彼此的想法和需求" },
+      { type:"dont", text:"避免翻旧账或指责对方" },
+      { type:"dont", text:"不宜在冲动时做重大感情决定" },
+      { type:"dont", text:"不要冷战，有矛盾及时沟通" }
+    ],
+    placement: "在家中东南方（巽宫/桃花位）摆放粉色水晶或鲜花。",
+    color: "宜穿粉色、红色、浅色系，忌穿黑色。",
+    psychology: "感情需要经营，不是计较得失。多站在对方角度思考，包容才能长久。"
+  },
+  exam: {
+    title: "考试学习",
+    directionalTips: {
+      good: ["东南（巽宫）","正南（离宫）"],
+      avoid: ["东北（艮宫）"]
+    },
+    timing: "天辅星或景门所在的时辰学习效率高。",
+    actions: [
+      { type:"do", text:"集中精力攻克重点难点" },
+      { type:"do", text:"做模拟题检验学习成果" },
+      { type:"do", text:"请教老师或同学讨论问题" },
+      { type:"dont", text:"避免熬夜临时抱佛脚" },
+      { type:"dont", text:"不宜频繁切换学习科目" },
+      { type:"dont", text:"不要给自己太大压力" }
+    ],
+    placement: "在书桌的文昌位（天辅所落宫位方向）放置四支毛笔或文昌塔。",
+    color: "宜穿绿色、蓝色系，忌穿红色。",
+    psychology: "考试不仅考知识，更考心态。保持平常心，稳定发挥就是最好的结果。"
+  },
+  health: {
+    title: "健康疾病",
+    directionalTips: {
+      good: ["正西（兑宫）","西北（乾宫）"],
+      avoid: ["东北（艮宫）","西南（坤宫）"]
+    },
+    timing: "天心星或休门所在的时辰适合就医和调养。",
+    actions: [
+      { type:"do", text:"按时就医检查，不要拖延" },
+      { type:"do", text:"适当休息，保证充足的睡眠" },
+      { type:"do", text:"做一些温和的运动如散步、太极" },
+      { type:"dont", text:"避免过度劳累和熬夜" },
+      { type:"dont", text:"不宜暴饮暴食或极端节食" },
+      { type:"dont", text:"不要忽视身体发出的警告信号" }
+    ],
+    placement: "在家中或办公室的西方放置白水晶或盐灯净化能量。",
+    color: "宜穿白色、金色、蓝色系。",
+    psychology: "身体是革命的本钱。健康问题不要拖延，早发现早治疗。保持乐观心态有助于康复。"
+  },
+  travel: {
+    title: "出行方位",
+    directionalTips: {
+      good: ["正北（坎宫）","正东（震宫）"],
+      avoid: ["正西（兑宫）","西南（坤宫）"]
+    },
+    timing: "开门、休门所在的时辰适合出发。",
+    actions: [
+      { type:"do", text:"提前规划路线和备份方案" },
+      { type:"do", text:"选择吉时吉方出发" },
+      { type:"do", text:"准备好必要的证件和物品" },
+      { type:"dont", text:"避免在凶门方位远行" },
+      { type:"dont", text:"不宜仓促出发、准备不足" },
+      { type:"dont", text:"不要忽视当地天气和安全提示" }
+    ],
+    placement: "出行时随身携带一块玉石或平安符。",
+    color: "宜穿蓝色、白色系。",
+    psychology: "出行重在安全，不要太赶。旅途中保持开放心态，享受过程。"
+  },
+  legal: {
+    title: "诉讼合同",
+    directionalTips: {
+      good: ["正西（兑宫）","西北（乾宫）"],
+      avoid: ["正北（坎宫）","东北（艮宫）"]
+    },
+    timing: "开门所在的时辰最利处理和签署合同。",
+    actions: [
+      { type:"do", text:"整理好所有合同文件和证据" },
+      { type:"do", text:"咨询专业律师的意见" },
+      { type:"do", text:"选择吉时签署重要文件" },
+      { type:"dont", text:"避免在情绪激动时做决定" },
+      { type:"dont", text:"不宜跳过法律咨询自行处理" },
+      { type:"dont", text:"不要签有疑问的条款" }
+    ],
+    placement: "在办公桌西北方（乾宫）放置金属摆件或天平摆件。",
+    color: "宜穿白色、金色、黑色系。",
+    psychology: "诉讼和合同需要冷静理性的处理。不要被情绪左右，一切以事实和法律为准。"
+  }
+};
+
+/** 默认调理方案 */
+var QM_REMEDIES_DEFAULT = {
+  title: "通用调理",
+  directionalTips: {
+    good: ["值符所在方位","吉门所在的方位"],
+    avoid: ["凶门所在的方位"]
+  },
+  timing: "选择吉门吉神较多的时辰行动。",
+  actions: [
+    { type:"do", text:"先观察盘面吉凶，再做决策" },
+    { type:"do", text:"选择值符所在的方位办事" },
+    { type:"dont", text:"避免在空亡宫位做重要决定" },
+    { type:"dont", text:"不宜在凶神临宫的方位行动" }
+  ],
+  placement: "在吉位摆放绿色植物或水晶，增强能量。",
+  color: "根据日主五行选择适合的颜色。",
+  psychology: "凡事有定数也有变数。奇门告诉你时机和方位，但最终决定权在你手上。"
+};
+
+/**
+ * 获取化解调理方案
+ * @param {Object} chart
+ * @param {string} questionType - 问事类型
+ * @returns {Object} { title, directionalTips, timing, actions, placement, color, psychology, directionAnalysis }
+ */
+function getRemedies(chart, questionType) {
+  if (!chart) {
+    return { title: "无数据", directionalTips: {good:[],avoid:[]}, timing: "", actions: [], placement: "", color: "", psychology: "" };
+  }
+  
+  var qtype = questionType || "career";
+  var remedies = QM_REMEDIES_DATA[qtype] || QM_REMEDIES_DEFAULT;
+  
+  // 分析实际方向
+  var dirResults = analyzeDirection(chart);
+  
+  // 找到最佳和最差方向
+  var bestDir = dirResults.length > 0 ? dirResults[0] : null;
+  var worstDir = dirResults.length > 0 ? dirResults[dirResults.length - 1] : null;
+  
+  // 生成实际方位建议
+  var goodDirs = [];
+  var avoidDirs = [];
+  for (var i = 0; i < dirResults.length; i++) {
+    if (dirResults[i].level === "大吉" || dirResults[i].level === "吉") {
+      goodDirs.push(dirResults[i].direction);
+    } else if (dirResults[i].level === "大凶" || dirResults[i].level === "凶") {
+      avoidDirs.push(dirResults[i].direction);
+    }
+  }
+  
+  // 时间分析
+  var timeLuck = analyzeTimeLuck(chart, qtype);
+  
+  // 深度整合的方位建议
+  var directionalAnalysis = "";
+  if (bestDir) {
+    directionalAnalysis = "最佳方位为【" + bestDir.direction + "方】，评分" + bestDir.score.toFixed(1) + "分，" + bestDir.detail;
+  }
+  if (worstDir && worstDir.level === "大凶") {
+    directionalAnalysis += " 最忌方位为【" + worstDir.direction + "方】，" + worstDir.detail;
+  }
+  
+  // 动态调整 actions
+  var actions = JSON.parse(JSON.stringify(remedies.actions));
+  
+  // 如果时辰大凶，添加等待建议
+  if (timeLuck.overall === "大凶" || timeLuck.overall === "凶") {
+    actions.unshift({ type:"dont", text:"当前时辰偏凶，建议先等待，换一个时辰再行动" });
+  }
+  
+  // 动态生成方向建议
+  var directionalTips = {
+    good: goodDirs.length > 0 ? goodDirs.map(function(d){ return d + "方"; }) : remedies.directionalTips.good,
+    avoid: avoidDirs.length > 0 ? avoidDirs.map(function(d){ return d + "方"; }) : remedies.directionalTips.avoid
+  };
+  
+  return {
+    title: remedies.title,
+    directionalTips: directionalTips,
+    timing: timeLuck.overall === "吉" || timeLuck.overall === "大吉" ? "当前时辰吉利，" + timeLuck.analysis : remedies.timing + " " + timeLuck.analysis,
+    actions: actions,
+    placement: remedies.placement,
+    color: remedies.color,
+    psychology: remedies.psychology,
+    directionAnalysis: directionalAnalysis,
+    timeLuck: timeLuck
+  };
+}
+
+// ═══════════════════════════════════════════════
+//  综合行动建议
+// ═══════════════════════════════════════════════
+
+/**
+ * 获取综合行动建议
+ * @param {Object} chart
+ * @param {string} questionType - 问事类型
+ * @returns {Object} { overall, canAct, bestDirection, bestTime, suggestedActions, avoidActions, fullAnalysis }
+ */
+function getActionAdvice(chart, questionType) {
+  if (!chart) {
+    return { overall: "缺少盘数据", canAct: false, bestDirection: "", bestTime: "", suggestedActions: [], avoidActions: [], fullAnalysis: "请先起盘" };
+  }
+  
+  var qtype = questionType || "career";
+  
+  // 整合所有分析
+  var dirResults = analyzeDirection(chart);
+  var timeLuck = analyzeTimeLuck(chart, qtype);
+  var remedies = getRemedies(chart, qtype);
+  
+  // 综合评分
+  var totalScore = 0;
+  totalScore += timeLuck.score * 1.5; // 时间权重高
+  
+  // 最佳/最差方向
+  var bestDir = dirResults.length > 0 ? dirResults[0] : null;
+  
+  // 格局分析（复用已有的）
+  var gejuResult = null;
+  if (typeof window !== 'undefined' && typeof window.analyzeGeju === 'function') {
+    gejuResult = window.analyzeGeju(chart);
+  } else if (typeof analyzeGeju === 'function') {
+    gejuResult = analyzeGeju(chart);
+  }
+  
+  if (gejuResult) {
+    var luckyCount = gejuResult.lucky ? gejuResult.lucky.length : 0;
+    var unluckyCount = gejuResult.unlucky ? gejuResult.unlucky.length : 0;
+    totalScore += (luckyCount - unluckyCount) * 0.5;
+  }
+  
+  // 判断是否适合行动
+  var canAct = totalScore >= 0;
+  
+  // 最佳时段
+  var bestTime = "";
+  if (chart.ganzhi && chart.ganzhi.time) {
+    bestTime = "当前时辰【" + chart.ganzhi.time + "】";
+    if (timeLuck.overall === "大吉" || timeLuck.overall === "吉") {
+      bestTime += "，是吉时，适合行动。";
+    } else {
+      bestTime += "，偏" + timeLuck.overall + "，建议等待更好的时机。";
+    }
+  } else {
+    bestTime = "请设定时辰后重试。";
+  }
+  
+  // 最佳方向文字
+  var bestDirection = "";
+  if (bestDir) {
+    bestDirection = bestDir.direction + "方（评分" + bestDir.score.toFixed(1) + "，" + bestDir.level + "）";
+  } else {
+    bestDirection = "未确定";
+  }
+  
+  // 综合判断
+  var overall = "";
+  if (totalScore >= 5) {
+    overall = "大吉 —— 当前气场非常适合行动，果断推进！";
+  } else if (totalScore >= 2) {
+    overall = "偏吉 —— 可以行动，注意选择有利的方位和方式。";
+  } else if (totalScore >= -1) {
+    overall = "平 —— 吉凶参半，建议选择性行动，规避不利因素。";
+  } else if (totalScore >= -3) {
+    overall = "偏凶 —— 当前不太顺利，建议等待或调整策略。";
+  } else {
+    overall = "大凶 —— 当前气场严重不利，强烈建议等待，不要贸然行动。";
+  }
+  
+  // 生成建议和禁忌
+  var suggestedActions = [];
+  var avoidActions = [];
+  
+  // 从remedies获取
+  if (remedies.actions) {
+    for (var i = 0; i < remedies.actions.length; i++) {
+      if (remedies.actions[i].type === "do") {
+        suggestedActions.push(remedies.actions[i].text);
+      } else {
+        avoidActions.push(remedies.actions[i].text);
+      }
+    }
+  }
+  
+  // 加上时辰相关的建议
+  if (timeLuck.suitable) {
+    for (var i = 0; i < timeLuck.suitable.length; i++) {
+      if (suggestedActions.indexOf(timeLuck.suitable[i]) === -1) {
+        suggestedActions.unshift(timeLuck.suitable[i]);
+      }
+    }
+  }
+  if (timeLuck.unsuitable) {
+    for (var i = 0; i < timeLuck.unsuitable.length; i++) {
+      if (avoidActions.indexOf(timeLuck.unsuitable[i]) === -1) {
+        avoidActions.unshift(timeLuck.unsuitable[i]);
+      }
+    }
+  }
+  
+  // 取前几条
+  suggestedActions = suggestedActions.slice(0, 5);
+  avoidActions = avoidActions.slice(0, 5);
+  
+  // 完整分析
+  var fullAnalysis = "";
+  fullAnalysis += "【整体判断】" + overall + "\n";
+  fullAnalysis += "【最佳方向】" + bestDirection + "\n";
+  fullAnalysis += "【最佳时段】" + bestTime + "\n";
+  fullAnalysis += "【时机分析】" + timeLuck.analysis + "\n";
+  if (bestDir) {
+    fullAnalysis += "【方位分析】" + bestDir.detail + "\n";
+  }
+  if (remedies.directionAnalysis) {
+    fullAnalysis += "【方位建议】" + remedies.directionAnalysis + "\n";
+  }
+  fullAnalysis += "【调理建议】" + remedies.psychology + "\n";
+  
+  return {
+    overall: overall,
+    canAct: canAct,
+    totalScore: totalScore.toFixed(1),
+    bestDirection: bestDirection,
+    bestTime: bestTime,
+    suggestedActions: suggestedActions,
+    avoidActions: avoidActions,
+    fullAnalysis: fullAnalysis,
+    timeLuck: timeLuck,
+    dirResults: dirResults,
+    remedies: remedies
+  };
+}
+
 // 导出到全局作用域
 if (typeof window !== 'undefined') {
   window.computeQimenChart = computeQimenChart;
   window.analyzeYongshen = analyzeYongshen;
   window.analyzeGeju = analyzeGeju;
+  window.analyzeDirection = analyzeDirection;
+  window.analyzeTimeLuck = analyzeTimeLuck;
+  window.getRemedies = getRemedies;
+  window.getActionAdvice = getActionAdvice;
 }
 if (typeof module !== 'undefined') {
   module.exports = {
     computeQimenChart: computeQimenChart,
     analyzeYongshen: analyzeYongshen,
-    analyzeGeju: analyzeGeju
+    analyzeGeju: analyzeGeju,
+    analyzeDirection: analyzeDirection,
+    analyzeTimeLuck: analyzeTimeLuck,
+    getRemedies: getRemedies,
+    getActionAdvice: getActionAdvice
   };
 }

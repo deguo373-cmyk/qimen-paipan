@@ -620,6 +620,231 @@
     }
     .guide-text .guide-icon { margin-right: 6px; }
     .guide-text b { color: var(--ink); font-weight: 600; }
+
+    /* ══ 综合行动建议区块 ══ */
+    .action-advice-card {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, #eef4ea 0%, #f0f4ec 100%);
+      border: 1.5px solid #c8d8c4;
+      border-left: 4px solid var(--stone-blue);
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .action-advice-card .aa-mood {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: var(--font-title);
+      margin-bottom: 6px;
+    }
+    .action-advice-card .aa-mood.good { color: var(--stone-blue); }
+    .action-advice-card .aa-mood.bad { color: var(--cinnabar); }
+    .action-advice-card .aa-mood.neutral { color: var(--gold); }
+    .action-advice-card .aa-score { font-size: 0.72rem; color: var(--ink-muted); }
+    .action-advice-card .aa-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 640px) {
+      .action-advice-card .aa-grid { grid-template-columns: 1fr; }
+    }
+    .action-advice-card .aa-col h4 {
+      font-family: var(--font-title);
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+    .action-advice-card .aa-col ul {
+      list-style: none;
+      padding: 0;
+    }
+    .action-advice-card .aa-col ul li {
+      padding: 4px 8px;
+      margin: 3px 0;
+      font-size: 0.8rem;
+      border-left: 3px solid transparent;
+    }
+    .action-advice-card .aa-col ul li.do-item {
+      border-left-color: var(--stone-blue);
+      background: rgba(74,103,65,0.06);
+    }
+    .action-advice-card .aa-col ul li.do-item::before { content: '✅ '; }
+    .action-advice-card .aa-col ul li.dont-item {
+      border-left-color: var(--cinnabar);
+      background: rgba(194,59,34,0.04);
+    }
+    .action-advice-card .aa-col ul li.dont-item::before { content: '❌ '; }
+    .action-advice-card .aa-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 0.78rem;
+    }
+    .action-advice-card .aa-info span {
+      color: var(--ink-light);
+    }
+    .action-advice-card .aa-info strong {
+      color: var(--ink);
+      font-family: var(--font-title);
+    }
+    /* ══ 方向吉凶区块 ══ */
+    .dir-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    @media (max-width: 640px) {
+      .dir-detail-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .dir-detail-card {
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dir-detail-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(44,36,22,0.06);
+    }
+    .dir-detail-card .dd-name {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+    .dir-detail-card .dd-level {
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin: 2px 0;
+      display: inline-block;
+      padding: 1px 8px;
+    }
+    .dir-detail-card .dd-score {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+    }
+    .dir-detail-card .dd-items {
+      margin-top: 3px;
+      font-size: 0.65rem;
+      line-height: 1.5;
+    }
+    .dir-detail-card .dd-items .dd-good { color: var(--stone-blue); }
+    .dir-detail-card .dd-items .dd-bad { color: var(--cinnabar); }
+    .dir-detail-card .dd-items .dd-neutral { color: var(--ink-muted); }
+    .dir-detail-card.level-daji {
+      background: #dff0d8;
+      border-color: #b8d4a8;
+    }
+    .dir-detail-card.level-ji {
+      background: #e8efe6;
+      border-color: #c8d8c4;
+    }
+    .dir-detail-card.level-ping {
+      background: var(--paper-light);
+    }
+    .dir-detail-card.level-xiong {
+      background: #f5e8e6;
+      border-color: #e0c0bc;
+    }
+    .dir-detail-card.level-daxiong {
+      background: #f0d8d6;
+      border-color: #d8b0ac;
+    }
+    .dir-detail-card .dd-level.daji { background: #b8d4a8; color: #2d5a1e; }
+    .dir-detail-card .dd-level.ji { background: #c8d8c4; color: var(--stone-blue); }
+    .dir-detail-card .dd-level.ping { background: var(--paper-dark); color: var(--ink-muted); }
+    .dir-detail-card .dd-level.xiong { background: #e0c0bc; color: #8a3430; }
+    .dir-detail-card .dd-level.daxiong { background: #d0a8a4; color: #7a2420; }
+    /* ══ 化解调理区块 ══ */
+    .remedy-section { margin-bottom: 12px; }
+    .remedy-section .rs-label {
+      font-family: var(--font-title);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--stone-blue);
+      display: block;
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+    .remedy-section .rs-value {
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+    .remedy-section .rs-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .remedy-section .rs-tag {
+      padding: 3px 10px;
+      border: 1px solid var(--border-color);
+      font-size: 0.78rem;
+      background: var(--paper);
+    }
+    .remedy-section .rs-tag.good-tag { border-color: var(--stone-blue); color: var(--stone-blue); background: #e8efe6; }
+    .remedy-section .rs-tag.bad-tag { border-color: var(--cinnabar); color: var(--cinnabar); background: #f5e8e6; }
+    /* ══ 时机分析区块 ══ */
+    .timing-card {
+      padding: 14px 16px;
+      background: var(--paper-dark);
+      font-size: 0.85rem;
+      line-height: 1.8;
+      border-left: 3px solid var(--border-color);
+    }
+    .timing-card .tc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .timing-card .tc-badge {
+      display: inline-block;
+      padding: 2px 12px;
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+    .timing-card .tc-badge.daji { background: #b8d4a8; color: #2d5a1e; }
+    .timing-card .tc-badge.ji { background: #c8d8c4; color: var(--stone-blue); }
+    .timing-card .tc-badge.ping { background: var(--paper); color: var(--ink-muted); border: 1px solid var(--border-color); }
+    .timing-card .tc-badge.xiong { background: #e0c0bc; color: #8a3430; }
+    .timing-card .tc-badge.daxiong { background: #d0a8a4; color: #7a2420; }
+    .timing-card .tc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    @media (max-width: 640px) {
+      .timing-card .tc-grid { grid-template-columns: 1fr; }
+    }
+    .timing-card .tc-suitable ul, .timing-card .tc-unsuitable ul {
+      list-style: none;
+      padding: 0;
+    }
+    .timing-card .tc-suitable ul li {
+      padding: 2px 6px;
+      font-size: 0.78rem;
+      border-left: 2px solid var(--stone-blue);
+      margin: 2px 0;
+      background: rgba(74,103,65,0.04);
+    }
+    .timing-card .tc-unsuitable ul li {
+      padding: 2px 6px;
+      font-size: 0.78rem;
+      border-left: 2px solid var(--cinnabar);
+      margin: 2px 0;
+      background: rgba(194,59,34,0.03);
+    }
+    .timing-card .tc-wx { font-size: 0.75rem; color: var(--ink-muted); }
   </style>
 </head>
 <body>
@@ -690,6 +915,16 @@
     <div id="qmResults" style="display:none">
       <div class="info-classic" id="qmInfo"></div>
 
+      <!-- 综合行动建议（醒目，最上方） -->
+      <div class="folio" id="qmActionAdvice" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">📋 综合行动建议</span>
+          <span class="folio-badge">行动指南</span>
+        </div>
+        <div class="action-advice-card" id="qmActionAdviceContent"></div>
+      </div>
+
       <!-- 格局分析 -->
       <div class="folio" id="qmGeju" style="display:none">
         <div class="folio-header">
@@ -742,6 +977,52 @@
           <span class="folio-badge">卷四</span>
         </div>
         <div class="luopan" id="qmGrid"></div>
+      </div>
+
+      <!-- 方向吉凶分析（增强版） -->
+      <div class="folio" id="qmDirDetail" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">方向吉凶分析</span>
+          <span class="folio-badge">方位解盘</span>
+        </div>
+        <div style="font-size:0.78rem;color:var(--ink-muted);margin-bottom:10px;line-height:1.6">
+          根据门、星、神、三奇、空亡、值符、马星等因素综合评分。<b>绿色</b>为吉方、<b>红色</b>为凶方。
+        </div>
+        <div class="dir-detail-grid" id="qmDirDetailGrid"></div>
+      </div>
+
+      <!-- 化解调理方案 -->
+      <div class="folio" id="qmRemedy" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">化解调理方案</span>
+          <span class="folio-badge">开运指导</span>
+        </div>
+        <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <label style="font-family:var(--font-title);font-size:0.75rem;color:var(--ink-muted)">选择事类：</label>
+          <select id="qmRemedyType" style="padding:5px 8px;border:1px solid var(--border-color);background:var(--paper);font-family:var(--font-body);font-size:0.82rem;color:var(--ink)">
+            <option value="career">事业 · 工作</option>
+            <option value="money">财运 · 求财</option>
+            <option value="love">感情 · 姻缘</option>
+            <option value="exam">学业 · 考试</option>
+            <option value="health">健康 · 疾病</option>
+            <option value="travel">出行 · 方位</option>
+            <option value="legal">诉讼 · 合同</option>
+          </select>
+          <button class="btn-classic" id="qmRemedyBtn" style="padding:5px 14px;font-size:0.78rem">生成方案</button>
+        </div>
+        <div id="qmRemedyContent"></div>
+      </div>
+
+      <!-- 时机分析 -->
+      <div class="folio" id="qmTimeLuck" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">时机分析</span>
+          <span class="folio-badge">吉时判断</span>
+        </div>
+        <div class="timing-card" id="qmTimeLuckContent"></div>
       </div>
 
       <!-- 吉凶方位 -->
@@ -1789,6 +2070,14 @@ function renderQimenAll(d){
       '</div>';
   }).join('');
 
+  // 综合行动建议
+  renderActionAdvice(c);
+  // 方向吉凶分析（增强版）
+  renderDirDetail(c);
+  // 化解调理方案
+  renderRemedy(c, qt || document.getElementById('qmQType').value);
+  // 时机分析
+  renderTimeLuck(c, qt || document.getElementById('qmQType').value);
   // 吉凶方位
   renderQmDirections(c);
   // 断事参考
@@ -1838,6 +2127,166 @@ function renderQmRef(c){
   el.style.display='block';
 }
 
+// ═════════════════════════════════════════════════
+// 奇门 — 综合行动建议 / 方向吉凶 / 化解调理 / 时机分析
+// ═════════════════════════════════════════════════
+
+/** 渲染综合行动建议 */
+function renderActionAdvice(chart) {
+  var el = document.getElementById('qmActionAdvice');
+  var ct = document.getElementById('qmActionAdviceContent');
+  if (!el || !ct) return;
+  var qtype = document.getElementById('qmQType').value || 'career';
+  var advice = null;
+  if (typeof window.getActionAdvice === 'function') {
+    advice = window.getActionAdvice(chart, qtype);
+  }
+  if (!advice || !advice.overall) { el.style.display = 'none'; return; }
+  var moodClass = 'neutral';
+  if (advice.canAct && parseFloat(advice.totalScore) >= 3) moodClass = 'good';
+  else if (!advice.canAct && parseFloat(advice.totalScore) < -1) moodClass = 'bad';
+  var moodIcon = moodClass === 'good' ? '✅' : (moodClass === 'bad' ? '⚠️' : '⚖️');
+  var html = '<div class="aa-mood ' + moodClass + '">' + moodIcon + ' ' + advice.overall + '</div>';
+  html += '<div class="aa-score">综合评分：' + advice.totalScore + '分</div>';
+  if (advice.suggestedActions.length || advice.avoidActions.length) {
+    html += '<div class="aa-grid">';
+    html += '<div class="aa-col"><h4>✅ 建议做</h4><ul>';
+    advice.suggestedActions.forEach(function(a) { html += '<li class="do-item">' + a + '</li>'; });
+    html += '</ul></div>';
+    html += '<div class="aa-col"><h4>❌ 避免做</h4><ul>';
+    advice.avoidActions.forEach(function(a) { html += '<li class="dont-item">' + a + '</li>'; });
+    html += '</ul></div>';
+    html += '</div>';
+  }
+  html += '<div class="aa-info">';
+  html += '<span>📍 最佳方向：<strong>' + advice.bestDirection + '</strong></span>';
+  html += '<span>⏰ 最佳时段：<strong>' + advice.bestTime + '</strong></span>';
+  html += '</div>';
+  ct.innerHTML = html;
+  el.style.display = 'block';
+}
+
+/** 渲染方向吉凶分析 */
+function renderDirDetail(chart) {
+  var el = document.getElementById('qmDirDetail');
+  var ct = document.getElementById('qmDirDetailGrid');
+  if (!el || !ct) return;
+  var dirResults = null;
+  if (typeof window.analyzeDirection === 'function') {
+    dirResults = window.analyzeDirection(chart);
+  }
+  if (!dirResults || !dirResults.length) { el.style.display = 'none'; return; }
+  var dirOrder = ['北','东北','东','东南','南','西南','西','西北'];
+  var dirMap = {};
+  dirResults.forEach(function(r) { dirMap[r.direction] = r; });
+  ct.innerHTML = dirOrder.map(function(dir) {
+    var r = dirMap[dir];
+    if (!r) return '';
+    var levelClass = r.level === '大吉' ? 'level-daji' : r.level === '吉' ? 'level-ji' : r.level === '平' ? 'level-ping' : r.level === '凶' ? 'level-xiong' : 'level-daxiong';
+    var itemsHtml = '';
+    if (r.items) {
+      r.items.forEach(function(item) {
+        var cls = item.type === 'good' ? 'dd-good' : (item.type === 'bad' ? 'dd-bad' : 'dd-neutral');
+        itemsHtml += '<div class="' + cls + '">' + item.text + '</div>';
+      });
+    }
+    var badgeClass = r.level === '大吉' ? 'daji' : r.level === '吉' ? 'ji' : r.level === '平' ? 'ping' : r.level === '凶' ? 'xiong' : 'daxiong';
+    return '<div class="dir-detail-card ' + levelClass + '">' +
+      '<div class="dd-name">' + r.direction + '</div>' +
+      '<div class="dd-level ' + badgeClass + '">' + r.level + '</div>' +
+      '<div class="dd-score">' + r.score.toFixed(1) + '分</div>' +
+      '<div class="dd-items">' + itemsHtml + '</div></div>';
+  }).join('');
+  el.style.display = 'block';
+}
+
+/** 渲染化解调理方案 */
+function renderRemedy(chart, qtype) {
+  var el = document.getElementById('qmRemedy');
+  var ct = document.getElementById('qmRemedyContent');
+  if (!el || !ct) return;
+  if (!qtype) qtype = document.getElementById('qmRemedyType').value || 'career';
+  var remedy = null;
+  if (typeof window.getRemedies === 'function') {
+    remedy = window.getRemedies(chart, qtype);
+  }
+  if (!remedy || !remedy.title) { el.style.display = 'none'; return; }
+  var html = '';
+  html += '<div class="remedy-section">';
+  html += '<span class="rs-label">📍 方位建议</span>';
+  if (remedy.directionalTips.good.length) {
+    html += '<div class="rs-tags">';
+    remedy.directionalTips.good.forEach(function(d) { html += '<span class="rs-tag good-tag">宜往 ' + d + '</span>'; });
+    remedy.directionalTips.avoid.forEach(function(d) { html += '<span class="rs-tag bad-tag">忌往 ' + d + '</span>'; });
+    html += '</div>';
+  }
+  if (remedy.directionAnalysis) {
+    html += '<div style="margin-top:4px;font-size:0.78rem;color:var(--ink-muted)">' + remedy.directionAnalysis + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="remedy-section"><span class="rs-label">⏰ 时间建议</span><div class="rs-value">' + remedy.timing + '</div></div>';
+  html += '<div class="remedy-section"><span class="rs-label">🎯 行为建议</span>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.82rem">';
+  html += '<div><div style="font-weight:600;color:var(--stone-blue);margin-bottom:4px;font-size:0.78rem">✅ 宜做</div>';
+  remedy.actions.filter(function(a) { return a.type === 'do'; }).forEach(function(a) {
+    html += '<div style="padding:2px 6px;border-left:2px solid var(--stone-blue);margin:2px 0;background:rgba(74,103,65,0.04)">' + a.text + '</div>';
+  });
+  html += '</div><div><div style="font-weight:600;color:var(--cinnabar);margin-bottom:4px;font-size:0.78rem">❌ 忌做</div>';
+  remedy.actions.filter(function(a) { return a.type === 'dont'; }).forEach(function(a) {
+    html += '<div style="padding:2px 6px;border-left:2px solid var(--cinnabar);margin:2px 0;background:rgba(194,59,34,0.03)">' + a.text + '</div>';
+  });
+  html += '</div></div></div>';
+  html += '<div class="remedy-section"><span class="rs-label">🏠 摆放布局</span><div class="rs-value">' + (remedy.placement || '参考方位建议调整布局。') + '</div>';
+  if (remedy.color) {
+    html += '<div style="margin-top:4px;font-size:0.82rem"><span style="font-weight:600;color:var(--ink-light)">🎨 颜色建议：</span>' + remedy.color + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="remedy-section" style="margin-bottom:0"><span class="rs-label">🧠 心态调整</span>';
+  html += '<div class="rs-value" style="font-size:0.82rem;line-height:1.7;color:var(--ink-light);border-left:2px solid var(--gold);padding-left:10px">' + (remedy.psychology || '保持平常心，顺势而为。') + '</div></div>';
+  ct.innerHTML = html;
+  el.style.display = 'block';
+}
+
+/** 渲染时机分析 */
+function renderTimeLuck(chart, qtype) {
+  var el = document.getElementById('qmTimeLuck');
+  var ct = document.getElementById('qmTimeLuckContent');
+  if (!el || !ct) return;
+  if (!qtype) qtype = document.getElementById('qmQType').value || 'career';
+  var tl = null;
+  if (typeof window.analyzeTimeLuck === 'function') {
+    tl = window.analyzeTimeLuck(chart, qtype);
+  }
+  if (!tl || !tl.overall) { el.style.display = 'none'; return; }
+  var badgeClass = tl.overall === '大吉' ? 'daji' : tl.overall === '吉' ? 'ji' : tl.overall === '平' ? 'ping' : tl.overall === '凶' ? 'xiong' : 'daxiong';
+  var badgeIcon = tl.overall === '大吉' ? '🏆' : tl.overall === '吉' ? '✅' : tl.overall === '平' ? '⚖️' : tl.overall === '凶' ? '⚠️' : '🚫';
+  var html = '<div class="tc-header">';
+  html += '<div><span class="tc-badge ' + badgeClass + '">' + badgeIcon + ' ' + tl.overall + '</span>';
+  if (tl.timeGZ) html += ' <span style="font-family:var(--font-title);font-size:0.85rem;font-weight:600">' + tl.timeGZ + '</span>';
+  if (tl.fiveElement) html += ' <span style="font-size:0.75rem;color:var(--ink-muted)">五行：' + tl.fiveElement + '</span>';
+  html += '</div>';
+  html += '<div style="font-size:0.75rem;color:var(--ink-muted)">评分：' + (tl.score || 0) + '分</div>';
+  html += '</div>';
+  html += '<div style="font-size:0.82rem;line-height:1.7">' + tl.analysis + '</div>';
+  if (tl.suitable && tl.suitable.length && tl.unsuitable) {
+    var hasSuitable = tl.suitable.length > 0 && tl.suitable[0] !== '不宜行动，宜等待观察';
+    html += '<div class="tc-grid">';
+    if (hasSuitable) {
+      html += '<div class="tc-suitable"><div style="font-weight:600;color:var(--stone-blue);font-size:0.8rem;margin-bottom:4px">✅ 此时宜做</div><ul>';
+      tl.suitable.forEach(function(s) { html += '<li>' + s + '</li>'; });
+      html += '</ul></div>';
+    }
+    if (tl.unsuitable.length > 0) {
+      html += '<div class="tc-unsuitable"><div style="font-weight:600;color:var(--cinnabar);font-size:0.8rem;margin-bottom:4px">❌ 此时忌做</div><ul>';
+      tl.unsuitable.forEach(function(s) { html += '<li>' + s + '</li>'; });
+      html += '</ul></div>';
+    }
+    html += '</div>';
+  }
+  ct.innerHTML = html;
+  el.style.display = 'block';
+}
+
 document.getElementById('qmShare').addEventListener('click',async function(){
   var el=document.getElementById('qmResults');
   try{var c=await html2canvas(el,{backgroundColor:'#faf6ef',scale:2,useCORS:true});var l=document.createElement('a');l.download='奇门遁甲排盘.png';l.href=c.toDataURL();l.click();toast('✅ 图片已保存');}catch(e){toast('❌ 截图失败');}
@@ -1872,6 +2321,13 @@ document.getElementById('qmYongshenBtn').addEventListener('click',function(){
   }else{
     yc.innerHTML=typeof analyzeYongshen==='function'?analyzeYongshen(_qmChart,qt):'用神分析暂不可用';
   }
+});
+
+// 化解调理方案切换按钮
+document.getElementById('qmRemedyBtn').addEventListener('click', function() {
+  if (!_qmChart) { toast('❌ 请先起盘'); return; }
+  var qt = document.getElementById('qmRemedyType').value;
+  renderRemedy(_qmChart, qt);
 });
 
 // ═════════════════════════════════════════════════
