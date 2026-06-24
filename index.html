@@ -537,6 +537,39 @@
       font-weight: 400; margin-left: 2px;
       font-family: var(--font-body);
     }
+    /* 神煞详解表格 */
+    .shensha-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.82rem; font-family: var(--font-body);
+    }
+    .shensha-table thead th {
+      padding: 6px 8px; text-align: left;
+      font-family: var(--font-title); font-size: 0.78rem;
+      color: var(--ink-muted);
+      border-bottom: 2px solid var(--border-color);
+      letter-spacing: 0.05em;
+    }
+    .shensha-table tbody tr {
+      border-bottom: 1px dashed var(--border-color);
+      transition: background 0.2s ease;
+    }
+    .shensha-table tbody tr:hover { background: rgba(200,184,154,0.08); }
+    .shensha-table tbody td {
+      padding: 5px 8px; vertical-align: middle;
+    }
+    .shensha-table .s-name { font-weight: 600; font-family: var(--font-title); }
+    .shensha-table .s-dizhi { text-align: center; color: var(--ink-muted); }
+    .shensha-table .s-dizhi.found { color: var(--cinnabar); font-weight: 600; }
+    .shensha-table .s-dizhi.missing { color: #bbb; }
+    .shensha-table .s-xj { text-align: center; font-weight: 600; }
+    .shensha-table .s-xj.good { color: var(--stone-blue); }
+    .shensha-table .s-xj.bad { color: var(--cinnabar); }
+    .shensha-table .s-desc { color: var(--ink-light); }
+    @media (max-width: 640px) {
+      .shensha-table { font-size: 0.75rem; }
+      .shensha-table thead th, .shensha-table tbody td { padding: 4px 6px; }
+    }
+
     /* 白话解读区块 */
     .plain-talk {
       padding: 14px 16px; background: #f0f4ec;
@@ -683,6 +716,20 @@
           <div class="dot"></div>
           <span class="folio-title">用神分析</span>
           <span class="folio-badge">卷三</span>
+        </div>
+        <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <label style="font-family:var(--font-title);font-size:0.75rem;color:var(--ink-muted)">选择问事类型：</label>
+          <select id="qmYongshenType" style="padding:5px 8px;border:1px solid var(--border-color);background:var(--paper);font-family:var(--font-body);font-size:0.82rem;color:var(--ink)">
+            <option value="career">事业 · 工作</option>
+            <option value="love">感情 · 姻缘</option>
+            <option value="money">财运 · 求财</option>
+            <option value="health">健康 · 疾病</option>
+            <option value="travel">出行 · 方位</option>
+            <option value="exam">学业 · 考试</option>
+            <option value="legal">诉讼 · 合同</option>
+            <option value="missing">寻人寻物</option>
+          </select>
+          <button class="btn-classic" id="qmYongshenBtn" style="padding:5px 14px;font-size:0.78rem">分析</button>
         </div>
         <div class="analysis-classic" id="qmYongshenContent"></div>
       </div>
@@ -938,6 +985,16 @@
           <span class="folio-badge">增三</span>
         </div>
         <div id="bzWangshuaiContent" style="font-size:0.82rem"></div>
+      </div>
+
+      <!-- 神煞详解 -->
+      <div class="folio" id="bzShenshaDetail" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">神煞详解</span>
+          <span class="folio-badge">增四</span>
+        </div>
+        <div id="bzShenshaDetailContent" style="font-size:0.82rem"></div>
       </div>
 
       <!-- 日主性格 -->
@@ -1403,15 +1460,54 @@ function analyzeGeju(chart) {
 
 function renderGeju(chart) {
   var el=document.getElementById('qmGeju'),ct=document.getElementById('qmGejuContent');
+  // Try to use the comprehensive window.analyzeGeju from qimen_calculator.js first
+  if(typeof window.analyzeGeju === 'function'){
+    var result=window.analyzeGeju(chart);
+    if(result && (result.patterns||[]).length){
+      el.style.display='block';
+      var lines=[];
+      // Summary
+      if(result.summary) lines.push('<div style="margin-bottom:8px;font-weight:600;color:var(--cinnabar);font-family:var(--font-title)">📋 格局总评</div><p style="margin-bottom:10px">'+result.summary+'</p>');
+      // Lucky patterns
+      if(result.lucky&&result.lucky.length){
+        lines.push('<div style="margin-bottom:6px;font-weight:600;color:var(--stone-blue);font-family:var(--font-title)">✅ 吉格</div>');
+        result.lucky.forEach(function(l){
+          lines.push('<div style="margin:2px 0;padding:3px 8px;background:#e8efe6;border-left:3px solid var(--stone-blue);font-size:0.82rem">'+l+'</div>');
+        });
+      }
+      // Unlucky patterns
+      if(result.unlucky&&result.unlucky.length){
+        lines.push('<div style="margin:8px 0 6px 0;font-weight:600;color:var(--cinnabar);font-family:var(--font-title)">❌ 凶格</div>');
+        result.unlucky.forEach(function(l){
+          lines.push('<div style="margin:2px 0;padding:3px 8px;background:#f5e8e6;border-left:3px solid var(--cinnabar);font-size:0.82rem">'+l+'</div>');
+        });
+      }
+      // Pattern details
+      lines.push('<div style="margin:8px 0 4px 0;font-weight:600;color:var(--ink-light);font-family:var(--font-title)">📌 格局明细</div>');
+      result.patterns.forEach(function(pt){
+        var cls={吉:'good',凶:'bad',warn:'warn'}[pt.type]||'';
+        var icon={吉:'✅',凶:'❌',warn:'⚠️'}[pt.type]||'';
+        var text=pt.name+'——'+pt.detail;
+        // Add term hints
+        var patternTerms=['青龙回首','飞鸟跌穴','太白入荧','荧入太白','值符得位','门受制','白虎','玄武','天辅','天芮','天心','天蓬','天英','天柱','死门','伤门','惊门','休门','生门','开门','杜门','景门'];
+        patternTerms.forEach(function(term){
+          if(text.indexOf(term)!==-1&&SHORT_HINTS[term]) text=text.split(term).join(term+'<span class="term-note">（'+SHORT_HINTS[term]+'）</span>');
+        });
+        lines.push('<span class="tag-classic '+cls+'">'+icon+'</span> '+text+'<br>');
+      });
+      ct.innerHTML=lines.join('\n');
+      return;
+    }
+  }
+  // Fallback: use the local simple analyzeGeju
   var f=analyzeGeju(chart);
   if(!f.length){el.style.display='none';return;}
   el.style.display='block';
   ct.innerHTML=f.map(function(x){
     var cls={good:'good',bad:'bad',warn:'warn'}[x.type]||'';
     var icon={good:'✅',bad:'❌',warn:'⚠️'}[x.type]||'';
-    // Add term hints to pattern names in text
     var text = x.text;
-    var patternTerms = ['青龙回首','飞鸟跌穴','太白入荧','荧入太白','值符得位','门受制','白虎','玄武','天辅','天芮','天心','天蓬','天英','天柱','死门','伤门','惊门','休门','生门','开门','杜门','景门'];
+    var patternTerms=['青龙回首','飞鸟跌穴','太白入荧','荧入太白','值符得位','门受制','白虎','玄武','天辅','天芮','天心','天蓬','天英','天柱','死门','伤门','惊门','休门','生门','开门','杜门','景门'];
     patternTerms.forEach(function(term){
       if(text.indexOf(term) !== -1 && SHORT_HINTS[term]){
         text = text.split(term).join(term+'<span class="term-note">（'+SHORT_HINTS[term]+'）</span>');
@@ -1501,6 +1597,7 @@ const YONGSHEN_MAP={
   health:{main:'天芮',aux:['死门','日干'],desc:'健康看天芮星落宫，结合死门状态，日干强弱。不代替就医'},
   travel:{main:'目标方位宫',aux:['开门','生门'],desc:'出行看目标方向宫位状态，开门利远行，生门利求财'},
   legal:{main:'开门',aux:['惊门','天心'],desc:'诉讼合同，开门主公事，惊门防官非口舌，天心主谋略'},
+  missing:{main:'杜门',aux:['玄武','值符'],desc:'寻人寻物看杜门掩藏之象，玄武主失窃，值符为寻回之机'},
 };
 
 function analyzeYongshen(chart,qtype) {
@@ -1576,6 +1673,7 @@ function analyzeYongshen(chart,qtype) {
 // ═════════════════════════════════════════════════
 // 奇门 — 主流程
 // ═════════════════════════════════════════════════
+var _qmChart = null; // Store the current chart for use by 用神分析 button
 document.getElementById('qmBtn').addEventListener('click',qimenGo);
 async function qimenGo(){
   var e=document.getElementById('qmErr');e.classList.remove('active');
@@ -1608,6 +1706,7 @@ async function qimenGo(){
 
 function renderQimenAll(d){
   var c=d.chart,g=d.ganzhi,cal=d.calendar;
+  _qmChart = c; // Store for 用神分析 button
 
   // Info bar with term hints
   var dunTypeHint = termHint(c.dun_type);
@@ -1633,11 +1732,44 @@ function renderQimenAll(d){
   renderPlainTalk(c);
 
   // 用神
-  var qt=document.getElementById('qmQType').value;
+  var ysType=document.getElementById('qmYongshenType');
+  var qt=ysType.value;
   var ys=document.getElementById('qmYongshen'),yc=document.getElementById('qmYongshenContent');
   if(qt&&qt!==''){
     ys.style.display='block';
-    yc.innerHTML=analyzeYongshen(c,qt);
+    var result=null;
+    if(typeof window.analyzeYongshen==='function'){
+      result=window.analyzeYongshen(c,qt);
+    }
+    if(result && result.primary){
+      var html='';
+      // Main yongshen
+      if(result.primary){
+        var p=result.primary;
+        var pName=p.name||'未知';
+        var pPalace=p.palace?('落'+p.palace.name+'宫'):'未找到';
+        var pDesc=p.description||'';
+        html+='<div style="margin-bottom:8px"><span class="tag-classic good">主用神</span> <b>'+pName+'</b> '+pPalace+' — '+pDesc+'</div>';
+      }
+      // Assistant yongshens
+      if(result.assistants&&result.assistants.length){
+        html+='<div style="margin-bottom:4px;font-size:0.78rem;color:var(--ink-muted);font-weight:600">辅用神：</div>';
+        result.assistants.forEach(function(a){
+          var aName=a.name||'未知';
+          var aPalace=a.palace?('落'+a.palace.name+'宫'):'未找到';
+          var aDesc=a.description||'';
+          html+='<div style="margin:2px 0;padding:2px 8px;font-size:0.8rem;background:var(--paper-dark);border-left:2px solid var(--border-color)">▸ '+aName+' '+aPalace+' — '+aDesc+'</div>';
+        });
+      }
+      // Analysis
+      if(result.analysis){
+        html+='<div class="ink-divider" style="margin:10px 0"></div><div style="font-size:0.82rem;line-height:1.7">'+result.analysis+'</div>';
+      }
+      yc.innerHTML=html;
+    }else{
+      // Fallback
+      yc.innerHTML=analyzeYongshen(c,qt);
+    }
   }else{ys.style.display='none';}
 
   // 九宫格
@@ -1709,6 +1841,37 @@ function renderQmRef(c){
 document.getElementById('qmShare').addEventListener('click',async function(){
   var el=document.getElementById('qmResults');
   try{var c=await html2canvas(el,{backgroundColor:'#faf6ef',scale:2,useCORS:true});var l=document.createElement('a');l.download='奇门遁甲排盘.png';l.href=c.toDataURL();l.click();toast('✅ 图片已保存');}catch(e){toast('❌ 截图失败');}
+});
+
+// 用神分析按钮 — 切换问事类型后重新分析
+document.getElementById('qmYongshenBtn').addEventListener('click',function(){
+  if(!_qmChart){toast('❌ 请先起盘');return;}
+  var qt=document.getElementById('qmYongshenType').value;
+  var ys=document.getElementById('qmYongshen'),yc=document.getElementById('qmYongshenContent');
+  ys.style.display='block';
+  var result=null;
+  if(typeof window.analyzeYongshen==='function'){
+    result=window.analyzeYongshen(_qmChart,qt);
+  }
+  if(result && result.primary){
+    var html='';
+    if(result.primary){
+      var p=result.primary;
+      html+='<div style="margin-bottom:8px"><span class="tag-classic good">主用神</span> <b>'+(p.name||'未知')+'</b> '+(p.palace?'落'+p.palace.name+'宫':'未找到')+' — '+(p.description||'')+'</div>';
+    }
+    if(result.assistants&&result.assistants.length){
+      html+='<div style="margin-bottom:4px;font-size:0.78rem;color:var(--ink-muted);font-weight:600">辅用神：</div>';
+      result.assistants.forEach(function(a){
+        html+='<div style="margin:2px 0;padding:2px 8px;font-size:0.8rem;background:var(--paper-dark);border-left:2px solid var(--border-color)">▸ '+(a.name||'未知')+' '+(a.palace?'落'+a.palace.name+'宫':'未找到')+' — '+(a.description||'')+'</div>';
+      });
+    }
+    if(result.analysis){
+      html+='<div class="ink-divider" style="margin:10px 0"></div><div style="font-size:0.82rem;line-height:1.7">'+result.analysis+'</div>';
+    }
+    yc.innerHTML=html;
+  }else{
+    yc.innerHTML=typeof analyzeYongshen==='function'?analyzeYongshen(_qmChart,qt):'用神分析暂不可用';
+  }
 });
 
 // ═════════════════════════════════════════════════
@@ -2288,6 +2451,39 @@ function renderBaziAll(d){
           '</div>';
       }).join('')+'</div>';
   }else{selShensha.style.display='none';}
+
+  // ── 增四·神煞详解（调用 calculateShensha）──
+  (function(){
+    var selDetail=document.getElementById('bzShenshaDetail'), secDetail=document.getElementById('bzShenshaDetailContent');
+    if(typeof window.calculateShensha !== 'function'){selDetail.style.display='none';return;}
+    var shenshaList=window.calculateShensha(d);
+    if(!shenshaList||!shenshaList.length){selDetail.style.display='none';return;}
+    selDetail.style.display='block';
+    var all11=['天乙贵人','文昌贵人','桃花','驿马','天德','月德','孤辰','寡宿','华盖','劫煞','亡神'];
+    var html='<table class="shensha-table">'+
+      '<thead><tr>'+
+      '<th>神煞名称</th><th style="text-align:center">地支位置</th><th style="text-align:center">吉凶</th><th>释义</th></tr></thead><tbody>';
+    all11.forEach(function(shenshaName){
+      var found=null;
+      for(var i=0;i<shenshaList.length;i++){
+        if(shenshaList[i].name===shenshaName||shenshaList[i].name.indexOf(shenshaName)!==-1||shenshaName.indexOf(shenshaList[i].name)!==-1){
+          found=shenshaList[i];break;
+        }
+      }
+      var name=shenshaName;
+      var dizhi=found?found.dizhi:'—';
+      var xj=found?found.is_ji:'—';
+      var desc=found?found.description:'未见入局';
+      var xjClass=xj==='吉'?'good':(xj==='凶'?'bad':'');
+      html+='<tr>'+
+        '<td class="s-name">'+name+'</td>'+
+        '<td class="s-dizhi'+(found?' found':' missing')+'">'+dizhi+'</td>'+
+        '<td class="s-xj '+xjClass+'">'+xj+'</td>'+
+        '<td class="s-desc">'+desc+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    secDetail.innerHTML=html;
+  })();
 
   // ── 格局判断 ──
   var selGeju=document.getElementById('bzGeju'), secGeju=document.getElementById('bzGejuContent');

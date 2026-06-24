@@ -367,3 +367,234 @@ function computeBaziLocal(params){
     "warnings": []
   };
 }
+
+// ── 神煞系统 ──────────────────────────────────
+function calculateShensha(baziData){
+  var fp = baziData.four_pillars;
+  var yearZhi = fp.year.zhi, monthZhi = fp.month.zhi, dayZhi = fp.day.zhi, hourZhi = fp.hour.zhi;
+  var yearGan = fp.year.gan, monthGan = fp.month.gan, dayGan = fp.day.gan, hourGan = fp.hour.gan;
+  var dayMaster = baziData.day_master;
+
+  var allZhi = [yearZhi, monthZhi, dayZhi, hourZhi];
+  var allGan = [yearGan, monthGan, dayGan, hourGan];
+  var posName = ["年柱", "月柱", "日柱", "时柱"];
+
+  var results = [];
+
+  // ── 天乙贵人 ──
+  var tianyiMap = {
+    "甲":"丑未","乙":"子申","丙":"亥酉","丁":"亥酉","戊":"丑未",
+    "己":"子申","庚":"丑未","辛":"午寅","壬":"巳卯","癸":"巳卯"
+  };
+  var tianyiStr = tianyiMap[dayMaster] || "";
+  var tianyiFound = [];
+  for(var i=0; i<4; i++){
+    if(tianyiStr.indexOf(allZhi[i]) !== -1){
+      tianyiFound.push(posName[i] + allZhi[i]);
+    }
+  }
+  if(tianyiFound.length > 0){
+    results.push({
+      name: "天乙贵人",
+      dizhi: tianyiFound.join("、"),
+      is_ji: "吉",
+      description: "最吉之神，主贵人相助，逢凶化吉，威望显达"
+    });
+  }
+
+  // ── 文昌贵人 ──
+  var wenchangMap = {
+    "甲":"巳","乙":"午","丙":"申","丁":"酉","戊":"申",
+    "己":"酉","庚":"亥","辛":"子","壬":"寅","癸":"卯"
+  };
+  var wenchangZhi = wenchangMap[dayMaster] || "";
+  var wenchangFound = [];
+  for(var i=0; i<4; i++){
+    if(allZhi[i] === wenchangZhi){
+      wenchangFound.push(posName[i] + allZhi[i]);
+    }
+  }
+  if(wenchangFound.length > 0){
+    results.push({
+      name: "文昌贵人",
+      dizhi: wenchangFound.join("、"),
+      is_ji: "吉",
+      description: "主聪明文采，学业突出，才华横溢，科举高中"
+    });
+  }
+
+  // ── 桃花(咸池) ──
+  var taohuaMap = {"寅":"卯","午":"卯","戌":"卯","申":"酉","子":"酉","辰":"酉","亥":"子","卯":"子","未":"子","巳":"午","酉":"午","丑":"午"};
+  var taohuaZhi = taohuaMap[yearZhi];
+  var taohuaFound = [];
+  for(var i=0; i<4; i++){
+    if(allZhi[i] === taohuaZhi){
+      taohuaFound.push(posName[i] + allZhi[i]);
+    }
+  }
+  if(taohuaFound.length > 0){
+    results.push({
+      name: "桃花(咸池)",
+      dizhi: taohuaFound.join("、"),
+      is_ji: "凶",
+      description: "主异性缘佳，风流多情，感情丰富，易招感情纷争"
+    });
+  }
+
+  // ── 驿马 ──
+  var yimaMap = {"寅":"申","午":"申","戌":"申","申":"寅","子":"寅","辰":"寅","亥":"巳","卯":"巳","未":"巳","巳":"亥","酉":"亥","丑":"亥"};
+  var yimaZhi = yimaMap[yearZhi];
+  var yimaFound = [];
+  for(var i=0; i<4; i++){
+    if(allZhi[i] === yimaZhi){
+      yimaFound.push(posName[i] + allZhi[i]);
+    }
+  }
+  if(yimaFound.length > 0){
+    results.push({
+      name: "驿马",
+      dizhi: yimaFound.join("、"),
+      is_ji: "吉",
+      description: "主动荡变通，远行迁徙，奔波劳碌但能有所成"
+    });
+  }
+
+  // ── 天德 ──
+  var tiandeMap = {
+    "寅":"丁","卯":"申","辰":"壬","巳":"辛","午":"亥","未":"甲",
+    "申":"癸","酉":"寅","戌":"丙","亥":"乙","子":"巳","丑":"庚"
+  };
+  var tiandeVal = tiandeMap[monthZhi];
+  var tiandeFound = [];
+  for(var i=0; i<4; i++){
+    if(allGan[i] === tiandeVal || allZhi[i] === tiandeVal){
+      tiandeFound.push(posName[i] + (allGan[i] === tiandeVal ? allGan[i] : allZhi[i]));
+    }
+  }
+  if(tiandeFound.length > 0){
+    results.push({
+      name: "天德",
+      dizhi: tiandeFound.join("、"),
+      is_ji: "吉",
+      description: "主心地善良，逢凶化吉，福泽深厚，遇难成祥"
+    });
+  }
+
+  // ── 月德 ──
+  var yuedeMap = {
+    "寅":["丙","甲"],"午":["丙","甲"],"戌":["丙","甲"],
+    "亥":["甲"],"卯":["甲"],"未":["甲"],
+    "申":["壬","庚"],"子":["壬","庚"],"辰":["壬","庚"],
+    "巳":["庚"],"酉":["庚"],"丑":["庚"]
+  };
+  var yuedeGans = yuedeMap[yearZhi] || [];
+  var yuedeFound = [];
+  for(var i=0; i<4; i++){
+    if(yuedeGans.indexOf(allGan[i]) !== -1){
+      yuedeFound.push(posName[i] + allGan[i]);
+    }
+  }
+  if(yuedeFound.length > 0){
+    results.push({
+      name: "月德",
+      dizhi: yuedeFound.join("、"),
+      is_ji: "吉",
+      description: "主仁慈祥和，贵人相助，消灾解难，婚姻美满"
+    });
+  }
+
+  // ── 孤辰寡宿（以年支判断）──
+  var guguGroups = [
+    {group:["寅","卯","辰"], gu:"巳", gua:"丑"},
+    {group:["巳","午","未"], gu:"申", gua:"辰"},
+    {group:["申","酉","戌"], gu:"亥", gua:"未"},
+    {group:["亥","子","丑"], gu:"寅", gua:"戌"}
+  ];
+  var guguPair = null;
+  for(var i=0; i<guguGroups.length; i++){
+    if(guguGroups[i].group.indexOf(yearZhi) !== -1){
+      guguPair = guguGroups[i];
+      break;
+    }
+  }
+  if(guguPair){
+    var guFound = [], guaFound = [];
+    for(var i=0; i<4; i++){
+      if(allZhi[i] === guguPair.gu) guFound.push(posName[i] + allZhi[i]);
+      if(allZhi[i] === guguPair.gua) guaFound.push(posName[i] + allZhi[i]);
+    }
+    if(guFound.length > 0){
+      results.push({
+        name: "孤辰",
+        dizhi: guFound.join("、"),
+        is_ji: "凶",
+        description: "主孤独寂寞，性格孤僻，六亲缘分淡薄，晚婚"
+      });
+    }
+    if(guaFound.length > 0){
+      results.push({
+        name: "寡宿",
+        dizhi: guaFound.join("、"),
+        is_ji: "凶",
+        description: "主孤独寡居，婚姻不顺，配偶缘薄，独处之命"
+      });
+    }
+  }
+
+  // ── 华盖 ──
+  var huagaiMap = {"寅":"戌","午":"戌","戌":"戌","申":"辰","子":"辰","辰":"辰","亥":"未","卯":"未","未":"未","巳":"丑","酉":"丑","丑":"丑"};
+  var huagaiZhi = huagaiMap[yearZhi];
+  var huagaiFound = [];
+  for(var i=0; i<4; i++){
+    if(allZhi[i] === huagaiZhi){
+      huagaiFound.push(posName[i] + allZhi[i]);
+    }
+  }
+  if(huagaiFound.length > 0){
+    results.push({
+      name: "华盖",
+      dizhi: huagaiFound.join("、"),
+      is_ji: "吉",
+      description: "主聪明好学，有艺术天赋，宗教缘分，但易孤傲"
+    });
+  }
+
+  // ── 劫煞 ──
+  var jieshaMap = {"寅":"亥","午":"亥","戌":"亥","申":"巳","子":"巳","辰":"巳","亥":"申","卯":"申","未":"申","巳":"寅","酉":"寅","丑":"寅"};
+  var jieshaZhi = jieshaMap[yearZhi];
+  var jieshaFound = [];
+  for(var i=0; i<4; i++){
+    if(allZhi[i] === jieshaZhi){
+      jieshaFound.push(posName[i] + allZhi[i]);
+    }
+  }
+  if(jieshaFound.length > 0){
+    results.push({
+      name: "劫煞",
+      dizhi: jieshaFound.join("、"),
+      is_ji: "凶",
+      description: "主破财败事，小人侵扰，需防意外灾祸"
+    });
+  }
+
+  // ── 亡神 ──
+  var wangshenMap = {"寅":"巳","午":"巳","戌":"巳","申":"亥","子":"亥","辰":"亥","亥":"寅","卯":"寅","未":"寅","巳":"申","酉":"申","丑":"申"};
+  var wangshenZhi = wangshenMap[yearZhi];
+  var wangshenFound = [];
+  for(var i=0; i<4; i++){
+    if(allZhi[i] === wangshenZhi){
+      wangshenFound.push(posName[i] + allZhi[i]);
+    }
+  }
+  if(wangshenFound.length > 0){
+    results.push({
+      name: "亡神",
+      dizhi: wangshenFound.join("、"),
+      is_ji: "凶",
+      description: "主心机深沉，名誉受损，易招官非诉讼"
+    });
+  }
+
+  return results;
+}
+if (typeof window !== 'undefined') { window.calculateShensha = calculateShensha; }

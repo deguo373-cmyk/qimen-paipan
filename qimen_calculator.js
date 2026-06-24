@@ -893,10 +893,574 @@ function computeQimenChart(input) {
   return result;
 }
 
+// ═══════════════════════════════════════════════
+//  用神分析
+// ═══════════════════════════════════════════════
+
+// 八门五行
+var QM_DOOR_WUXING = {
+  "休门":"水", "生门":"土", "伤门":"木", "杜门":"木",
+  "景门":"火", "死门":"土", "惊门":"金", "开门":"金"
+};
+
+// 九星五行
+var QM_STAR_WUXING = {
+  "天蓬":"水", "天任":"土", "天冲":"木", "天辅":"木",
+  "天英":"火", "天芮":"土", "天柱":"金", "天心":"金", "天禽":"土"
+};
+
+// 八神凶吉（仅定义明显凶神和吉神）
+var QM_GOD_LUCK = {
+  "值符":"吉", "九天":"吉", "九地":"吉",
+  "太阴":"吉", "六合":"吉",
+  "螣蛇":"凶", "白虎":"凶", "玄武":"凶"
+};
+
+// 五行生克
+var QM_WUXING_CYCLE = ["木","火","土","金","水"];
+
+function qmWuxingIndex(wx) { return QM_WUXING_CYCLE.indexOf(wx); }
+
+/** 判断五行关系: "生我","我生","克我","我克","同" */
+function qmWuxingRelation(me, other) {
+  if (me === other) return "同";
+  var mi = qmWuxingIndex(me);
+  var oi = qmWuxingIndex(other);
+  if (mi === -1 || oi === -1) return "?";
+  if ((mi + 1) % 5 === oi) return "我生";
+  if ((mi + 4) % 5 === oi) return "生我";
+  if ((mi + 2) % 5 === oi) return "我克";
+  if ((mi + 3) % 5 === oi) return "克我";
+  return "?";
+}
+
+/**
+ * 判断"门受制"：宫克门（宫位五行克门的五行）
+ * 生门/开门受宫克时，视为条件不顺
+ */
+function qmDoorRestricted(doorName, palaceElement) {
+  var doorWx = QM_DOOR_WUXING[doorName];
+  if (!doorWx || !palaceElement) return false;
+  // 宫克门 → 门受制
+  return qmWuxingRelation(palaceElement, doorWx) === "克我";
+}
+
+/**
+ * 从盘数据中查找指定名称所在宫
+ */
+function qmFindPalaceByItem(panData, type, name) {
+  // type: "star", "door", "god"
+  var keyMap = { star: "star", door: "door", god: "god" };
+  var key = keyMap[type];
+  if (!key) return null;
+  for (var i = 0; i < panData.palaces.length; i++) {
+    var p = panData.palaces[i];
+    if (p[key] === name) return p;
+  }
+  return null;
+}
+
+/**
+ * 根据问题类型确定用神
+ * 
+ * @param {Object} panData - computeQimenChart 返回的 chart 对象
+ * @param {string} question - 问题描述或问题类型关键字
+ * @returns {Object} {
+ *   primary: { type, name, palace, detail },
+ *   assistants: [...],
+ *   analysis: string
+ * }
+ */
+function analyzeYongshen(panData, question) {
+  if (!panData || !panData.palaces) {
+    return { primary: null, assistants: [], analysis: "缺少盘数据" };
+  }
+
+  // 标准化问题文本
+  var q = (question || "").trim();
+
+  // ── 关键字匹配，确定主用神 ──
+  var primary = null;
+  var assistants = [];
+
+  function setPrimary(type, name, desc) {
+    var palace = null;
+    if (type === "door") {
+      palace = qmFindPalaceByItem(panData, "door", name);
+    } else if (type === "star") {
+      palace = qmFindPalaceByItem(panData, "star", name);
+    } else if (type === "god") {
+      palace = qmFindPalaceByItem(panData, "god", name);
+    } else if (type === "stem" || type === "earth_stem") {
+      // 按天干查找
+      for (var i = 0; i < panData.palaces.length; i++) {
+        if (panData.palaces[i].earth_stem === name || panData.palaces[i].sky_stem === name) {
+          palace = panData.palaces[i];
+          break;
+        }
+      }
+    } else if (type === "zhifu") {
+      // 值符星落宫
+      if (panData.zhifu && panData.zhifu.palace) {
+        for (var i = 0; i < panData.palaces.length; i++) {
+          if (panData.palaces[i].palace === panData.zhifu.palace) {
+            palace = panData.palaces[i];
+            break;
+          }
+        }
+      }
+    }
+
+    primary = {
+      type: type,
+      name: name,
+      palace: palace,
+      description: desc
+    };
+  }
+
+  function addAssistant(type, name, desc) {
+    var palace = null;
+    if (type === "door") {
+      palace = qmFindPalaceByItem(panData, "door", name);
+    } else if (type === "star") {
+      palace = qmFindPalaceByItem(panData, "star", name);
+    } else if (type === "zhifu") {
+      if (panData.zhifu && panData.zhifu.palace) {
+        for (var i = 0; i < panData.palaces.length; i++) {
+          if (panData.palaces[i].palace === panData.zhifu.palace) {
+            palace = panData.palaces[i];
+            break;
+          }
+        }
+      }
+    }
+    assistants.push({ type: type, name: name, palace: palace, description: desc });
+  }
+
+  // 匹配问题类型 — 按优先级匹配
+  var matched = false;
+
+  // 健康/疾病
+  if (/(?:健康|疾病|生病|病|身体|体检|看病|天芮|死门)/.test(q) && !matched) {
+    setPrimary("star", "天芮", "疾病健康主用神");
+    addAssistant("door", "死门", "健康辅助参考");
+    addAssistant("stem", panData.time_stem_visible || "", "日干/求测者自身");
+    matched = true;
+  }
+
+  // 感情/婚姻/恋爱
+  if (/(?:感情|婚姻|恋爱|结婚|对象|女友|男友|配偶|婚|六合)/.test(q) && !matched) {
+    setPrimary("god", "六合", "感情婚姻主用神");
+    addAssistant("stem", panData.time_stem_visible || "", "日干/求测者");
+    // 乙庚作为辅助
+    addAssistant("earth_stem", "乙", "乙奇(女方/柔方参考)");
+    addAssistant("earth_stem", "庚", "庚(男方/刚方参考)");
+    matched = true;
+  }
+
+  // 财运/投资/交易
+  if (/(?:财|财运|投资|交易|生意|赚钱|生门|戊)/.test(q) && !matched) {
+    setPrimary("door", "生门", "财运投资主用神");
+    addAssistant("stem", panData.time_stem_visible || "", "日干/求测者自身");
+    addAssistant("earth_stem", "戊", "戊/正财参考");
+    matched = true;
+  }
+
+  // 事业/工作/项目
+  if (/(?:事业|工作|项目|职场|升职|跳槽|求职|开门|值符)/.test(q) && !matched) {
+    setPrimary("door", "开门", "事业工作主用神");
+    addAssistant("zhifu", "值符", "主导权和上级支持");
+    addAssistant("stem", panData.time_stem_visible || "", "日干/求测者");
+    matched = true;
+  }
+
+  // 考试/学习/证书
+  if (/(?:考试|学习|学业|证书|教育|学校|文昌|天辅|景门)/.test(q) && !matched) {
+    setPrimary("door", "景门", "考试学业主用神");
+    addAssistant("star", "天辅", "文昌/学业辅助");
+    addAssistant("earth_stem", "丁", "丁奇/文书辅助");
+    matched = true;
+  }
+
+  // 出行/方位
+  if (/(?:出行|出差|旅行|旅游|方位|方向|休门)/.test(q) && !matched) {
+    setPrimary("door", "休门", "出行主用神");
+    addAssistant("door", "开门", "出行顺利参考");
+    addAssistant("zhifu", "值符", "出行安全辅助");
+    matched = true;
+  }
+
+  // 诉讼/合同/争议
+  if (/(?:诉讼|合同|争议|官司|打官司|惊门|开门)/.test(q) && !matched) {
+    setPrimary("door", "惊门", "诉讼争议主用神");
+    addAssistant("door", "开门", "合同公开性参考");
+    addAssistant("zhifu", "值符", "公正裁决辅助");
+    matched = true;
+  }
+
+  // 寻人/寻物
+  if (/(?:寻人|寻物|找|找人|找东西|丢失|遗失|玄武)/.test(q) && !matched) {
+    setPrimary("door", "杜门", "遮掩/失物主用神");
+    addAssistant("zhifu", "值符", "主导辅助");
+    matched = true;
+  }
+
+  // 默认: 用日干+时干
+  if (!matched) {
+    setPrimary("stem", panData.time_stem_visible || "", "时干/所问之事");
+    addAssistant("zhifu", "值符", "全局主导参考");
+  }
+
+  // ── 用神分析 ──
+  var analysis = "";
+
+  if (primary && primary.palace) {
+    var pp = primary.palace;
+    analysis += "主用神【" + primary.name + "(" + primary.description + ")】落" +
+                pp.name + "宫(" + pp.direction + ")。";
+
+    // 门的状态
+    if (pp.door) {
+      analysis += "该宫门为【" + pp.door + "】";
+      if (qmDoorRestricted(pp.door, pp.element)) {
+        analysis += "（门受宫克，条件不顺）";
+      }
+      analysis += "。";
+    }
+
+    // 星的状态
+    if (pp.star) {
+      var starLuck = QM_GOD_LUCK[pp.god] || "平";
+      analysis += "星为【" + pp.star + "】，";
+    }
+
+    // 神的状态
+    if (pp.god) {
+      var godLuck = QM_GOD_LUCK[pp.god] || "平";
+      if (godLuck === "凶") {
+        analysis += "神临【" + pp.god + "】（凶神干扰）";
+      } else if (godLuck === "吉") {
+        analysis += "神临【" + pp.god + "】（吉神相助）";
+      } else {
+        analysis += "神临【" + pp.god + "】";
+      }
+      analysis += "。";
+    }
+
+    // 空亡
+    if (pp.is_kong) {
+      analysis += "⚠ 此宫逢空亡，力量虚浮，易拖延或落空。";
+    }
+
+    // 值符是否落到同一宫
+    if (panData.zhifu && panData.zhifu.palace === pp.palace) {
+      analysis += "值符同宫，得主导权加持。";
+    }
+    if (panData.zhishi && panData.zhishi.palace === pp.palace) {
+      analysis += "值使同宫，事有执行动力。";
+    }
+  } else {
+    analysis += "用神未找到明确落宫。";
+  }
+
+  return {
+    primary: primary,
+    assistants: assistants,
+    analysis: analysis
+  };
+}
+
+// ═══════════════════════════════════════════════
+//  格局分析
+// ═══════════════════════════════════════════════
+
+/**
+ * 分析奇门盘格局
+ * 判断顺序: 先用神落宫→值符值使→门星神组合→特殊格局
+ * 
+ * @param {Object} panData - computeQimenChart 返回的 chart 对象
+ * @param {Object} [yongshenResult] - 可选的 analyzeYongshen 结果，用于增强分析
+ * @returns {Object} {
+ *   patterns: [...],    // 格局列表
+ *   summary: string,    // 整体判断
+ *   lucky: string[],    // 吉象列表
+ *   unlucky: string[],  // 凶象列表
+ * }
+ */
+function analyzeGeju(panData, yongshenResult) {
+  if (!panData || !panData.palaces) {
+    return { patterns: [], summary: "缺少盘数据", lucky: [], unlucky: [] };
+  }
+
+  var lucky = [];
+  var unlucky = [];
+  var patterns = [];
+  var detailLines = [];
+
+  // ── 1. 三奇配吉门 ──
+  // 三奇：乙、丙、丁；吉门：开门、休门、生门
+  var sanqi = ["乙", "丙", "丁"];
+  var luckyDoors = ["开门", "休门", "生门"];
+
+  for (var i = 0; i < panData.palaces.length; i++) {
+    var p = panData.palaces[i];
+    if (p.is_center) continue;
+
+    // 检查天盘天干是否为三奇，且门是否为吉门
+    var isSanqi = sanqi.indexOf(p.sky_stem) !== -1;
+    var isLuckyDoor = luckyDoors.indexOf(p.door) !== -1;
+
+    if (isSanqi && isLuckyDoor) {
+      var patName = p.sky_stem + "奇配" + p.door;
+      patterns.push({
+        name: patName,
+        type: "吉",
+        palace: p.palace,
+        detail: p.name + "宫：" + p.sky_stem + "（" + p.sky_stem + "奇）与" + p.door + "同宫，"
+              + "利于行动、沟通、资源调动。"
+      });
+      lucky.push("【" + patName + "】在" + p.name + "宫—事情有转机，推进更顺。");
+    }
+  }
+
+  // 如果没配到三奇配吉门，标记
+  if (patterns.filter(function(x){ return x.name.indexOf("奇配") > 0; }).length === 0) {
+    // 简单记载
+  }
+
+  // ── 2. 值符得位分析 ──
+  if (panData.zhifu) {
+    var zfPalace = null;
+    for (var i = 0; i < panData.palaces.length; i++) {
+      if (panData.palaces[i].palace === panData.zhifu.palace) {
+        zfPalace = panData.palaces[i];
+        break;
+      }
+    }
+    if (zfPalace) {
+      // 值符得位简评：值符宫的门星神状况
+      var zfAnalysis = "值符【" + panData.zhifu.star + "】落" + zfPalace.name + "宫";
+      var zfGood = true;
+
+      if (zfPalace.god === "白虎" || zfPalace.god === "玄武" || zfPalace.god === "螣蛇") {
+        zfGood = false;
+        zfAnalysis += "，临" + zfPalace.god + "（凶神干扰）";
+        unlucky.push("值符落" + zfPalace.name + "宫，临" + zfPalace.god + "，主导权有干扰。");
+      } else if (zfPalace.god && QM_GOD_LUCK[zfPalace.god] === "吉") {
+        zfAnalysis += "，临" + zfPalace.god + "（吉神配合）";
+        lucky.push("值符落" + zfPalace.name + "宫得" + zfPalace.god + "相助，主导权稳固。");
+      }
+
+      if (zfPalace.is_kong) {
+        zfGood = false;
+        zfAnalysis += "，但逢空亡，力量虚浮";
+        unlucky.push("值符落宫逢空亡，主导力量虚，需等时机。");
+      }
+
+      if (zfPalace.door && qmDoorRestricted(zfPalace.door, zfPalace.element)) {
+        zfGood = false;
+        zfAnalysis += "，门" + zfPalace.door + "受制";
+        unlucky.push("值符所在宫的门" + zfPalace.door + "受宫克，主导权执行不顺。");
+      }
+
+      patterns.push({
+        name: "值符落宫分析",
+        type: zfGood ? "吉" : "凶",
+        palace: panData.zhifu.palace,
+        detail: zfAnalysis + "。"
+      });
+    }
+  }
+
+  // ── 3. 值使门分析 ──
+  if (panData.zhishi) {
+    var zsPalace = null;
+    for (var i = 0; i < panData.palaces.length; i++) {
+      if (panData.palaces[i].palace === panData.zhishi.palace) {
+        zsPalace = panData.palaces[i];
+        break;
+      }
+    }
+    if (zsPalace) {
+      var zsAnalysis = "值使【" + panData.zhishi.door + "】落" + zsPalace.name + "宫";
+      var zsGood = true;
+
+      if (zsPalace.is_kong) {
+        zsGood = false;
+        zsAnalysis += "，逢空亡";
+        unlucky.push("值使" + panData.zhishi.door + "落空亡宫，执行力虚浮。");
+      }
+
+      if (qmDoorRestricted(panData.zhishi.door, zsPalace.element)) {
+        zsGood = false;
+        zsAnalysis += "，门受宫克";
+        unlucky.push("值使" + panData.zhishi.door + "受" + zsPalace.name + "宫所克，执行受阻。");
+      } else {
+        // 门克宫为吉
+        var doorWx = QM_DOOR_WUXING[panData.zhishi.door];
+        if (doorWx && zsPalace.element) {
+          var rel = qmWuxingRelation(doorWx, zsPalace.element);
+          if (rel === "我克") {
+            zsGood = true;
+            zsAnalysis += "，门克宫（得力）";
+            lucky.push("值使" + panData.zhishi.door + "克" + zsPalace.name + "宫，执行有力。");
+          }
+        }
+      }
+
+      patterns.push({
+        name: "值使门分析",
+        type: zsGood ? "吉" : "凶",
+        palace: panData.zhishi.palace,
+        detail: zsAnalysis + "。"
+      });
+    }
+  }
+
+  // ── 4. 门+星+神组合检查 ──
+  var checkDoors = ["生门", "开门", "休门"];
+  for (var di = 0; di < checkDoors.length; di++) {
+    var doorName = checkDoors[di];
+    var pDoor = qmFindPalaceByItem(panData, "door", doorName);
+    if (!pDoor) continue;
+
+    var doorAnalysis = doorName + "落" + pDoor.name + "宫";
+    var doorOk = true;
+
+    // 门受制检查
+    if (qmDoorRestricted(doorName, pDoor.element)) {
+      doorOk = false;
+      unlucky.push(doorName + "落" + pDoor.name + "宫，门受宫克—条件不顺，硬推成本高。");
+      doorAnalysis += "（门受宫克）";
+    } else {
+      var doorWx = QM_DOOR_WUXING[doorName];
+      var rel = qmWuxingRelation(doorWx, pDoor.element);
+      if (rel === "我克") {
+        doorAnalysis += "（门克宫，得力）";
+      } else if (rel === "同") {
+        doorAnalysis += "（门宫比和，平稳）";
+      } else if (rel === "生我") {
+        doorAnalysis += "（宫生门，得地）";
+      } else if (rel === "我生") {
+        doorAnalysis += "（门生宫，泄气）";
+      }
+    }
+
+    // 白虎/玄武检查
+    if (pDoor.god === "白虎") {
+      doorAnalysis += "，临白虎（冲突/伤损风险）";
+      if (doorName !== "惊门" && doorName !== "死门") {
+        unlucky.push(doorName + "临白虎，提醒避免冲突和硬碰硬。");
+      }
+    }
+    if (pDoor.god === "玄武") {
+      doorAnalysis += "，临玄武（信息失真/隐情）";
+      unlucky.push(doorName + "临玄武，注意信息误差或小人。");
+    }
+    if (pDoor.god === "九天") {
+      doorAnalysis += "，临九天（高远/宜主动）";
+    }
+
+    // 空亡
+    if (pDoor.is_kong) {
+      doorOk = false;
+      doorAnalysis += "，逢空亡（力量虚）";
+      unlucky.push(doorName + "落空亡宫，事易拖延或落空。");
+    }
+
+    patterns.push({
+      name: doorName + "分析",
+      type: doorOk ? "吉" : "凶",
+      palace: pDoor.palace,
+      detail: doorAnalysis + "。"
+    });
+  }
+
+  // ── 5. 凶门检查 ──
+  var badDoorCheck = ["死门", "惊门"];
+  for (var di = 0; di < badDoorCheck.length; di++) {
+    var doorName = badDoorCheck[di];
+    var pDoor = qmFindPalaceByItem(panData, "door", doorName);
+    if (!pDoor) continue;
+    if (pDoor.god === "白虎" || pDoor.god === "玄武") {
+      unlucky.push(doorName + "与" + pDoor.god + "同宫—凶上加凶，需格外警惕。");
+    }
+  }
+
+  // ── 6. 白虎/玄武整体检查 ──
+  var baihuFound = false;
+  var xuanwuFound = false;
+  for (var i = 0; i < panData.palaces.length; i++) {
+    var p = panData.palaces[i];
+    if (p.is_center) continue;
+    if (p.god === "白虎" && !baihuFound) {
+      baihuFound = true;
+      // 白虎所在宫的门
+      if (p.door && (p.door === "惊门" || p.door === "伤门")) {
+        unlucky.push("白虎临" + p.door + "落" + p.name + "宫—冲突、争斗风险高。");
+      }
+    }
+    if (p.god === "玄武" && !xuanwuFound) {
+      xuanwuFound = true;
+    }
+  }
+
+  // ── 7. 用神分析交叉参考 ──
+  if (yongshenResult && yongshenResult.primary && yongshenResult.primary.palace) {
+    var ysPalace = yongshenResult.primary.palace;
+    // 检查是否与值符同宫
+    if (panData.zhifu && panData.zhifu.palace === ysPalace.palace) {
+      lucky.push("用神与值符同宫，有主导权和支持。");
+    }
+    // 检查用神所在宫是否临白虎/玄武
+    if (ysPalace.god === "白虎") {
+      unlucky.push("用神临白虎，主冲突或障碍。");
+    }
+    if (ysPalace.god === "玄武") {
+      unlucky.push("用神临玄武，主信息不明或有隐情。");
+    }
+    if (ysPalace.is_kong) {
+      unlucky.push("用神落空亡宫，主事虚不实。");
+    }
+  }
+
+  // ── 生成整体总结 ──
+  var summary = "";
+  if (lucky.length === 0 && unlucky.length === 0) {
+    summary = "此盘格局特征不突出，建议结合实际宫位信息综合判断。";
+  } else {
+    var hasStrongLucky = lucky.length >= 2;
+    var hasStrongUnlucky = unlucky.length >= 2;
+    if (hasStrongLucky && !hasStrongUnlucky) {
+      summary = "整体格局偏吉。";
+    } else if (hasStrongUnlucky && !hasStrongLucky) {
+      summary = "整体格局偏凶，需注意风险。";
+    } else if (hasStrongLucky && hasStrongUnlucky) {
+      summary = "吉凶互现，需区别对待：吉处可推进，凶处先规避。";
+    } else {
+      summary = "格局一般，建议结合具体宫位分析判断。";
+    }
+  }
+
+  return {
+    patterns: patterns,
+    summary: summary,
+    lucky: lucky,
+    unlucky: unlucky
+  };
+}
+
 // 导出到全局作用域
 if (typeof window !== 'undefined') {
   window.computeQimenChart = computeQimenChart;
+  window.analyzeYongshen = analyzeYongshen;
+  window.analyzeGeju = analyzeGeju;
 }
 if (typeof module !== 'undefined') {
-  module.exports = { computeQimenChart: computeQimenChart };
+  module.exports = {
+    computeQimenChart: computeQimenChart,
+    analyzeYongshen: analyzeYongshen,
+    analyzeGeju: analyzeGeju
+  };
 }

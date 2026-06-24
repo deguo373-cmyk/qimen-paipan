@@ -1028,6 +1028,371 @@ window.ZiWeiCalculator = (function() {
       },
       like: ['紫微', '禄存', '天魁', '天钺', '文昌', '文曲'],
       dislike: ['擎羊', '陀罗', '铃星', '火星', '地空', '地劫']
+    },
+    // ===== 辅星 =====
+    '文昌': {
+      name: '文昌',
+      english: 'Wen Chang',
+      aliases: ['文星', '科甲星'],
+      element: '金',
+      color: '金色',
+      coreTrait: '正统学问、科甲功名、文书才华',
+      strengths: '聪慧好学、学历高、表达好、文笔出众、有学术天赋',
+      weaknesses: '清高自负、有时过于理想化',
+      palaces: {
+        '命宫': '聪明好学，有文采，学历运佳，适合学术发展。',
+        '兄弟': '兄弟姐妹中有文采出众者。',
+        '夫妻': '配偶有文化素养，婚姻有文学气息。',
+        '子女': '子女学业优秀，聪慧好学。',
+        '财帛': '以文采或知识得财，适合文化教育类职业。',
+        '疾厄': '注意上呼吸道和神经系统。',
+        '迁移': '外出发展有文名，适合异地求学发展。',
+        '交友': '朋友多为文人学者。',
+        '官禄': '文化、教育、出版、媒体行业有发展。',
+        '田宅': '住宅有文化气息，书房运好。',
+        '福德': '精神追求高雅。',
+        '父母': '父母有文化，家庭书香气息。'
+      },
+      like: ['文曲', '左辅', '右弼', '天魁', '天钺'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫']
+    },
+    '文曲': {
+      name: '文曲',
+      english: 'Wen Qu',
+      aliases: ['才艺星', '异路功名'],
+      element: '水',
+      color: '浅蓝',
+      coreTrait: '才艺、口才、异路功名、偏才',
+      strengths: '多才多艺、口才好、有文艺天赋、反应快、有创意',
+      weaknesses: '不够扎实、容易浮华、不耐久坐',
+      palaces: {
+        '命宫': '多才多艺，口才出众，适合文艺、主持、演艺。',
+        '兄弟': '兄弟姐妹中有才艺天赋的。',
+        '夫妻': '配偶有才艺，婚姻浪漫。',
+        '子女': '子女有艺术天赋，多才多艺。',
+        '财帛': '靠才艺或口才得财，财源多样。',
+        '疾厄': '注意口腔、咽喉、中耳炎。',
+        '迁移': '在外以才艺闻名。',
+        '交友': '朋友多为艺术圈人士。',
+        '官禄': '文艺、演艺、传媒、公关行业。',
+        '田宅': '住宅有艺术气息。',
+        '福德': '精神生活丰富多彩。',
+        '父母': '父母有文艺特长。'
+      },
+      like: ['文昌', '左辅', '右弼', '天魁', '天钺'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫']
+    },
+    '左辅': {
+      name: '左辅',
+      english: 'Zuo Fu',
+      aliases: ['助星', '贵星'],
+      element: '土',
+      color: '土黄',
+      coreTrait: '助力、善缘、贵人相助',
+      strengths: '人缘好、有贵人助、做事顺利、有团队协作精神',
+      weaknesses: '依赖性较强、缺乏主见',
+      palaces: {
+        '命宫': '一生贵人运佳，人缘好，做事有助力。',
+        '兄弟': '兄弟姐妹和谐互助。',
+        '夫妻': '配偶是贤内助，婚姻关系好。',
+        '子女': '子女乖巧，有教养。',
+        '财帛': '合伙得财，有人相助赚钱。',
+        '疾厄': '病有良医。',
+        '迁移': '外出有朋友帮助。',
+        '交友': '朋友可靠，能得实质帮助。',
+        '官禄': '同事关系好，有助力。',
+        '田宅': '家庭和谐。',
+        '福德': '心境平和。',
+        '父母': '父母慈爱，有助力。'
+      },
+      like: ['右弼', '天魁', '天钺', '文昌', '文曲'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫']
+    },
+    '右弼': {
+      name: '右弼',
+      english: 'You Bi',
+      aliases: ['助星', '隐贵'],
+      element: '水',
+      color: '暗蓝',
+      coreTrait: '暗中助力、随和、贵人',
+      strengths: '性格柔和、善解人意、暗中得助、人缘好',
+      weaknesses: '过于随和、缺乏决断力',
+      palaces: {
+        '命宫': '性格温和，善解人意，常有贵人暗中相助。',
+        '兄弟': '兄弟姐妹关系融洽。',
+        '夫妻': '配偶温柔体贴。',
+        '子女': '子女温顺懂事。',
+        '财帛': '有人暗中帮助得财。',
+        '疾厄': '小病易愈。',
+        '迁移': '外有暗中贵人。',
+        '交友': '朋友真诚相助。',
+        '官禄': '工作中有同事暗中支持。',
+        '田宅': '居家安宁。',
+        '福德': '内心安详。',
+        '父母': '父母暗中支持。'
+      },
+      like: ['左辅', '天魁', '天钺', '文昌', '文曲'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫']
+    },
+    '天魁': {
+      name: '天魁',
+      english: 'Tian Kui',
+      aliases: ['阳贵人', '科甲星'],
+      element: '火',
+      color: '赤红',
+      coreTrait: '阳贵人、显贵、科甲功名',
+      strengths: '遇难有人明助、考试运好、升迁顺利、有名望',
+      weaknesses: '依赖贵人、独立能力稍弱',
+      palaces: {
+        '命宫': '一生有男性贵人相助，考试升迁运佳。',
+        '兄弟': '兄弟姐妹中有显达者相助。',
+        '夫妻': '配偶有社会地位。',
+        '子女': '子女有出息。',
+        '财帛': '得贵人助而进财。',
+        '疾厄': '病有良医，遇难呈祥。',
+        '迁移': '外出得贵人提携。',
+        '交友': '朋友中有达官贵人。',
+        '官禄': '事业有贵人提拔。',
+        '田宅': '能得祖荫。',
+        '福德': '有福气。',
+        '父母': '父母有地位。'
+      },
+      like: ['天钺', '左辅', '右弼', '文昌', '文曲'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫']
+    },
+    '天钺': {
+      name: '天钺',
+      english: 'Tian Yue',
+      aliases: ['阴贵人', '阴助星'],
+      element: '火',
+      color: '橙红',
+      coreTrait: '阴贵人、暗中相助、女贵人',
+      strengths: '有暗中贵人相助、逢凶化吉、得女性助力',
+      weaknesses: '贵人暗藏、需要自己把握机会',
+      palaces: {
+        '命宫': '常有女性贵人暗中相助。',
+        '兄弟': '姐妹或女性亲人相助。',
+        '夫妻': '配偶温柔贤淑有助。',
+        '子女': '女儿孝顺有助。',
+        '财帛': '暗中得财。',
+        '疾厄': '病有良医暗中相助。',
+        '迁移': '外出有女性贵人。',
+        '交友': '女性朋友可靠。',
+        '官禄': '有女性上司或同事相助。',
+        '田宅': '住宅安宁。',
+        '福德': '有福荫。',
+        '父母': '母亲或女性长辈有助。'
+      },
+      like: ['天魁', '左辅', '右弼', '文昌', '文曲'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫']
+    },
+    '禄存': {
+      name: '禄存',
+      english: 'Lu Cun',
+      aliases: ['财星', '正财禄'],
+      element: '土',
+      color: '金黄',
+      coreTrait: '正财禄、稳定收入、积蓄',
+      strengths: '财运稳定、善于积累、理财有道、生活富裕',
+      weaknesses: '两侧必有羊陀、有孤独感、守财太紧',
+      palaces: {
+        '命宫': '财运稳定，有积蓄能力，但性格较孤独。',
+        '兄弟': '兄弟姐妹经济条件不错。',
+        '夫妻': '配偶善于理财。',
+        '子女': '子女有财运。',
+        '财帛': '财库充盈，正财运稳定。',
+        '疾厄': '身体底子好。',
+        '迁移': '外出求财顺利。',
+        '交友': '朋友经济条件好。',
+        '官禄': '事业收入稳定丰厚。',
+        '田宅': '财产积累，不动产丰厚。',
+        '福德': '物质生活满足。',
+        '父母': '家境殷实。'
+      },
+      like: ['天马', '左辅', '右弼', '天魁', '天钺'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫', '火星', '铃星']
+    },
+    '天马': {
+      name: '天马',
+      english: 'Tian Ma',
+      aliases: ['驿马', '动星'],
+      element: '火',
+      color: '赭红',
+      coreTrait: '驿马、奔波、变动、远方发展',
+      strengths: '行动力强、适应变化、适合远行发展、喜欢探索',
+      weaknesses: '不安定、奔波劳碌、难扎根、家庭聚少离多',
+      palaces: {
+        '命宫': '人生多变动，适合在外发展，奔波劳碌但有所成。',
+        '兄弟': '兄弟姐妹中有人远行或在外发展。',
+        '夫妻': '夫妻聚少离多。',
+        '子女': '子女外向好动。',
+        '财帛': '动中求财，适合做生意或跑业务。',
+        '疾厄': '注意四肢损伤。',
+        '迁移': '出外发展大吉，越动越旺。',
+        '交友': '朋友遍布各地。',
+        '官禄': '工作需要多走动，跑业务、外贸等。',
+        '田宅': '常搬家或职业变动。',
+        '福德': '喜欢自由不受束缚。',
+        '父母': '父母事业在外。'
+      },
+      like: ['禄存', '左辅', '右弼', '天魁', '天钺'],
+      dislike: ['擎羊', '陀罗', '地空', '地劫']
+    },
+    '擎羊': {
+      name: '擎羊',
+      english: 'Qing Yang',
+      aliases: ['刑星', '煞星'],
+      element: '金',
+      color: '白煞',
+      coreTrait: '刑伤、是非、刚烈、冲劲',
+      strengths: '行动力强、果敢、有冲劲、不拖泥带水',
+      weaknesses: '是非多、易冲突、血光之灾、人际关系紧张',
+      palaces: {
+        '命宫': '性格刚烈，行动力强但容易得罪人，需注意意外伤害。',
+        '兄弟': '兄弟姐妹间有争斗。',
+        '夫妻': '婚姻中易争吵。',
+        '子女': '子女个性强硬难管教。',
+        '财帛': '竞争得财但易有纠纷。',
+        '疾厄': '注意刀伤、手术、意外。',
+        '迁移': '外出易惹是非。',
+        '交友': '朋友中易有争斗。',
+        '官禄': '事业竞争压力大。',
+        '田宅': '住宅附近有煞气。',
+        '福德': '内心刚强急躁。',
+        '父母': '父母关系紧张。'
+      },
+      like: ['天魁', '天钺', '禄存'],
+      dislike: ['文昌', '文曲', '左辅', '右弼']
+    },
+    '陀罗': {
+      name: '陀罗',
+      english: 'Tuo Luo',
+      aliases: ['暗耗星', '煞星'],
+      element: '金',
+      color: '暗金',
+      coreTrait: '拖延、纠缠、暗耗、反复',
+      strengths: '忍耐力强、有韧性、执着不放弃',
+      weaknesses: '做事拖拉、犹豫不决、暗中有消耗、事倍功半',
+      palaces: {
+        '命宫': '做事容易拖延，内心纠结，需培养决断力。',
+        '兄弟': '兄弟姐妹间有纠缠不清的事情。',
+        '夫妻': '婚姻中易有纠缠反复。',
+        '子女': '为子女操心费时。',
+        '财帛': '赚钱费劲，暗中破耗。',
+        '疾厄': '慢性病缠身难愈。',
+        '迁移': '外出常遇拖延。',
+        '交友': '朋友拖累。',
+        '官禄': '事业进展缓慢。',
+        '田宅': '房产事务反复。',
+        '福德': '内心纠结难放。',
+        '父母': '父母关系有纠缠。'
+      },
+      like: ['天魁', '天钺', '禄存'],
+      dislike: ['文昌', '文曲', '左辅', '右弼']
+    },
+    '火星': {
+      name: '火星',
+      english: 'Huo Xing',
+      aliases: ['煞星', '急暴星'],
+      element: '火',
+      color: '烈红',
+      coreTrait: '急躁、暴烈、突发、冲动',
+      strengths: '行动迅速、有爆发力、遇贪狼反成吉格',
+      weaknesses: '性急暴躁、缺乏耐心、容易冲动坏事',
+      palaces: {
+        '命宫': '性急暴躁，行动快但容易冲动，遇贪狼可成格。',
+        '兄弟': '兄弟姐妹关系紧张。',
+        '夫妻': '婚姻中争吵多。',
+        '子女': '子女脾气暴躁。',
+        '财帛': '来得快去得也快。',
+        '疾厄': '注意火气大、高血压。',
+        '迁移': '外出易与人冲突。',
+        '交友': '朋友脾气相冲。',
+        '官禄': '事业上有爆发力但不持久。',
+        '田宅': '家居附近有火煞。',
+        '福德': '内心急躁不安。',
+        '父母': '父母性子急。'
+      },
+      like: ['贪狼', '禄存', '天魁', '天钺'],
+      dislike: ['文昌', '文曲', '左辅', '右弼']
+    },
+    '铃星': {
+      name: '铃星',
+      english: 'Ling Xing',
+      aliases: ['煞星', '暗火星'],
+      element: '火',
+      color: '暗红',
+      coreTrait: '阴火、暗燃、隐患、心焦',
+      strengths: '内心有动力、暗中有谋略、遇贪狼可成格',
+      weaknesses: '表面平静内心焦虑、暗中消耗、隐忧不断',
+      palaces: {
+        '命宫': '表面平静但内心焦虑，有心计，遇贪狼可成铃贪格。',
+        '兄弟': '手足间有暗争。',
+        '夫妻': '表面和睦内心有不满。',
+        '子女': '子女有心事不表露。',
+        '财帛': '暗中有财务压力。',
+        '疾厄': '注意隐性病症。',
+        '迁移': '外出易遇烦心事。',
+        '交友': '朋友表面好实际有算计。',
+        '官禄': '工作上暗中有压力。',
+        '田宅': '住宅有隐患。',
+        '福德': '内心焦虑不安。',
+        '父母': '父母有心事。'
+      },
+      like: ['贪狼', '禄存', '天魁', '天钺'],
+      dislike: ['文昌', '文曲', '左辅', '右弼']
+    },
+    '地空': {
+      name: '地空',
+      english: 'Di Kong',
+      aliases: ['空亡星', '煞星'],
+      element: '火',
+      color: '透明',
+      coreTrait: '空虚、落空、创意、哲思',
+      strengths: '想法独特、有创意、有哲学宗教缘分、不落俗套',
+      weaknesses: '不切实际、钱财难守、现实感弱、易落空',
+      palaces: {
+        '命宫': '思想独特，有创意和哲思，但现实感较弱，适合艺术和宗教。',
+        '兄弟': '兄弟姐妹中有人不切实际。',
+        '夫妻': '婚姻中精神层面重于物质。',
+        '子女': '子女想法独特。',
+        '财帛': '钱财难留，有破耗。',
+        '疾厄': '注意气血不足。',
+        '迁移': '外出发展不稳定。',
+        '交友': '朋友多为奇人异士。',
+        '官禄': '适合创意类工作。',
+        '田宅': '房产不易积累。',
+        '福德': '精神追求极高。',
+        '父母': '父母有宗教或哲学倾向。'
+      },
+      like: ['天魁', '天钺', '文昌', '文曲'],
+      dislike: ['禄存', '左辅', '右弼']
+    },
+    '地劫': {
+      name: '地劫',
+      english: 'Di Jie',
+      aliases: ['劫煞星', '煞星'],
+      element: '火',
+      color: '灰暗',
+      coreTrait: '劫夺、损失、灵感、跳跃',
+      strengths: '有灵感直觉、思想跳跃、能跳出常规思路',
+      weaknesses: '财物易损失、人生多波折、意外损失',
+      palaces: {
+        '命宫': '人生多波折，财物易损失，但有灵感和直觉天赋。',
+        '兄弟': '手足间有利益冲突。',
+        '夫妻': '婚姻中易有损失。',
+        '子女': '为子女付出多。',
+        '财帛': '易破财，投资需谨慎。',
+        '疾厄': '注意突发性疾病。',
+        '迁移': '外出易遇劫难。',
+        '交友': '交友需谨慎，防小人。',
+        '官禄': '事业上有损失。',
+        '田宅': '房产有损失风险。',
+        '福德': '精神不安。',
+        '父母': '家庭有变故风险。'
+      },
+      like: ['天魁', '天钺', '文昌', '文曲'],
+      dislike: ['禄存', '左辅', '右弼']
     }
   };
 
@@ -1353,6 +1718,282 @@ window.ZiWeiCalculator = (function() {
         return false;
       },
       level: '中上格'
+    },
+    // ===== 以下为新添加的格局（依据参考文件） =====
+    '紫杀同宫': {
+      name: '紫杀同宫',
+      description: '紫微与七杀同宫，魄力大、敢担事、适合带队或开创。',
+      condition: function(chart) {
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          var hasZiWei = false, hasQiSha = false;
+          for (var j = 0; j < p.stars.length; j++) {
+            if (p.stars[j].name === '紫微') hasZiWei = true;
+            if (p.stars[j].name === '七杀') hasQiSha = true;
+          }
+          if (hasZiWei && hasQiSha) return true;
+        }
+        return false;
+      },
+      level: '上格'
+    },
+    '武府同宫': {
+      name: '武府同宫',
+      description: '武曲与天府同宫，理财守成、资源管理能力强，适合稳健积累型财富结构。',
+      condition: function(chart) {
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          var hasWuQu = false, hasTianFu = false;
+          for (var j = 0; j < p.stars.length; j++) {
+            if (p.stars[j].name === '武曲') hasWuQu = true;
+            if (p.stars[j].name === '天府') hasTianFu = true;
+          }
+          if (hasWuQu && hasTianFu) return true;
+        }
+        return false;
+      },
+      level: '中上格'
+    },
+    '日照雷门': {
+      name: '日照雷门',
+      description: '太阳与巨门同度或形成强联系且太阳得势，口才表达、传播、公众影响力突出。',
+      condition: function(chart) {
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          var hasTaiYang = false, hasJuMen = false;
+          for (var j = 0; j < p.stars.length; j++) {
+            if (p.stars[j].name === '太阳') hasTaiYang = true;
+            if (p.stars[j].name === '巨门') hasJuMen = true;
+          }
+          if (hasTaiYang && hasJuMen) return true;
+        }
+        return false;
+      },
+      level: '中上格'
+    },
+    '阳梁昌禄': {
+      name: '阳梁昌禄',
+      description: '太阳、天梁、文昌/化科、禄存/化禄形成会照，利学术、考试、公职、名誉体系。',
+      condition: function(chart) {
+        var names = [];
+        var sihuaStars = [];
+        for (var i = 0; i < chart.palaces.length; i++) {
+          for (var j = 0; j < chart.palaces[i].stars.length; j++) {
+            var s = chart.palaces[i].stars[j];
+            names.push(s.name);
+            if (s.sihua && s.sihua.length > 0) {
+              sihuaStars.push(s.name);
+            }
+          }
+        }
+        var hasSun = names.indexOf('太阳') !== -1;
+        var hasLiang = names.indexOf('天梁') !== -1;
+        var hasChang = names.indexOf('文昌') !== -1;
+        var hasLucun = names.indexOf('禄存') !== -1;
+        var hasKe = sihuaStars.indexOf('太阳') !== -1 || sihuaStars.indexOf('天梁') !== -1 || sihuaStars.indexOf('文昌') !== -1;
+        return (hasSun && hasLiang) && (hasChang || hasKe) && (hasLucun || hasKe);
+      },
+      level: '上格'
+    },
+    '火贪格': {
+      name: '火贪格',
+      description: '贪狼与火星同宫或会照，爆发力强、机会来得快，吉时可突然起势。',
+      condition: function(chart) {
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          var hasTanLang = false, hasHuoXing = false;
+          for (var j = 0; j < p.stars.length; j++) {
+            if (p.stars[j].name === '贪狼') hasTanLang = true;
+            if (p.stars[j].name === '火星') hasHuoXing = true;
+          }
+          if (hasTanLang && hasHuoXing) return true;
+        }
+        return false;
+      },
+      level: '中上格'
+    },
+    '铃贪格': {
+      name: '铃贪格',
+      description: '贪狼与铃星同宫或会照，爆发力与火贪格类似但更为暗藏惊喜。',
+      condition: function(chart) {
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          var hasTanLang = false, hasLingXing = false;
+          for (var j = 0; j < p.stars.length; j++) {
+            if (p.stars[j].name === '贪狼') hasTanLang = true;
+            if (p.stars[j].name === '铃星') hasLingXing = true;
+          }
+          if (hasTanLang && hasLingXing) return true;
+        }
+        return false;
+      },
+      level: '中上格'
+    },
+    '三奇加会': {
+      name: '三奇加会',
+      description: '化禄、化权、化科集中于命宫三方四正，资源、执行、名声同时发力。',
+      condition: function(chart) {
+        var sihua = chart.sihua;
+        var hasLuh = sihua.化禄 ? true : false;
+        var hasQuan = sihua.化权 ? true : false;
+        var hasKe = sihua.化科 ? true : false;
+        return hasLuh && hasQuan && hasKe;
+      },
+      level: '上格'
+    },
+    '双禄朝垣': {
+      name: '双禄朝垣',
+      description: '禄存与化禄同时加会命宫三方四正，财禄条件较佳，资源兑现力强。',
+      condition: function(chart) {
+        var sihua = chart.sihua;
+        var hasLucun = false;
+        var hasHuaLu = sihua.化禄 ? true : false;
+        for (var i = 0; i < chart.palaces.length; i++) {
+          for (var j = 0; j < chart.palaces[i].stars.length; j++) {
+            if (chart.palaces[i].stars[j].name === '禄存') hasLucun = true;
+          }
+        }
+        return hasLucun && hasHuaLu;
+      },
+      level: '上格'
+    },
+    '命无正曜': {
+      name: '命无正曜',
+      description: '命宫无十四主星，更受对宫与三方四正牵引，需重点看对宫主星。',
+      condition: function(chart) {
+        var ming = chart.palaces[0];
+        var hasMajor = false;
+        for (var j = 0; j < ming.stars.length; j++) {
+          if (ming.stars[j].type === 'major') {
+            hasMajor = true;
+            break;
+          }
+        }
+        return !hasMajor;
+      },
+      level: '课题型'
+    },
+    '羊陀夹命': {
+      name: '羊陀夹命',
+      description: '擎羊、陀罗分居命宫两侧或强力夹制命宫，有压力、阻滞、磨损感。',
+      condition: function(chart) {
+        var ming = chart.palaces[0];
+        var mingZhi = ming.zhi;
+        var mingIdx = branchIndex(mingZhi);
+        var leftZhi = BRANCHES[(mingIdx - 1 + 12) % 12];
+        var rightZhi = BRANCHES[(mingIdx + 1) % 12];
+        var hasYangLeft = false, hasLuoRight = false;
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          if (p.zhi === leftZhi || p.zhi === rightZhi) {
+            for (var j = 0; j < p.stars.length; j++) {
+              if (p.stars[j].name === '擎羊') hasYangLeft = true;
+              if (p.stars[j].name === '陀罗') hasLuoRight = true;
+            }
+          }
+        }
+        return hasYangLeft && hasLuoRight;
+      },
+      level: '课题型'
+    },
+    '空劫夹命': {
+      name: '空劫夹命',
+      description: '地空、地劫夹命或重压命宫三方，现实感、资源感较弱，思维跳脱。',
+      condition: function(chart) {
+        var ming = chart.palaces[0];
+        var mingZhi = ming.zhi;
+        var mingIdx = branchIndex(mingZhi);
+        var leftZhi = BRANCHES[(mingIdx - 1 + 12) % 12];
+        var rightZhi = BRANCHES[(mingIdx + 1) % 12];
+        var hasKongLeft = false, hasJieRight = false;
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          if (p.zhi === leftZhi || p.zhi === rightZhi) {
+            for (var j = 0; j < p.stars.length; j++) {
+              if (p.stars[j].name === '地空') hasKongLeft = true;
+              if (p.stars[j].name === '地劫') hasJieRight = true;
+            }
+          }
+        }
+        return hasKongLeft && hasJieRight;
+      },
+      level: '课题型'
+    },
+    '巨机化忌': {
+      name: '巨机化忌',
+      description: '巨门或天机化忌落命宫、官禄宫，或强冲命宫三方，想法多、纠结重、口舌多。',
+      condition: function(chart) {
+        var sihua = chart.sihua;
+        var huaJiStar = sihua.化忌;
+        if (!huaJiStar) return false;
+        if (huaJiStar !== '巨门' && huaJiStar !== '天机') return false;
+        // Check if it's in ming palace or guanlu palace
+        var ming = chart.palaces[0];
+        var guanLu = chart.palaces[7];
+        for (var j = 0; j < ming.stars.length; j++) {
+          if (ming.stars[j].name === huaJiStar && ming.stars[j].sihua.indexOf('化忌') !== -1) return true;
+        }
+        for (var j = 0; j < guanLu.stars.length; j++) {
+          if (guanLu.stars[j].name === huaJiStar && guanLu.stars[j].sihua.indexOf('化忌') !== -1) return true;
+        }
+        return false;
+      },
+      level: '课题型'
+    },
+    '廉贞七杀': {
+      name: '廉贞七杀',
+      description: '廉贞与七杀形成强同度/会照，人生起伏大，进取心与风险承受并存。',
+      condition: function(chart) {
+        for (var i = 0; i < chart.palaces.length; i++) {
+          var p = chart.palaces[i];
+          var hasLianZhen = false, hasQiSha = false;
+          for (var j = 0; j < p.stars.length; j++) {
+            if (p.stars[j].name === '廉贞') hasLianZhen = true;
+            if (p.stars[j].name === '七杀') hasQiSha = true;
+          }
+          if (hasLianZhen && hasQiSha) return true;
+        }
+        return false;
+      },
+      level: '中格'
+    },
+    '刑忌夹印': {
+      name: '刑忌夹印',
+      description: '天相受刑煞与化忌夹制，名声、事业、评价体系容易承压。',
+      condition: function(chart) {
+        // Find Tian Xiang palace
+        var tianXiangPalace = null;
+        var tianXiangIdx = -1;
+        for (var i = 0; i < chart.palaces.length; i++) {
+          for (var j = 0; j < chart.palaces[i].stars.length; j++) {
+            if (chart.palaces[i].stars[j].name === '天相') {
+              tianXiangPalace = chart.palaces[i];
+              tianXiangIdx = i;
+              break;
+            }
+          }
+          if (tianXiangPalace) break;
+        }
+        if (!tianXiangPalace) return false;
+        // Check adjacent palaces for Xing Sha (擎羊/陀罗) and Hua Ji
+        var leftIdx = (tianXiangIdx - 1 + 12) % 12;
+        var rightIdx = (tianXiangIdx + 1) % 12;
+        var hasSha = false, hasJi = false;
+        var leftPalace = chart.palaces[leftIdx];
+        var rightPalace = chart.palaces[rightIdx];
+        for (var j = 0; j < leftPalace.stars.length; j++) {
+          var s = leftPalace.stars[j];
+          if (s.name === '擎羊' || s.name === '陀罗') hasSha = true;
+          if (s.sihua.indexOf('化忌') !== -1) hasJi = true;
+        }
+        for (var j = 0; j < rightPalace.stars.length; j++) {
+          var s = rightPalace.stars[j];
+          if (s.name === '擎羊' || s.name === '陀罗') hasSha = true;
+          if (s.sihua.indexOf('化忌') !== -1) hasJi = true;
+        }
+        return hasSha && hasJi;
+      },
+      level: '课题型'
     }
   };
 
@@ -1361,14 +2002,103 @@ window.ZiWeiCalculator = (function() {
   // ============================================================
 
   /**
-   * 获取星曜详细资料
+   * 获取星曜详细资料（增强版）
+   * 返回星曜的完整详解文本
+   * @param {string} starName - 星曜名称（如 '紫微', '文昌'）
+   * @returns {Object|null} 星曜详解数据对象，包含name、coreTrait、strengths、weaknesses、palaces等
    */
   function getStarDetail(starName) {
-    return STAR_DATA[starName] || null;
+    var data = STAR_DATA[starName];
+    if (!data) return null;
+    return {
+      name: data.name,
+      english: data.english || '',
+      aliases: data.aliases || [],
+      element: data.element || '',
+      color: data.color || '',
+      coreTrait: data.coreTrait,
+      strengths: data.strengths,
+      weaknesses: data.weaknesses,
+      palaces: data.palaces,
+      like: data.like || [],
+      dislike: data.dislike || [],
+      // 生成完整的详解文本
+      getFullDescription: function() {
+        var desc = '【' + data.name + '】';
+        if (data.aliases && data.aliases.length > 0) {
+          desc += '（' + data.aliases.join('、') + '）';
+        }
+        desc += '\n五行：' + (data.element || '—');
+        desc += '\n核心特质：' + data.coreTrait;
+        desc += '\n优点：' + data.strengths;
+        desc += '\n缺点：' + data.weaknesses;
+        desc += '\n\n【十二宫详解】';
+        for (var p in data.palaces) {
+          if (data.palaces.hasOwnProperty(p)) {
+            desc += '\n' + p + '：' + data.palaces[p];
+          }
+        }
+        if (data.like && data.like.length > 0) {
+          desc += '\n\n喜搭配：' + data.like.join('、');
+        }
+        if (data.dislike && data.dislike.length > 0) {
+          desc += '\n忌搭配：' + data.dislike.join('、');
+        }
+        return desc;
+      }
+    };
   }
 
   /**
-   * 获取四化在各宫含义
+   * 获取四化在各宫含义（增强版）
+   * 返回四化入宫的完整详解
+   * @param {string} sihuaType - 四化类型（'化禄'|'化权'|'化科'|'化忌'）
+   * @param {string} palaceName - 宫位名称（'命宫'|'兄弟'|...）
+   * @returns {Object|null} 四化详解对象
+   */
+  function getSihuaDetail(sihuaType, palaceName) {
+    var sihuaInfo = SIHUA_DATA[sihuaType];
+    if (!sihuaInfo) return null;
+    
+    if (palaceName) {
+      var palaceDetail = sihuaInfo.palaces[palaceName];
+      if (!palaceDetail) return null;
+      return {
+        type: sihuaInfo.name,
+        meaning: sihuaInfo.meaning,
+        palace: palaceName,
+        detail: palaceDetail,
+        getFullDescription: function() {
+          return '【' + sihuaInfo.name + '入' + palaceName + '】\n' +
+                 sihuaInfo.meaning + '\n' +
+                 palaceName + '：' + palaceDetail;
+        }
+      };
+    }
+    
+    // 返回完整的四化类型信息
+    var result = {
+      type: sihuaInfo.name,
+      meaning: sihuaInfo.meaning,
+      palaces: sihuaInfo.palaces,
+      getFullDescription: function() {
+        var desc = '【' + sihuaInfo.name + '】\n' + sihuaInfo.meaning + '\n\n【各宫详解】';
+        for (var p in sihuaInfo.palaces) {
+          if (sihuaInfo.palaces.hasOwnProperty(p)) {
+            desc += '\n' + p + '：' + sihuaInfo.palaces[p];
+          }
+        }
+        return desc;
+      }
+    };
+    return result;
+  }
+
+  /**
+   * 获取四化在各宫含义（原版兼容接口）
+   * @param {string} type - 四化类型（'化禄'|'化权'|'化科'|'化忌'）
+   * @param {string} palaceName - 宫位名称（可选）
+   * @returns {Object|null} 四化数据或指定宫位的详解文本
    */
   function getSihuaMeaning(type, palaceName) {
     var sihuaInfo = SIHUA_DATA[type];
@@ -1378,7 +2108,19 @@ window.ZiWeiCalculator = (function() {
   }
 
   /**
-   * 识别命盘中的所有格局
+   * 获取星曜在特定宫位的详细解释
+   * @param {string} starName - 星曜名称
+   * @param {string} palaceName - 宫位名称
+   * @returns {string|null} 星曜在该宫位的详解文本
+   */
+  function getStarPalaceDetail(starName, palaceName) {
+    var star = STAR_DATA[starName];
+    if (!star || !star.palaces) return null;
+    return star.palaces[palaceName] || null;
+  }
+
+  /**
+   * 识别命盘中的所有格局（与原identifyPatterns功能一致）
    */
   function identifyPatterns(chart) {
     var result = [];
@@ -1397,6 +2139,16 @@ window.ZiWeiCalculator = (function() {
       }
     }
     return result;
+  }
+
+  /**
+   * 格局判断函数
+   * 分析命盘中的所有格局，返回带详解的分析结果
+   * @param {Object} panData - 命盘数据（由calculate()返回的完整对象）
+   * @returns {Array} 格局分析结果数组，每项包含key、name、description、level
+   */
+  function analyzePatterns(panData) {
+    return identifyPatterns(panData);
   }
 
   /**
@@ -1431,8 +2183,11 @@ window.ZiWeiCalculator = (function() {
     SIHUA_DATA: SIHUA_DATA,
     PATTERN_DATA: PATTERNS,
     getStarDetail: getStarDetail,
+    getStarPalaceDetail: getStarPalaceDetail,
+    getSihuaDetail: getSihuaDetail,
     getSihuaMeaning: getSihuaMeaning,
     identifyPatterns: identifyPatterns,
+    analyzePatterns: analyzePatterns,
     getAllStarNames: getAllStarNames,
     getPatternConfig: getPatternConfig
   };
