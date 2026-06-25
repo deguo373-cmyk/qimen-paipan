@@ -992,6 +992,19 @@
         <div class="dir-detail-grid" id="qmDirDetailGrid"></div>
       </div>
 
+      <!-- 个人五行补益系统 -->
+      <div class="folio" id="qmWuxiSupplement" style="display:none">
+        <div class="folio-header">
+          <div class="dot"></div>
+          <span class="folio-title">🌿 个人五行补益</span>
+          <span class="folio-badge">开运指南</span>
+        </div>
+        <div id="qmWuxiSupplementContent"></div>
+        <div class="guide-note" style="margin-top:10px;font-size:0.75rem">
+          <strong>📌 使用提示：</strong>五行补益建议基于你的八字五行统计和当前奇门盘的方向分析。请先在"八字排盘"Tab中排盘以获取你的八字数据，补益建议才能生成。五行缺失补什么，偏弱五行适当加强，日主五行作为参考。
+        </div>
+      </div>
+
       <!-- 化解调理方案 -->
       <div class="folio" id="qmRemedy" style="display:none">
         <div class="folio-header">
@@ -1955,6 +1968,7 @@ function analyzeYongshen(chart,qtype) {
 // 奇门 — 主流程
 // ═════════════════════════════════════════════════
 var _qmChart = null; // Store the current chart for use by 用神分析 button
+var _lastBaziData = null; // Store the last computed bazi data for 五行补益 system
 document.getElementById('qmBtn').addEventListener('click',qimenGo);
 async function qimenGo(){
   var e=document.getElementById('qmErr');e.classList.remove('active');
@@ -2074,6 +2088,8 @@ function renderQimenAll(d){
   renderActionAdvice(c);
   // 方向吉凶分析（增强版）
   renderDirDetail(c);
+  // 个人五行补益
+  renderWuxiSupplement(c);
   // 化解调理方案
   renderRemedy(c, qt || document.getElementById('qmQType').value);
   // 时机分析
@@ -2243,6 +2259,165 @@ function renderRemedy(chart, qtype) {
   html += '</div>';
   html += '<div class="remedy-section" style="margin-bottom:0"><span class="rs-label">🧠 心态调整</span>';
   html += '<div class="rs-value" style="font-size:0.82rem;line-height:1.7;color:var(--ink-light);border-left:2px solid var(--gold);padding-left:10px">' + (remedy.psychology || '保持平常心，顺势而为。') + '</div></div>';
+  ct.innerHTML = html;
+  el.style.display = 'block';
+}
+
+/** 渲染个人五行补益系统 */
+function renderWuxiSupplement(chart) {
+  var el = document.getElementById('qmWuxiSupplement');
+  var ct = document.getElementById('qmWuxiSupplementContent');
+  if (!el || !ct) return;
+
+  // 检查是否有八字数据
+  if (!_lastBaziData) {
+    el.style.display = 'none';
+    return;
+  }
+
+  // 获取五行缺失分析
+  var wxi = null;
+  if (typeof window.getWuxiDeficiency === 'function') {
+    wxi = window.getWuxiDeficiency(_lastBaziData);
+  }
+  if (!wxi || (!wxi.deficiency.length && !wxi.weakest)) {
+    el.style.display = 'none';
+    return;
+  }
+
+  // 获取五行补益建议（串联奇门方向）
+  var advice = null;
+  if (typeof window.getPersonalAdvice === 'function') {
+    advice = window.getPersonalAdvice(chart, wxi);
+  }
+  if (!advice || !advice.remedies || !advice.remedies.length) {
+    el.style.display = 'none';
+    return;
+  }
+
+  var html = '';
+
+  // 五行统计概况
+  html += '<div class="analysis-classic" style="margin-bottom:12px">';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">';
+  html += '<span style="font-family:var(--font-title);font-weight:700;font-size:0.85rem">📊 五行统计</span>';
+  if (advice.dayMasterInfo.dayMaster) {
+    html += '<span class="tag-classic" style="background:var(--paper-light);border:1px solid var(--border-color)">日主：' + advice.dayMasterInfo.dayMaster + advice.dayMasterInfo.dayMasterWuxing + '</span>';
+  }
+  html += '</div>';
+  html += '<div class="wuxing-classic-grid" style="margin-bottom:8px">';
+  var wxOrder = ['木','火','土','金','水'];
+  var wxColors = {木:'#4a6741',火:'#c23b22',土:'#b8933e',金:'#8a7e6b',水:'#4a6fa5'};
+  wxOrder.forEach(function(wx) {
+    var c = wxi.counts[wx] || 0;
+    var isDeficient = wxi.deficiency.indexOf(wx) !== -1;
+    var isWeakest = wxi.weakest === wx && !isDeficient;
+    var borderColor = isDeficient ? 'var(--cinnabar)' : (isWeakest ? '#c0803e' : 'var(--border-color)');
+    var bgColor = isDeficient ? '#fef0ee' : (isWeakest ? '#fef8e8' : 'transparent');
+    html += '<div class="wuxing-classic-item" style="border-color:' + borderColor + ';background:' + bgColor + '">';
+    html += '<div class="wx-label" style="color:' + (wxColors[wx] || 'var(--ink-muted)') + ';font-weight:700">' + wx + '</div>';
+    html += '<div class="wx-count" style="color:' + (isDeficient ? 'var(--cinnabar)' : (isWeakest ? '#8a6d3b' : 'var(--ink)')) + '">' + c;
+    if (isDeficient) html += ' <span style="font-size:0.6rem;color:var(--cinnabar)">缺失</span>';
+    else if (isWeakest) html += ' <span style="font-size:0.6rem;color:#8a6d3b">偏弱</span>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+  html += '<div style="font-size:0.78rem;line-height:1.6;color:var(--ink-light)">' + advice.summary + '</div>';
+  html += '</div>';
+
+  // 逐项补益建议
+  advice.remedies.forEach(function(r, idx) {
+    var isMissing = r.type === '缺失';
+    var typeBadge = isMissing
+      ? '<span class="tag-classic bad" style="font-size:0.7rem">缺失 · 重点补益</span>'
+      : '<span class="tag-classic warn" style="font-size:0.7rem">偏弱 · 适当加强</span>';
+    var borderLeftColor = isMissing ? 'var(--cinnabar)' : '#c0803e';
+
+    html += '<div style="border:1px solid var(--border-color);padding:14px 16px;margin-bottom:12px;border-left:3px solid ' + borderLeftColor + ';background:var(--paper-light);background-image:repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200,184,154,0.03) 1px, rgba(200,184,154,0.03) 3px)">';
+
+    // 标题
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--border-color)">';
+    html += '<span style="font-family:var(--font-title);font-size:1rem;font-weight:700;color:' + (isMissing ? 'var(--cinnabar)' : '#8a6d3b') + '">' + r.wuxi + '</span>';
+    html += typeBadge;
+    html += '</div>';
+
+    // 综合奇门推荐（最醒目）
+    if (r.qimenRecommendation) {
+      html += '<div style="padding:8px 10px;background:#eef4ea;border:1px solid #c8d8c4;margin-bottom:10px;font-size:0.82rem;line-height:1.6">';
+      html += '<span style="font-weight:600;color:var(--stone-blue)">🔮 奇门整合建议：</span>' + r.qimenRecommendation;
+      html += '</div>';
+    }
+
+    // 方位 + 颜色 + 时辰 + 数字（用grid排列）
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">';
+    // 方位
+    html += '<div class="detail-classic-item" style="grid-column:1">';
+    html += '<div class="dlabel">🧭 补益方位</div>';
+    html += '<div class="dvalue" style="font-size:0.82rem">';
+    if (r.directionAdvice && r.directionAdvice.length) {
+      r.directionAdvice.forEach(function(da) {
+        html += '<span class="tag-classic" style="background:var(--paper-dark);border:1px solid var(--border-color);margin:1px 2px">' + da.direction + '方 <span style="font-size:0.65rem;color:var(--ink-muted)">(' + da.qimenLevel + '/' + da.qimenScore + '分)</span></span>';
+      });
+    }
+    html += '</div></div>';
+    // 颜色
+    html += '<div class="detail-classic-item" style="grid-column:2">';
+    html += '<div class="dlabel">🎨 宜用颜色</div>';
+    html += '<div class="dvalue" style="font-size:0.82rem">';
+    if (r.colors && r.colors.colors) {
+      r.colors.colors.forEach(function(c) {
+        html += '<span class="tag-classic" style="background:var(--paper);border:1px solid var(--border-color);margin:1px 2px">' + c + '</span>';
+      });
+    }
+    html += '<div style="font-size:0.72rem;color:var(--ink-muted);margin-top:2px">' + (r.colors.desc || '') + '</div>';
+    html += '</div></div>';
+    // 时辰
+    html += '<div class="detail-classic-item" style="grid-column:1">';
+    html += '<div class="dlabel">⏰ 最佳时辰</div>';
+    html += '<div class="dvalue" style="font-size:0.78rem;line-height:1.5">' + (r.hourInfo.period || '') + '</div></div>';
+    // 数字
+    html += '<div class="detail-classic-item" style="grid-column:2">';
+    html += '<div class="dlabel">🔢 吉祥数字</div>';
+    html += '<div class="dvalue" style="font-size:0.82rem">' + (r.numbers || '') + '</div></div>';
+    html += '</div>';
+
+    // 物品建议 + 行为建议
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">';
+    // 物品
+    html += '<div class="detail-classic-item" style="grid-column:1">';
+    html += '<div class="dlabel">💎 宜佩物品</div>';
+    html += '<div style="font-size:0.82rem;line-height:1.6">';
+    if (r.items && r.items.items) {
+      r.items.items.forEach(function(it) {
+        html += '<span class="tag-classic" style="background:var(--paper-dark);border:1px solid var(--border-color);margin:1px 2px">' + it + '</span>';
+      });
+      html += '<div style="font-size:0.72rem;color:var(--ink-muted);margin-top:2px">' + (r.items.desc || '') + '</div>';
+    }
+    html += '</div></div>';
+    // 行为
+    html += '<div class="detail-classic-item" style="grid-column:2">';
+    html += '<div class="dlabel">🏃 宜做之事</div>';
+    html += '<ul style="list-style:none;padding:0;margin:0;font-size:0.8rem;line-height:1.7">';
+    if (r.actions) {
+      r.actions.forEach(function(a) {
+        html += '<li style="padding:1px 0;border-left:2px solid var(--stone-blue);padding-left:6px;margin:2px 0">' + a + '</li>';
+      });
+    }
+    html += '</ul></div></div>';
+
+    // 季节补益
+    if (r.season) {
+      html += '<div style="font-size:0.78rem;color:var(--ink-muted);margin-bottom:6px">🌱 季节补益：' + r.season + '</div>';
+    }
+
+    // 五行原理说明
+    html += '<div style="font-size:0.75rem;color:var(--ink-muted);line-height:1.6;padding:8px 10px;background:var(--paper-dark);border-left:2px solid var(--border-color);margin-top:4px">';
+    html += '<span style="font-weight:600;color:var(--ink-light)">📖 原理：</span>' + r.principle;
+    html += '</div>';
+
+    html += '</div>';
+  });
+
   ct.innerHTML = html;
   el.style.display = 'block';
 }
@@ -2704,6 +2879,7 @@ document.getElementById('bzBtn').addEventListener('click',function(){
     var g=document.getElementById('bzGen').value;
     if(!year||!month||!day) throw new Error('请输入有效日期');
     var d=computeBaziLocal({year:year,month:month,day:day,hour:hour,minute:minute,gender:g});
+    _lastBaziData = d; // Store for 五行补益 system
     renderBaziAll(d);
   }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
   finally{l.classList.remove('active');this.disabled=false;}

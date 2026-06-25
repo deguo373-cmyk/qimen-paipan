@@ -598,3 +598,43 @@ function calculateShensha(baziData){
   return results;
 }
 if (typeof window !== 'undefined') { window.calculateShensha = calculateShensha; }
+
+// ── 五行缺失诊断 ──────────────────────────────────
+/**
+ * 根据八字数据诊断五行缺失和偏弱
+ * @param {Object} baziData - computeBaziLocal 返回的结果
+ * @returns {Object} { deficiency: [缺失五行列表], weakest: 最弱五行, counts: {金:N,木:N,...}, dayMaster, dayMasterWuxing }
+ */
+function getWuxiDeficiency(baziData) {
+  if (!baziData || !baziData.wuxing_stat) {
+    return { deficiency: [], weakest: null, counts: {木:0,火:0,土:0,金:0,水:0}, dayMaster: '', dayMasterWuxing: '' };
+  }
+  var counts = baziData.wuxing_stat;
+  var deficiency = [];
+  var weakest = null;
+  var minCount = Infinity;
+
+  WUXING.forEach(function(wx) {
+    var c = counts[wx] || 0;
+    if (c === 0) {
+      deficiency.push(wx);
+    }
+    if (c > 0 && c < minCount) {
+      minCount = c;
+      weakest = wx;
+    }
+  });
+
+  return {
+    deficiency: deficiency,
+    weakest: weakest,
+    counts: counts,
+    dayMaster: baziData.day_master || '',
+    dayMasterWuxing: baziData.day_master_wuxing || ''
+  };
+}
+
+// 导出到全局
+if (typeof window !== 'undefined') {
+  window.getWuxiDeficiency = getWuxiDeficiency;
+}

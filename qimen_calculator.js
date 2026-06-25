@@ -2166,7 +2166,279 @@ function getActionAdvice(chart, questionType) {
   };
 }
 
-// 导出到全局作用域
+// ═══════════════════════════════════════════════
+//  个人五行补益系统 — 串联八字五行缺失和奇门方向建议
+// ═══════════════════════════════════════════════
+
+/** 五行 → 方向映射 */
+var WUXI_DIRECTION_MAP = {
+  "金": [{dir:"西", palace:7}, {dir:"西北", palace:6}],
+  "木": [{dir:"东", palace:3}, {dir:"东南", palace:4}],
+  "水": [{dir:"北", palace:1}],
+  "火": [{dir:"南", palace:9}],
+  "土": [{dir:"东北", palace:8}, {dir:"西南", palace:2}]
+};
+
+/** 五行 → 颜色建议 */
+var WUXI_COLOR_MAP = {
+  "金": {colors:["白色","金色","银色","杏色"], desc:"白色、金色系，如白衬衫、金色饰品"},
+  "木": {colors:["绿色","青色","翠色"], desc:"绿色、青色系，如绿植、青玉"},
+  "水": {colors:["黑色","蓝色","藏青"], desc:"黑色、蓝色系，如深蓝外套、黑曜石"},
+  "火": {colors:["红色","紫色","橙色","粉色"], desc:"红色、紫色系，如红绳、紫水晶"},
+  "土": {colors:["黄色","棕色","米色","咖色"], desc:"黄色、棕色系，如黄玉、土黄衣物"}
+};
+
+/** 五行 → 行为建议 */
+var WUXI_ACTION_MAP = {
+  "金": ["多做决策性工作，培养决断力","练习演讲和表达，增强气场","整理房间，断舍离，去除杂物","规律运动，如跑步、健身"],
+  "木": ["多去公园、山林等自然环境中散步","培养新技能或爱好，保持学习","做计划和规划，画思维导图","种植花草，亲近绿色植物"],
+  "水": ["多喝水、泡澡、游泳等亲水活动","静坐冥想，养神安眠","阅读和写作，培养思考习惯","练习倾听，少说多听"],
+  "火": ["多做让自己开心的事，培养热情","主动社交，结交新朋友","开展创意类工作，画画、写作","早晨晒太阳，吸收阳气"],
+  "土": ["保持规律作息，建立稳定生活习惯","做长期积累的事，如定投、储蓄","多和家人朋友团聚，接地气","做公益或志愿服务，稳固根基"]
+};
+
+/** 五行 → 物品建议 */
+var WUXI_ITEM_MAP = {
+  "金": {items:["金属饰品（金/银）","白水晶","金属摆件","硬币或铜钱"], desc:"佩戴金属饰品、白水晶，办公桌放金属摆件"},
+  "木": {items:["绿色植物","木质饰品","书本文具","绿玉或翡翠"], desc:"桌上放绿植，佩戴木质手串或绿色玉石"},
+  "水": {items:["黑曜石","蓝色饰品","鱼缸或流水摆件","水杯常满"], desc:"佩戴黑曜石，办公桌放小型流水摆件"},
+  "火": {items:["红绳或红玛瑙","紫水晶","蜡烛或香薰","暖色系饰品"], desc:"系红绳、佩戴紫水晶或红玛瑙"},
+  "土": {items:["黄水晶","陶瓷摆件","玉石","黄玉"], desc:"佩戴黄水晶，家中放陶瓷或黄玉摆件"}
+};
+
+/** 五行 → 时辰建议（地支时辰，该五行能量最强之时辰） */
+var WUXI_HOUR_MAP = {
+  "金": {zhi:"申酉", period:"15:00-19:00（申时、酉时，金气旺盛）"},
+  "木": {zhi:"寅卯", period:"03:00-07:00（寅时、卯时，木气升发）"},
+  "水": {zhi:"亥子", period:"21:00-01:00（亥时、子时，水气最盛）"},
+  "火": {zhi:"巳午", period:"09:00-13:00（巳时、午时，火气当令）"},
+  "土": {zhi:"辰戌丑未", period:"辰(7-9)、戌(19-21)、丑(1-3)、未(13-15)——土旺于四季之交"}
+};
+
+/** 五行 → 吉祥数字 */
+var WUXI_NUMBER_MAP = {
+  "金": "4、9（金之生数）",
+  "木": "3、8（木之生数）",
+  "水": "1、6（水之生数）",
+  "火": "2、7（火之生数）",
+  "土": "5、10（土之生数）"
+};
+
+/** 五行 → 季节补益 */
+var WUXI_SEASON_MAP = {
+  "金": "秋季（秋金当令，此时节补金效果最佳）",
+  "木": "春季（春木生发，此时节补木最为顺势）",
+  "水": "冬季（冬水归藏，此时节补水最为适宜）",
+  "火": "夏季（夏火炎上，此时节补火最为得力）",
+  "土": "季末（每季最后18天，土旺之时）"
+};
+
+/**
+ * 获取个人五行补益建议
+ * @param {Object} chart - computeQimenChart 返回的 chart 对象
+ * @param {Object} wuxiDeficiency - getWuxiDeficiency 返回的结果
+ * @returns {Object} { summary, dayMasterInfo, remedies: [{wuxi, type, suggestions}] }
+ */
+function getPersonalAdvice(chart, wuxiDeficiency) {
+  if (!wuxiDeficiency || (!wuxiDeficiency.deficiency.length && !wuxiDeficiency.weakest)) {
+    return null;
+  }
+
+  // 分析奇门盘中各方向能量
+  var dirResults = [];
+  if (chart && typeof analyzeDirection === 'function') {
+    dirResults = analyzeDirection(chart);
+  }
+  var dirMap = {};
+  dirResults.forEach(function(r) { dirMap[r.direction] = r; });
+
+  var remedies = [];
+  var allNeeded = [];
+
+  // 先收集缺失的五行
+  wuxiDeficiency.deficiency.forEach(function(wx) {
+    allNeeded.push({ wuxi: wx, type: "缺失" });
+  });
+
+  // 再收集偏弱的五行（如果还没有被缺失覆盖）
+  if (wuxiDeficiency.weakest && allNeeded.every(function(n) { return n.wuxi !== wuxiDeficiency.weakest; })) {
+    allNeeded.push({ wuxi: wuxiDeficiency.weakest, type: "偏弱" });
+  }
+
+  allNeeded.forEach(function(item) {
+    var wx = item.wuxi;
+    var type = item.type;
+
+    // 方位建议
+    var directionInfo = WUXI_DIRECTION_MAP[wx] || [];
+    var dirAdvice = directionInfo.map(function(d) {
+      var qmDir = dirMap[d.dir] || null;
+      var qmLevel = qmDir ? qmDir.level : "未知";
+      var qmScore = qmDir ? qmDir.score.toFixed(1) : "?";
+      var qmTag = "";
+      if (qmDir) {
+        if (qmDir.level === "大吉" || qmDir.level === "吉") {
+          qmTag = "（吉，当前气场有利✅）";
+        } else if (qmDir.level === "凶" || qmDir.level === "大凶") {
+          qmTag = "（凶，当前气场不利⚠️）";
+        } else {
+          qmTag = "（平，气场中性）";
+        }
+      }
+      return {
+        direction: d.dir,
+        palace: d.palace,
+        qimenLevel: qmLevel,
+        qimenScore: qmScore,
+        qimenTag: qmTag
+      };
+    });
+
+    var colors = WUXI_COLOR_MAP[wx] || {colors:[], desc:""};
+    var actions = WUXI_ACTION_MAP[wx] || [];
+    var items = WUXI_ITEM_MAP[wx] || {items:[], desc:""};
+    var hourInfo = WUXI_HOUR_MAP[wx] || {zhi:"", period:""};
+    var numbers = WUXI_NUMBER_MAP[wx] || "";
+    var season = WUXI_SEASON_MAP[wx] || "";
+
+    // 综合奇门方向推荐
+    var qimenRecommendation = "";
+    if (dirAdvice.length > 0) {
+      var bestDir = null;
+      var worstDir = null;
+      dirAdvice.forEach(function(d) {
+        if (d.qimenLevel === "大吉" || d.qimenLevel === "吉") {
+          if (!bestDir || (d.qimenScore && parseFloat(d.qimenScore) > parseFloat(bestDir.qimenScore))) {
+            bestDir = d;
+          }
+        }
+        if (d.qimenLevel === "凶" || d.qimenLevel === "大凶") {
+          if (!worstDir || (d.qimenScore && parseFloat(d.qimenScore) < parseFloat(worstDir.qimenScore))) {
+            worstDir = d;
+          }
+        }
+      });
+      if (bestDir) {
+        qimenRecommendation = "当前奇门盘中，" + wx + "对应的【" + bestDir.direction + "方】为" + bestDir.qimenLevel + "方向（" + bestDir.qimenScore + "分），宜往此方行走或办事。";
+      } else {
+        var neutralDir = dirAdvice[0];
+        qimenRecommendation = "当前奇门盘中，" + wx + "对应的【" + neutralDir.direction + "方】气场" + neutralDir.qimenLevel + "，可酌情使用。";
+      }
+      if (worstDir) {
+        qimenRecommendation += " 忌往【" + worstDir.direction + "方】，当前为" + worstDir.qimenLevel + "方向。";
+      }
+    }
+
+    remedies.push({
+      wuxi: wx,
+      type: type,
+      directionAdvice: dirAdvice,
+      colors: colors,
+      actions: actions,
+      items: items,
+      hourInfo: hourInfo,
+      numbers: numbers,
+      season: season,
+      qimenRecommendation: qimenRecommendation,
+      // 综合五行生克原理的补益说明
+      principle: getWuxiPrinciple(wx, wuxiDeficiency.dayMasterWuxing)
+    });
+  });
+
+  // 日主信息
+  var dayMasterInfo = {
+    dayMaster: wuxiDeficiency.dayMaster,
+    dayMasterWuxing: wuxiDeficiency.dayMasterWuxing,
+    counts: wuxiDeficiency.counts
+  };
+
+  return {
+    summary: generateWuxiSummary(wuxiDeficiency),
+    dayMasterInfo: dayMasterInfo,
+    remedies: remedies
+  };
+}
+
+/**
+ * 获取五行补益原理说明
+ */
+function getWuxiPrinciple(wx, dayMasterWx) {
+  var principles = {
+    "金": "金主义，主决断、肃杀、收敛。五行'金生水'，补金可以增强决策力和执行力。金对应白色和西方，与呼吸系统、皮肤相关。",
+    "木": "木主仁，主生发、条达、舒展。五行'木生火'，补木可以增强成长力和创造力。木对应绿色和东方，与肝胆、神经系统相关。",
+    "水": "水主智，主流动、智慧、收藏。五行'水生木'，补水可以增强智慧和适应力。水对应黑色和北方，与肾脏、泌尿系统相关。",
+    "火": "火主礼，主热烈、升腾、光明。五行'火生土'，补火可以增强热情和表达力。火对应红色和南方，与心脏、血液循环相关。",
+    "土": "土主信，主承载、生化、包容。五行'土生金'，补土可以增强稳定性和信任感。土对应黄色和中央，与脾胃、消化系统相关。"
+  };
+  var p = principles[wx] || "";
+  if (dayMasterWx) {
+    p += " 你的日主为" + dayMasterWx + "，";
+    // 判断生克关系
+    var wxCycle = ["木","火","土","金","水"];
+    var mi = wxCycle.indexOf(dayMasterWx);
+    var oi = wxCycle.indexOf(wx);
+    if (mi !== -1 && oi !== -1) {
+      if ((mi + 1) % 5 === oi) {
+        p += dayMasterWx + "生" + wx + "（" + dayMasterWx + "→" + wx + "），补" + wx + "会泄耗日主之气。";
+      } else if ((mi + 2) % 5 === oi) {
+        p += dayMasterWx + "克" + wx + "（" + dayMasterWx + "→" + wx + "），补" + wx + "可以平衡日主过旺之势。";
+      } else if ((oi + 1) % 5 === mi) {
+        p += wx + "生" + dayMasterWx + "（" + wx + "→" + dayMasterWx + "），补" + wx + "可以滋养日主，最为有利。";
+      } else if ((oi + 2) % 5 === mi) {
+        p += wx + "克" + dayMasterWx + "（" + wx + "→" + dayMasterWx + "），补" + wx + "需适度，过量则克伤日主。";
+      } else {
+        p += "与日主五行相同，补" + wx + "可以增强日主自身力量。";
+      }
+    }
+  }
+  return p;
+}
+
+/**
+ * 生成五行概况总结
+ */
+function generateWuxiSummary(wxi) {
+  var parts = [];
+  var counts = wxi.counts;
+  if (counts) {
+    var total = 0;
+    ["木","火","土","金","水"].forEach(function(wx) { total += counts[wx] || 0; });
+    parts.push("八字四柱中，五行共" + total + "计（天干×4+地支×4=8字）：");
+    var countStrs = [];
+    ["木","火","土","金","水"].forEach(function(wx) {
+      var c = counts[wx] || 0;
+      var extra = "";
+      if (wx === wxi.dayMasterWuxing) extra = "（日主）";
+      if (c === 0) extra = "⚠缺失";
+      countStrs.push(wx + "×" + c + extra);
+    });
+    parts.push(countStrs.join("，") + "。");
+  }
+  if (wxi.deficiency.length > 0) {
+    parts.push("缺失五行：<b style='color:var(--cinnabar)'>" + wxi.deficiency.join("、") + "</b>，需重点补益。");
+  }
+  if (wxi.weakest && wxi.deficiency.indexOf(wxi.weakest) === -1) {
+    parts.push("偏弱五行：<b style='color:#8a6d3b'>" + wxi.weakest + "</b>，建议适当加强。");
+  }
+  if (wxi.dayMaster && wxi.dayMasterWuxing) {
+    parts.push("日主为<b>" + wxi.dayMaster + wxi.dayMasterWuxing + "</b>，日主五行是" + wxi.dayMasterWuxing + "。");
+  }
+  return parts.join("");
+}
+
+// 导出到全局
+if (typeof window !== 'undefined') {
+  window.getPersonalAdvice = getPersonalAdvice;
+  window.WUXI_DIRECTION_MAP = WUXI_DIRECTION_MAP;
+  window.WUXI_COLOR_MAP = WUXI_COLOR_MAP;
+  window.WUXI_ACTION_MAP = WUXI_ACTION_MAP;
+  window.WUXI_ITEM_MAP = WUXI_ITEM_MAP;
+  window.WUXI_HOUR_MAP = WUXI_HOUR_MAP;
+  window.WUXI_NUMBER_MAP = WUXI_NUMBER_MAP;
+  window.WUXI_SEASON_MAP = WUXI_SEASON_MAP;
+}
+
+// 导出到全局
 if (typeof window !== 'undefined') {
   window.computeQimenChart = computeQimenChart;
   window.analyzeYongshen = analyzeYongshen;
