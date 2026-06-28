@@ -804,8 +804,8 @@ function computeQimenChart(input) {
         year: year,
         month: month,
         day: day,
-        month_text: String(month) + '月',
-        day_text: String(day) + '日',
+        month_text: String(month),
+        day_text: String(day),
         is_leap_month: false
       },
       jieqi: {
@@ -1452,6 +1452,393 @@ function analyzeGeju(panData, yongshenResult) {
 }
 
 // ═══════════════════════════════════════════════
+//  经典格局详解 — 天盘+地盘格局 / 九遁 / 三诈五假
+// ═══════════════════════════════════════════════
+
+/**
+* 天盘+地盘奇仪组合 → 格局映射表
+* key = 天盘+地盘, value = {name, type, desc}
+* 吉格: 青龙返首, 飞鸟跌穴, 青龙转光
+* 凶格: 青龙逃走, 白虎猖狂, 朱雀投江, 腾蛇夭矫,
+*       荧入太白, 太白入荧, 伏宫格, 飞宫格,
+*       大格, 小格, 刑格, 奇格, 天网四张
+*/
+var QM_STEM_PATTERNS = {
+  "戊丙": {name:"青龙返首", type:"吉", desc:"戊+丙，木生火，母顾子，大吉大利。利求财、求职、婚姻、建造。"},
+  "丙戊": {name:"飞鸟跌穴", type:"吉", desc:"丙+戊，朱雀归巢，木火相生，百事皆吉。利就职、求财、诉讼、迁移。"},
+  "戊丁": {name:"青龙转光", type:"吉", desc:"戊+丁，木火相生，得富贵荣耀。宜见贵、求名、进取。"},
+  "乙辛": {name:"青龙逃走", type:"凶", desc:"乙+辛，龙逃虎追，金克木，奴仆拐带，失财破败，百事皆凶。"},
+  "辛乙": {name:"白虎猖狂", type:"凶", desc:"辛+乙，虎在龙上，反客为主，主客两伤，出入有惊恐，远行多灾。"},
+  "丁癸": {name:"朱雀投江", type:"凶", desc:"丁+癸，火入水乡，水克火，文书口舌，音信沉溺，百事凶。"},
+  "癸丁": {name:"腾蛇夭矫", type:"凶", desc:"癸+丁，蛇入火中，虚惊不宁，百事不利，文书官司。"},
+  "丙庚": {name:"荧入太白", type:"凶", desc:"丙+庚，火入金乡，贼去，利主不利客，宜退避不宜进攻。"},
+  "庚丙": {name:"太白入荧", type:"凶", desc:"庚+丙，金入火乡，贼来，利客不利主，须防贼偷营。"},
+  "庚戊": {name:"伏宫格", type:"凶", desc:"庚+戊，庚克甲，主客皆不利，求人不在，等人不来。"},
+  "戊庚": {name:"飞宫格", type:"凶", desc:"戊+庚，甲遇庚克，大凶，尤不利客，经商破财，行有灾。"},
+  "庚癸": {name:"大格", type:"凶", desc:"庚+癸，大格反吟，行人不至，官司破财，求人不在。"},
+  "庚壬": {name:"小格", type:"凶", desc:"庚+壬，上格，远行失迷道路，求谋破财得病。"},
+  "庚己": {name:"刑格", type:"凶", desc:"庚+己，刑格，官司受刑，求谋破财。"},
+  "癸癸": {name:"天网四张", type:"凶", desc:"癸+癸，天网四张，不可当，强出者必有血光。"},
+  "戊戊": {name:"伏吟格", type:"warn", desc:"戊+戊，甲子遁于戊，伏吟局，宜静不宜动。"},
+  "壬癸": {name:"天网低张", type:"凶", desc:"壬+癸，天网低落，事易败露，不宜举事。"}
+};
+
+/** 三奇得使 — 乙得使/丙得使/丁得使 */
+var QM_SANQI_DEYUN = {
+  "乙己": "乙得使（乙+己，甲戌时）",
+  "乙辛": "乙得使（乙+辛，甲午时）",
+  "丙戊": "丙得使（丙+戊，甲子时）",
+  "丙庚": "丙得使（丙+庚，甲申时）",
+  "丁壬": "丁得使（丁+壬，甲辰时）",
+  "丁癸": "丁得使（丁+癸，甲寅时）"
+};
+
+/**
+* 检测天盘+地盘指定组合是否存在于宫中
+*/
+function qmFindStemCombination(palaces, skyStem, earthStem) {
+  for (var i = 0; i < palaces.length; i++) {
+    var p = palaces[i];
+    if (p.is_center) continue;
+    if (p.sky_stem === skyStem && p.earth_stem === earthStem) {
+      return p;
+    }
+  }
+  return null;
+}
+
+/**
+* 全盘扫描天盘+地盘奇仪格局
+* @param {Array} palaces - 宫位数组
+* @param {Object} chart - 完整chart对象（用于玉女守门等判断）
+* @returns {Array} [{name, type, palace, detail}]
+*/
+function qmFindAllStemPatterns(palaces, chart) {
+  var results = [];
+  var checked = {};
+
+  // 扫描每个宫的天盘+地盘组合
+  for (var i = 0; i < palaces.length; i++) {
+    var p = palaces[i];
+    if (p.is_center || !p.sky_stem || !p.earth_stem) continue;
+
+    var key = p.sky_stem + p.earth_stem;
+    var pattern = QM_STEM_PATTERNS[key];
+    if (pattern) {
+      var det = pattern.desc;
+      // 特殊处理：遇墓迫击刑则吉格打折
+      if (pattern.type === "吉" && p.is_kong) det += " (但逢空亡，吉力打折)";
+      results.push({
+        name: pattern.name,
+        type: pattern.type,
+        palace: p.palace,
+        palaceName: p.name,
+        sky_stem: p.sky_stem,
+        earth_stem: p.earth_stem,
+        door: p.door,
+        detail: det
+      });
+      checked[key] = true;
+    }
+
+    // 三奇得使
+    var deyKey = p.sky_stem + p.earth_stem;
+    if (QM_SANQI_DEYUN[deyKey] && p.door) {
+      // 需值使门在该宫
+      if (chart.zhishi && chart.zhishi.palace === p.palace) {
+        results.push({
+          name: "三奇得使",
+          type: "吉",
+          palace: p.palace,
+          palaceName: p.name,
+          detail: QM_SANQI_DEYUN[deyKey] + "，值使门至其位。"
+        });
+      }
+    }
+  }
+
+  // 玉女守门：值使门+地盘丁奇
+  if (chart.zhishi) {
+    var zsPalace = chart.zhishi.palace;
+    for (var j = 0; j < palaces.length; j++) {
+      var pp = palaces[j];
+      if (pp.is_center || pp.palace !== zsPalace) continue;
+      if (pp.earth_stem === "丁") {
+        results.push({
+          name: "玉女守门",
+          type: "吉",
+          palace: zsPalace,
+          palaceName: pp.name,
+          detail: "值使门" + (chart.zhishi.door || "") + "落" + pp.name + "宫遇地盘丁奇(玉女)，利宴会、婚姻。"
+        });
+      }
+    }
+  }
+
+  // 三奇升殿
+  // 乙到震宫（卯）
+  var bPalace = qmFindStemCombination(palaces, "乙", null);
+  if (bPalace && !bPalace.is_center && bPalace.sky_stem === "乙" && bPalace.palace === 3) {
+    results.push({name:"三奇升殿(乙)", type:"吉", palace:3, palaceName:"震", detail:"乙奇到震宫(卯位)，日出扶桑，有禄之乡，为上吉。"});
+  }
+  // 丙到离宫（午）
+  var cPalace = qmFindStemCombination(palaces, "丙", null);
+  if (cPalace && cPalace.sky_stem === "丙" && cPalace.palace === 9) {
+    results.push({name:"三奇升殿(丙)", type:"吉", palace:9, palaceName:"离", detail:"丙奇到离宫(午位)，月照端门，火旺之地，为上吉。"});
+  }
+  // 丁到兑宫（酉）
+  var dPalace = qmFindStemCombination(palaces, "丁", null);
+  if (dPalace && dPalace.sky_stem === "丁" && dPalace.palace === 7) {
+    results.push({name:"三奇升殿(丁)", type:"吉", palace:7, palaceName:"兑", detail:"丁奇到兑宫(酉位)，星见西方，天之神位，为上吉。"});
+  }
+
+  return results;
+}
+
+// ─────────────────────────────────────────────
+//  九遁检测
+// ─────────────────────────────────────────────
+
+/**
+* 检查九遁格局
+* 规则: 天盘/地盘/人盘/神盘特定组合
+* @param {Array} palaces - 宫位数组
+* @returns {Array} [{name, palaceName, detail, type}]
+*/
+function qmFindNineDun(palaces) {
+  var results = [];
+
+  for (var i = 0; i < palaces.length; i++) {
+    var p = palaces[i];
+    if (p.is_center) continue;
+
+    // 天遁: 丙奇+生门+丁奇 同宫
+    if (p.sky_stem === "丙" && p.door === "生门" && p.earth_stem === "丁") {
+      results.push({name:"天遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:"丙奇+生门+丁奇——得天华之蔽，百事生旺，利上书、求官、行商。"});
+    }
+
+    // 地遁: 乙奇+开门+己 同宫
+    if (p.sky_stem === "乙" && p.door === "开门" && p.earth_stem === "己") {
+      results.push({name:"地遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:"乙奇+开门+六己——得日精之蔽，百事皆吉，宜安营、藏兵、修造。"});
+    }
+
+    // 人遁: 丁奇+休门+太阴 同宫 (需检查神盘)
+    if (p.sky_stem === "丁" && p.door === "休门" && p.god === "太阴") {
+      results.push({name:"人遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:"丁奇+休门+太阴——得星精之蔽，利和谈、探密、婚姻、交易。"});
+    }
+
+    // 风遁: 乙奇+三吉门(开休生)+巽宫
+    if (p.sky_stem === "乙" && (p.door === "开门" || p.door === "休门" || p.door === "生门") && p.palace === 4) {
+      results.push({name:"风遁", type:"吉", palace:p.palace, palaceName:"巽",
+        detail:"乙奇+" + p.door + "于巽宫——得风精之蔽，宜顺风击敌、火攻。"});
+    }
+
+    // 云遁: 乙奇+三吉门+辛 同宫
+    if (p.sky_stem === "乙" && (p.door === "开门" || p.door === "休门" || p.door === "生门") && p.earth_stem === "辛") {
+      results.push({name:"云遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:"乙奇+" + p.door + "+六辛——得云精之蔽，宜求雨、立寨、造军械。"});
+    }
+
+    // 龙遁: 乙奇+三吉门+坎宫(1宫)或癸
+    if (p.sky_stem === "乙" && (p.door === "开门" || p.door === "休门" || p.door === "生门") &&
+        (p.palace === 1 || p.earth_stem === "癸")) {
+      results.push({name:"龙遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:"乙奇+" + p.door + "于" + (p.palace === 1 ? "坎宫" : "六癸之地") + "——得龙精之蔽，利水战、修桥。"});
+    }
+
+    // 虎遁: 乙奇+休门+辛+艮宫 或 庚+开门+兑宫
+    if ((p.sky_stem === "乙" && p.door === "休门" && p.earth_stem === "辛" && p.palace === 8) ||
+        (p.sky_stem === "庚" && p.door === "开门" && p.palace === 7)) {
+      results.push({name:"虎遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail: (p.sky_stem === "乙" ? "乙奇+休门+六辛于艮宫" : "庚+开门于兑宫") + "——得虎威之蔽，利招安、攻险。"});
+    }
+
+    // 神遁: 丙奇+生门+九天 同宫
+    if (p.sky_stem === "丙" && p.door === "生门" && p.god === "九天") {
+      results.push({name:"神遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:"丙奇+生门+九天——得神助，宜驱神遣将、祭祀、攻城。"});
+    }
+
+    // 鬼遁: 丁奇+杜门+九地 同宫
+    if (p.sky_stem === "丁" && p.door === "杜门" && p.god === "九地") {
+      results.push({name:"鬼遁", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:"丁奇+杜门+九地——得鬼精之蔽，宜偷营劫寨、设伏。"});
+    }
+  }
+
+  return results;
+}
+
+// ─────────────────────────────────────────────
+//  三诈五假检测
+// ─────────────────────────────────────────────
+
+var QM_SANQI = ["乙","丙","丁"];
+var QM_THREE_GOOD_DOORS = ["开门","休门","生门"];
+var QM_THREE_YIN_GODS = ["太阴","六合","九地"];
+
+function qmFindSanZhaWuJia(palaces) {
+  var results = [];
+
+  for (var i = 0; i < palaces.length; i++) {
+    var p = palaces[i];
+    if (p.is_center) continue;
+
+    var hasQi = QM_SANQI.indexOf(p.sky_stem) !== -1;
+    var hasGoodDoor = QM_THREE_GOOD_DOORS.indexOf(p.door) !== -1;
+
+    if (!hasQi || !hasGoodDoor) continue;
+
+    // 真诈: 三吉门+三奇+太阴
+    if (p.god === "太阴") {
+      results.push({name:"真诈", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:p.sky_stem + "奇+" + p.door + "+太阴——利密谋策划，经商远行百事吉。"});
+    }
+    // 休诈: 三吉门+三奇+六合
+    if (p.god === "六合") {
+      results.push({name:"休诈", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:p.sky_stem + "奇+" + p.door + "+六合——利合谋合作，百事皆吉。"});
+    }
+    // 重诈: 三吉门+三奇+九地
+    if (p.god === "九地") {
+      results.push({name:"重诈", type:"吉", palace:p.palace, palaceName:p.name,
+        detail:p.sky_stem + "奇+" + p.door + "+九地——利隐藏设伏，谋藏于心。"});
+    }
+  }
+
+  // 五假（不依赖三奇，依赖特定门+神）
+  for (var j = 0; j < palaces.length; j++) {
+    var pp = palaces[j];
+    if (pp.is_center) continue;
+
+    // 天假: 景门+三奇+九天
+    if (pp.door === "景门" && pp.god === "九天" && QM_SANQI.indexOf(pp.sky_stem) !== -1) {
+      results.push({name:"天假", type:"吉", palace:pp.palace, palaceName:pp.name,
+        detail:"景门+" + pp.sky_stem + "奇+九天——利争战诉讼、上书献策。"});
+    }
+    // 地假: 杜门+丁己癸+九地/太阴/六合
+    if (pp.door === "杜门" && (["九地","太阴","六合"].indexOf(pp.god) !== -1) &&
+        ["丁","己","癸"].indexOf(pp.sky_stem) !== -1) {
+      results.push({name:"地假", type:"吉", palace:pp.palace, palaceName:pp.name,
+        detail:"杜门+" + pp.sky_stem + "+" + pp.god + "——利潜藏埋伏、逃亡躲灾。"});
+    }
+    // 人假: 惊门+六壬+九天
+    if (pp.door === "惊门" && pp.god === "九天" && pp.sky_stem === "壬") {
+      results.push({name:"人假", type:"吉", palace:pp.palace, palaceName:pp.name,
+        detail:"惊门+壬+九天——利捕捉逃亡。"});
+    }
+    // 神假: 伤门+丁己癸+九地
+    if (pp.door === "伤门" && pp.god === "九地" && ["丁","己","癸"].indexOf(pp.sky_stem) !== -1) {
+      results.push({name:"神假", type:"吉", palace:pp.palace, palaceName:pp.name,
+        detail:"伤门+" + pp.sky_stem + "+九地——利埋藏伏藏。"});
+    }
+    // 鬼假: 死门+丁己癸+九地
+    if (pp.door === "死门" && pp.god === "九地" && ["丁","己","癸"].indexOf(pp.sky_stem) !== -1) {
+      results.push({name:"鬼假", type:"吉", palace:pp.palace, palaceName:pp.name,
+        detail:"死门+" + pp.sky_stem + "+九地——利超度亡灵、破土修茔。"});
+    }
+  }
+
+  return results;
+}
+
+// ─────────────────────────────────────────────
+//  五不遇时 & 天辅时
+// ─────────────────────────────────────────────
+
+/**
+* 天干五行对照表
+*/
+var QM_GAN_WX = {"甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土","庚":"金","辛":"金","壬":"水","癸":"水"};
+
+/**
+* 判断五不遇时：时干克日干（阳克阳、阴克阴）
+*/
+function qmCheckFiveUnmeet(dayGZ, timeGZ) {
+  if (!dayGZ || !timeGZ || dayGZ.length < 1 || timeGZ.length < 1) return null;
+  var dayG = dayGZ[0];
+  var timeG = timeGZ[0];
+  var dWx = QM_GAN_WX[dayG];
+  var tWx = QM_GAN_WX[timeG];
+  if (!dWx || !tWx) return null;
+  var rel = qmWuxingRelation(tWx, dWx);
+  if (rel === "克我") {
+    // 必须是阳克阳、阴克阴
+    var isDayYang = "甲丙戊庚壬".indexOf(dayG) !== -1;
+    var isTimeYang = "甲丙戊庚壬".indexOf(timeG) !== -1;
+    if (isDayYang === isTimeYang) {
+      return "五不遇时(时干" + timeG + "克日干" + dayG + ")，大凶，纵得三奇吉门亦不可用。";
+    }
+  }
+  return null;
+}
+
+/**
+* 判断天辅时（天显时格）
+*/
+function qmCheckTianFuTime(dayGZ, timeGZ) {
+  if (!dayGZ || !timeGZ) return null;
+  // 甲己日的甲子时、甲戌时
+  // 乙庚日的甲申时
+  // 丙辛日的甲午时
+  // 丁壬日的甲辰时
+  // 戊癸日的甲寅时
+  var dayG = dayGZ[0];
+  var timeG = timeGZ[0];
+  if (timeG !== "甲") return null;
+  var timeZ = timeGZ[1];
+  var map = {"甲":["子","戌"], "己":["子","戌"], "乙":["申"], "庚":["申"], "丙":["午"], "辛":["午"], "丁":["辰"], "壬":["辰"], "戊":["寅"], "癸":["寅"]};
+  var zhiList = map[dayG];
+  if (zhiList && zhiList.indexOf(timeZ) !== -1) {
+    return "天辅时(天显时格)：" + dayG + "日" + timeG + timeZ + "时，虽伏吟不为凶，反为吉。";
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 	⓺ 综合增强格局分析（调用所有子检测）
+// ─────────────────────────────────────────────
+
+/**
+* 增强版格局分析：在原有analyzeGeju之上追加经典格局检测
+* @param {Object} chart - computeQimenChart 返回的chart
+* @param {string} dayGZ - 日干支字符串
+* @param {string} timeGZ - 时干支字符串
+* @returns {Object} {gejuPatterns, dunPatterns, sanzhaPatterns, timePatterns:[]}
+*/
+function analyzeClassicPatterns(chart, dayGZ, timeGZ) {
+  if (!chart || !chart.palaces) return {gejuPatterns:[], dunPatterns:[], sanzhaPatterns:[], timePatterns:[]};
+
+  var palaces = chart.palaces;
+
+  // 天盘+地盘格局
+  var gejuPatterns = qmFindAllStemPatterns(palaces, chart);
+
+  // 九遁
+  var dunPatterns = qmFindNineDun(palaces);
+
+  // 三诈五假
+  var sanzhaPatterns = qmFindSanZhaWuJia(palaces);
+
+  // 时间格局
+  var timePatterns = [];
+  var fiveUnmeet = qmCheckFiveUnmeet(dayGZ, timeGZ);
+  if (fiveUnmeet) timePatterns.push({name:"五不遇时", type:"凶", detail:fiveUnmeet});
+  var tianFu = qmCheckTianFuTime(dayGZ, timeGZ);
+  if (tianFu) timePatterns.push({name:"天辅时", type:"吉", detail:tianFu});
+
+  return {
+    gejuPatterns: gejuPatterns,
+    dunPatterns: dunPatterns,
+    sanzhaPatterns: sanzhaPatterns,
+    timePatterns: timePatterns
+  };
+}
+
+// ═══════════════════════════════════════════════
 //  方向吉凶分析
 // ═══════════════════════════════════════════════
 
@@ -1630,6 +2017,291 @@ function analyzeDirection(chart) {
   results.sort(function(a, b) { return b.score - a.score; });
   
   return results;
+}
+
+// ═══════════════════════════════════════════════
+//  四害检查：伏吟·反吟·门迫·入墓·旺相休囚死
+// ═══════════════════════════════════════════════
+
+/** 九星对应本宫（星伏吟判断用） */
+var QM_STAR_HOME_PALACE = {
+  "天蓬":1, "天芮":2, "天冲":3, "天辅":4,
+  "天禽":5, "天心":6, "天柱":7, "天任":8, "天英":9
+};
+
+/** 八门对应本宫（门伏吟判断用） */
+var QM_DOOR_HOME_PALACE = {
+  "休门":1, "死门":2, "伤门":3, "杜门":4,
+  "景门":9, "生门":8, "惊门":7, "开门":6
+};
+
+/** 九宫对冲映射 */
+var QM_OPPOSITE_PALACE = {1:9, 2:8, 3:7, 4:6, 5:5, 6:4, 7:3, 8:2, 9:1};
+
+/** 天干入墓宫位 */
+var QM_STEM_MU = {
+  "乙":[6,2], "丙":[6],   "丁":[8],
+  "戊":[6],   "己":[8],   "庚":[8],
+  "辛":[4],   "壬":[4],   "癸":[2]
+};
+
+/** 月令地支→五行 */
+var QM_MONTH_WX = {
+  1:"木", 2:"木", 3:"土", 4:"火", 5:"火", 6:"土",
+  7:"金", 8:"金", 9:"土", 10:"水", 11:"水", 12:"土"
+};
+
+/**
+* 获取五行在月令下的旺相休囚死
+* 同我者旺, 我生者相, 生我者休, 克我者囚, 我克者死
+*/
+function qmWxStatus(wx, monthZhiIdx) {
+  if (!wx || !monthZhiIdx) return "平";
+  var monthWx = QM_MONTH_WX[monthZhiIdx];
+  if (!monthWx) return "平";
+  if (wx === monthWx) return "旺";
+  var rel = qmWuxingRelation(monthWx, wx);
+  if (rel === "我生") return "相";
+  if (rel === "生我") return "休";
+  if (rel === "克我") return "囚";
+  if (rel === "我克") return "死";
+  return "平";
+}
+
+/**
+* 从月干支获取月支数字索引 (1=寅..12=丑)
+*/
+function qmMonthZhiIndex(monthGZ) {
+  if (!monthGZ || monthGZ.length < 2) return 0;
+  var zhi = monthGZ[1];
+  var zhiMap = {"寅":1,"卯":2,"辰":3,"巳":4,"午":5,"未":6,"申":7,"酉":8,"戌":9,"亥":10,"子":11,"丑":12};
+  return zhiMap[zhi] || 0;
+}
+
+// ─────────────────────────────────────────────
+//  ① 伏吟 & 反吟
+// ─────────────────────────────────────────────
+
+function qmCheckStarFY(palaces) {
+  var results = [];
+  for (var i = 0; i < palaces.length; i++) {
+    var p = palaces[i];
+    if (!p.star || p.is_center) continue;
+    var home = QM_STAR_HOME_PALACE[p.star];
+    if (!home) continue;
+    if (p.palace === home) results.push({star:p.star, palace:p.palace, type:"伏吟"});
+    else if (QM_OPPOSITE_PALACE[p.palace] === home) results.push({star:p.star, palace:p.palace, type:"反吟"});
+  }
+  return results;
+}
+
+function qmCheckDoorFY(palaces) {
+  var results = [];
+  for (var i = 0; i < palaces.length; i++) {
+    var p = palaces[i];
+    if (!p.door || p.is_center) continue;
+    var home = QM_DOOR_HOME_PALACE[p.door];
+    if (!home) continue;
+    if (p.palace === home) results.push({door:p.door, palace:p.palace, type:"伏吟"});
+    else if (QM_OPPOSITE_PALACE[p.palace] === home) results.push({door:p.door, palace:p.palace, type:"反吟"});
+  }
+  return results;
+}
+
+function qmCheckZhifuFY(zhifu) {
+  if (!zhifu) return "";
+  var home = QM_STAR_HOME_PALACE[zhifu.star];
+  if (!home) return "";
+  if (zhifu.palace === home) return "伏吟";
+  if (QM_OPPOSITE_PALACE[zhifu.palace] === home) return "反吟";
+  return "";
+}
+
+function qmCheckZhishiFY(zhishi) {
+  if (!zhishi || !zhishi.door) return "";
+  var home = QM_DOOR_HOME_PALACE[zhishi.door];
+  if (!home) return "";
+  if (zhishi.palace === home) return "伏吟";
+  if (QM_OPPOSITE_PALACE[zhishi.palace] === home) return "反吟";
+  return "";
+}
+
+/** 六仪击刑简化判断 */
+function qmCheckJixing(palace) {
+  if (!palace || !palace.earth_stem) return false;
+  if (palace.earth_stem === "戊" && palace.palace === 3) return true;
+  if (palace.earth_stem === "己" && palace.palace === 2) return true;
+  if (palace.earth_stem === "庚" && palace.palace === 8) return true;
+  if (palace.earth_stem === "辛" && palace.palace === 9) return true;
+  if ((palace.earth_stem === "壬" || palace.earth_stem === "癸") && palace.palace === 4) return true;
+  return false;
+}
+
+/** 综合伏吟反吟 */
+function qmAnalyzeFY(chart) {
+  if (!chart || !chart.palaces) return {starFY:[], doorFY:[], zhifuFY:"", zhishiFY:"", summary:""};
+  var starFY = qmCheckStarFY(chart.palaces);
+  var doorFY = qmCheckDoorFY(chart.palaces);
+  var zhifuFY = qmCheckZhifuFY(chart.zhifu);
+  var zhishiFY = qmCheckZhishiFY(chart.zhishi);
+  var parts = [];
+  if (starFY.length >= 4) parts.push("⭐ 星全局伏吟");
+  else if (starFY.length > 0) {
+    var fyn = starFY.filter(function(s){return s.type==="伏吟";}).length;
+    var fan = starFY.filter(function(s){return s.type==="反吟";}).length;
+    if (fyn > 0) parts.push("⭐ 星伏吟" + fyn + "宫");
+    if (fan > 0) parts.push("⭐ 星反吟" + fan + "宫");
+  }
+  if (doorFY.length >= 4) parts.push("🚪 门全局伏吟");
+  else if (doorFY.length > 0) {
+    var dfyn = doorFY.filter(function(s){return s.type==="伏吟";}).length;
+    var dfan = doorFY.filter(function(s){return s.type==="反吟";}).length;
+    if (dfyn > 0) parts.push("🚪 门伏吟" + dfyn + "宫");
+    if (dfan > 0) parts.push("🚪 门反吟" + dfan + "宫");
+  }
+  if (zhifuFY) parts.push("🎯 值符" + zhifuFY);
+  if (zhishiFY) parts.push("🛠 值使" + zhishiFY);
+  var summary = "";
+  if (parts.length > 0) {
+    if (zhifuFY === "伏吟" && zhishiFY === "伏吟") summary = "全局伏吟，宜静不宜动，事多迟滞，守成为上。";
+    else if (zhifuFY === "反吟" && zhishiFY === "反吟") summary = "全局反吟，事有反复，宜主动出击，不宜固守。";
+    else if (parts.join("").indexOf("伏吟") !== -1 && parts.join("").indexOf("反吟") !== -1) summary = "伏吟反吟互见，有部分阻滞也有部分波动。";
+    else if (parts.join("").indexOf("伏吟") !== -1) summary = "有伏吟格局，整体偏慢，宜守不宜攻。";
+    else if (parts.join("").indexOf("反吟") !== -1) summary = "有反吟格局，事有反复，宜主动应对。";
+  } else summary = "星门值使均无伏吟反吟，盘局流动正常。";
+  return {starFY:starFY, doorFY:doorFY, zhifuFY:zhifuFY, zhishiFY:zhishiFY, summary:summary};
+}
+
+// ─────────────────────────────────────────────
+//  ② 门迫 & 宫迫
+// ─────────────────────────────────────────────
+
+function qmCheckDoorForce(palace) {
+  if (!palace || !palace.door || !palace.element || palace.is_center) return {type:"",detail:""};
+  var doorWx = QM_DOOR_WUXING[palace.door];
+  if (!doorWx) return {type:"",detail:""};
+  var rel = qmWuxingRelation(doorWx, palace.element);
+  if (rel === "我克") return {type:"门迫", detail:palace.door + "(" + doorWx + ")克" + palace.name + "宫(" + palace.element + ")，门迫"};
+  if (rel === "克我") return {type:"宫迫", detail:palace.name + "宫(" + palace.element + ")克" + palace.door + "(" + doorWx + ")，宫迫"};
+  if (rel === "同") return {type:"和平", detail:palace.door + "与" + palace.name + "宫五行相同(" + doorWx + ")"};
+  return {type:"",detail:""};
+}
+
+function qmAnalyzeDoorForce(palaces) {
+  var menpo = [], gongpo = [];
+  for (var i = 0; i < palaces.length; i++) {
+    if (palaces[i].is_center) continue;
+    var r = qmCheckDoorForce(palaces[i]);
+    if (r.type === "门迫") menpo.push({palace:palaces[i].name, door:palaces[i].door, detail:r.detail});
+    else if (r.type === "宫迫") gongpo.push({palace:palaces[i].name, door:palaces[i].door, detail:r.detail});
+  }
+  var summary = "";
+  if (menpo.length === 0 && gongpo.length === 0) summary = "无门迫宫迫，八门与九宫气场相合。";
+  else {
+    var parts = [];
+    if (menpo.length > 0) parts.push("门迫" + menpo.length + "处（吉门被克吉不就，凶门被克祸更重）");
+    if (gongpo.length > 0) parts.push("宫迫" + gongpo.length + "处（宫克门，人事受环境限制）");
+    summary = parts.join("，");
+  }
+  return {menpo:menpo, gongpo:gongpo, summary:summary};
+}
+
+// ─────────────────────────────────────────────
+//  ③ 入墓
+// ─────────────────────────────────────────────
+
+function qmStemIsMu(stem, palaceNo) {
+  if (!stem || !QM_STEM_MU[stem]) return false;
+  return QM_STEM_MU[stem].indexOf(palaceNo) !== -1;
+}
+
+function qmAnalyzeMu(palaces, monthGZ) {
+  var entries = [];
+  var monthIdx = qmMonthZhiIndex(monthGZ);
+  var stemWxMap = {"甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土","庚":"金","辛":"金","壬":"水","癸":"水"};
+  for (var i = 0; i < palaces.length; i++) {
+    var p = palaces[i];
+    if (p.is_center || !p.sky_stem) continue;
+    if (qmStemIsMu(p.sky_stem, p.palace)) {
+      var swx = stemWxMap[p.sky_stem] || "";
+      var wxs = qmWxStatus(swx, monthIdx);
+      entries.push({
+        stem:p.sky_stem, palace:p.palace, palaceName:p.name,
+        isKong:p.is_kong,
+        type:(wxs === "旺" || wxs === "相") ? "入库(旺相)" : "入墓(衰绝)",
+        detail:p.sky_stem + "落" + p.name + "宫→" + (wxs === "旺" || wxs === "相" ? "旺相入库，暂时收纳" : "衰绝入墓，能量被封，仅余20%")
+      });
+    }
+  }
+  var summary = entries.length === 0 ? "无天干入墓，各天干能量正常释放。" :
+    "有" + entries.length + "处天干" +
+    (entries.some(function(e){return e.type === "入墓(衰绝)";}) ? "入墓，能量被封宜等待时机。" : "入库，旺相暂时收纳，不影响。");
+  return {entries:entries, summary:summary};
+}
+
+// ─────────────────────────────────────────────
+//  ④ 旺相休囚死
+// ─────────────────────────────────────────────
+
+function qmAnalyzeWxStatus(chart, monthGZ) {
+  if (!chart || !chart.palaces) return {overall:"", details:[]};
+  var monthIdx = qmMonthZhiIndex(monthGZ);
+  if (!monthIdx) return {overall:"", details:[]};
+  var monthWx = QM_MONTH_WX[monthIdx];
+  var details = [];
+  for (var i = 0; i < chart.palaces.length; i++) {
+    var p = chart.palaces[i];
+    if (p.is_center) continue;
+    var row = {palace:p.name, items:[]};
+    if (p.door && QM_DOOR_WUXING[p.door]) row.items.push({name:p.door, wx:QM_DOOR_WUXING[p.door], status:qmWxStatus(QM_DOOR_WUXING[p.door], monthIdx)});
+    if (p.star && QM_STAR_WUXING[p.star]) row.items.push({name:p.star, wx:QM_STAR_WUXING[p.star], status:qmWxStatus(QM_STAR_WUXING[p.star], monthIdx)});
+    details.push(row);
+  }
+  var monthName = ["寅","卯","辰","巳","午","未","申","酉","戌","亥","子","丑"][monthIdx-1];
+  var overall = "月令" + monthName + "月（" + monthWx + "旺），";
+  var jiWang = 0, xiongWang = 0;
+  for (var j = 0; j < details.length; j++) {
+    for (var k = 0; k < details[j].items.length; k++) {
+      var it = details[j].items[k];
+      if (QM_DOOR_JI.indexOf(it.name) !== -1 && (it.status === "旺" || it.status === "相")) jiWang++;
+      if (QM_DOOR_XIONG.indexOf(it.name) !== -1 && (it.status === "旺" || it.status === "相")) xiongWang++;
+    }
+  }
+  if (jiWang > 0) overall += "吉门" + jiWang + "处得令";
+  else overall += "吉门失令，吉力打折";
+  if (xiongWang > 0) overall += "，凶门" + xiongWang + "处得令（凶势加重）";
+  else overall += "，凶门失令，凶力减轻";
+  return {overall:overall, details:details, monthWx:monthWx};
+}
+
+// ─────────────────────────────────────────────
+//  ⑤ 综合四害报告
+// ─────────────────────────────────────────────
+
+/**
+* 综合分析四害
+* @param {Object} chart - computeQimenChart 返回的完整 chart
+* @returns {Object}
+*/
+function analyzeFourHarms(chart) {
+  if (!chart || !chart.palaces) return {fy:{}, menpo:{}, mu:{}, wxs:{}, items:[], summary:""};
+  var fy = qmAnalyzeFY(chart);
+  var menpo = qmAnalyzeDoorForce(chart.palaces);
+  var mu = qmAnalyzeMu(chart.palaces, chart.ganzhi ? chart.ganzhi.month : "");
+  var wxs = qmAnalyzeWxStatus(chart, chart.ganzhi ? chart.ganzhi.month : "");
+  var jixingCount = 0;
+  for (var i = 0; i < chart.palaces.length; i++) {
+    if (qmCheckJixing(chart.palaces[i])) jixingCount++;
+  }
+  var items = [];
+  if (fy.summary && fy.summary.indexOf("流动正常") === -1) items.push({type:"伏吟反吟", detail:fy.summary});
+  if (menpo.summary && menpo.summary.indexOf("无门迫宫迫") === -1) items.push({type:"门迫宫迫", detail:menpo.summary});
+  if (mu.summary && mu.summary.indexOf("无天干入墓") === -1) items.push({type:"入墓", detail:mu.summary});
+  if (jixingCount > 0) items.push({type:"六仪击刑", detail:"有" + jixingCount + "处击刑，能量冲突激烈。"});
+  if (wxs.overall) items.push({type:"旺相休囚", detail:wxs.overall});
+  var summary = items.length === 0 ? "盘面无显著四害，格局清朗。" :
+    "四害分析发现" + items.length + "项异常：" + items.map(function(it){return it.detail;}).join("；");
+  return {fy:fy, menpo:menpo, mu:mu, wxs:wxs, jixing:jixingCount, items:items, summary:summary};
 }
 
 // ═══════════════════════════════════════════════
@@ -2445,6 +3117,8 @@ if (typeof window !== 'undefined') {
   window.analyzeGeju = analyzeGeju;
   window.analyzeDirection = analyzeDirection;
   window.analyzeTimeLuck = analyzeTimeLuck;
+  window.analyzeFourHarms = analyzeFourHarms;
+  window.analyzeClassicPatterns = analyzeClassicPatterns;
   window.getRemedies = getRemedies;
   window.getActionAdvice = getActionAdvice;
 }
@@ -2455,6 +3129,8 @@ if (typeof module !== 'undefined') {
     analyzeGeju: analyzeGeju,
     analyzeDirection: analyzeDirection,
     analyzeTimeLuck: analyzeTimeLuck,
+    analyzeFourHarms: analyzeFourHarms,
+    analyzeClassicPatterns: analyzeClassicPatterns,
     getRemedies: getRemedies,
     getActionAdvice: getActionAdvice
   };
