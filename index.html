@@ -2787,25 +2787,61 @@ document.getElementById('qmRemedyBtn').addEventListener('click', function() {
 // ═════════════════════════════════════════════════
 // TAB 2: 择时
 // ═════════════════════════════════════════════════
-document.getElementById('scBtn').addEventListener('click',async function(){
+document.getElementById('scBtn').addEventListener('click',function(){
   var e=document.getElementById('scErr');e.classList.remove('active');
   document.getElementById('scResults').style.display='none';
   var l=document.getElementById('scLoad');l.classList.add('active');this.disabled=true;
-  var loc=document.getElementById('scLoc').value;
   try{
-    var r=await fetch('/api/qimen_batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:getSelDate('scYear','scMonth','scDay'),timezone:LOC_TZ[loc]||'Asia/Shanghai'})});
-    var d=await r.json();if(!r.ok||d.error)throw new Error(d.error||'失败');
-    document.getElementById('scInfo').innerHTML='<div class="info-item"><span class="ilabel">日期</span><span class="ivalue">'+d.date+'</span></div><div class="info-item"><span class="ilabel">时区</span><span class="ivalue">'+d.timezone+'</span></div><div class="info-item"><span class="ilabel">共</span><span class="ivalue">'+d.results.length+'个时辰</span></div>';
+    var y=parseInt(document.getElementById('scYear').value);
+    var m=parseInt(document.getElementById('scMonth').value);
+    var d=parseInt(document.getElementById('scDay').value);
+    if(isNaN(y)||isNaN(m)||isNaN(d))throw new Error('请选择日期');
+    // 十二时辰信息
+    var shichen=[{id:1,name:"子时",period:"23:00-00:59",hour:23,min:0},
+      {id:2,name:"丑时",period:"01:00-02:59",hour:1,min:0},
+      {id:3,name:"寅时",period:"03:00-04:59",hour:3,min:0},
+      {id:4,name:"卯时",period:"05:00-06:59",hour:5,min:0},
+      {id:5,name:"辰时",period:"07:00-08:59",hour:7,min:0},
+      {id:6,name:"巳时",period:"09:00-10:59",hour:9,min:0},
+      {id:7,name:"午时",period:"11:00-12:59",hour:11,min:0},
+      {id:8,name:"未时",period:"13:00-14:59",hour:13,min:0},
+      {id:9,name:"申时",period:"15:00-16:59",hour:15,min:0},
+      {id:10,name:"酉时",period:"17:00-18:59",hour:17,min:0},
+      {id:11,name:"戌时",period:"19:00-20:59",hour:19,min:0},
+      {id:12,name:"亥时",period:"21:00-22:59",hour:21,min:0}];
+    var results=[];
+    for(var i=0;i<shichen.length;i++){
+      var sc=shichen[i];
+      var chart=computeQimenChart({year:y,month:m,day:d,hour:sc.hour,minute:sc.min});
+      var luck=chart?analyzeTimeLuck(chart):{overall:"平"};
+      var timeGZ=chart&&chart.ganzhi?chart.ganzhi.time:'';
+      // 从chart提取门信息
+      var door='',star='',god='';
+      if(chart&&chart.palaces){
+        for(var p=0;p<chart.palaces.length;p++){
+          if(chart.palaces[p].time_stem||chart.palaces[p].sky_stem){
+            if(chart.palaces[p].door) door=chart.palaces[p].door;
+            if(chart.palaces[p].star) star=chart.palaces[p].star;
+            if(chart.palaces[p].god) god=chart.palaces[p].god;
+            break;
+          }
+        }
+      }
+      var rating=luck.overall||'平';
+      var starStr=rating==='大吉'?'★★★':rating==='吉'?'★★':rating==='平'?'★':rating==='凶'?'☆':'';
+      results.push({name:sc.name,period:sc.period,rating:{text:rating,star:starStr},door:door,time_ganzhi:timeGZ});
+    }
     var gg=document.getElementById('scGrid');
-    gg.innerHTML=d.results.map(function(r){
-      var rt=r.rating?.text||'?',cm={'大吉':'lev-daji','吉':'lev-ji','平':'lev-ping','凶':'lev-xiong','大凶':'lev-daxiong'};
-      return '<div class="shichen-classic-card '+(cm[rt]||'lev-ping')+'"><div class="sc-name">'+r.name+'</div><div class="sc-period">'+r.period+'</div><div class="sc-rating">'+(r.rating?.star||'')+' '+rt+'</div><div class="sc-door">'+(r.zhishi?.door||'')+termHint(r.zhishi?.door)+'</div><div style="font-size:0.65rem;color:var(--ink-muted)">'+(r.time_ganzhi||'')+'</div></div>';
+    document.getElementById('scInfo').innerHTML='<div class="info-item"><span class="ilabel">日期</span><span class="ivalue">'+y+'年'+String(m).padStart(2,'0')+'月'+String(d).padStart(2,'0')+'日</span></div><div class="info-item"><span class="ilabel">共</span><span class="ivalue">'+results.length+'个时辰</span></div>';
+    gg.innerHTML=results.map(function(r){
+      var rt=r.rating.text,cm={'大吉':'lev-daji','吉':'lev-ji','平':'lev-ping','凶':'lev-xiong','大凶':'lev-daxiong'};
+      return '<div class="shichen-classic-card '+(cm[rt]||'lev-ping')+'"><div class="sc-name">'+r.name+'</div><div class="sc-period">'+r.period+'</div><div class="sc-rating">'+r.rating.star+' '+rt+'</div><div class="sc-door">'+r.door+termHint(r.door)+'</div><div style="font-size:0.65rem;color:var(--ink-muted)">'+(r.time_ganzhi||'')+'</div></div>';
     }).join('');
-    var st={};d.results.forEach(function(r){var t=r.rating?.text||'?';st[t]=(st[t]||0)+1;});
+    var st={};results.forEach(function(r){var t=r.rating.text;st[t]=(st[t]||0)+1;});
     document.getElementById('scStats').innerHTML=Object.entries(st).map(function(kv){return '<div class="detail-classic-item"><div class="dlabel">'+kv[0]+'</div><div class="dvalue">'+kv[1]+'个时辰</div></div>';}).join('');
-    document.getElementById('scResults').style.display='block';document.getElementById('scResults').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('scResults').style.display='block';
   }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
-  finally{l.classList.remove('active');this.disabled=false;}
+  l.classList.remove('active');this.disabled=false;
 });
 
 // ═════════════════════════════════════════════════
