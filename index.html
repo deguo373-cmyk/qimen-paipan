@@ -330,7 +330,7 @@
     .zw-palace .zw-p-name .zw-p-zhi { font-weight: 400; font-size: 0.6rem; color: var(--ink-muted); }
     .zw-palace .zw-p-name .zw-p-shen { font-size: 0.55rem; color: var(--cinnabar); }
     .zw-palace .zw-p-stars { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px; }
-    .zw-palace .zw-p-stars .zw-star { font-size: 0.75rem; font-weight: 600; font-family: var(--font-title); }
+    .zw-palace .zw-p-stars .zw-star { font-size: 0.75rem; font-weight: 600; font-family: var(--font-title); border-bottom: 1px dotted var(--cinnabar); }
     .zw-palace .zw-p-stars .zw-star.highlight { color: var(--cinnabar); font-weight: 700; }
     .zw-palace .zw-p-stars .zw-star.minor { font-size: 0.65rem; font-weight: 400; color: var(--ink-light); }
     .zw-palace .zw-p-stars .zw-sihua { font-size: 0.55rem; color: var(--cinnabar); font-weight: 700; margin-left: 1px; }
@@ -887,13 +887,21 @@
           <label>历法</label>
           <select id="qmCalT"><option value="solar">公历</option><option value="lunar">农历</option><option value="now">即时</option></select>
         </div>
-        <div class="field-group" id="qmDateG">
-          <label>日期</label>
-          <input type="date" id="qmDate">
+        <div class="field-group" id="qmDateG" style="display:flex;gap:4px;flex-wrap:nowrap;align-items:center">
+          <label style="flex-shrink:0">日期</label>
+          <select id="qmYear" style="flex:1;min-width:60px"></select>
+          <span style="flex-shrink:0">年</span>
+          <select id="qmMonth" style="flex:1;min-width:50px"></select>
+          <span style="flex-shrink:0">月</span>
+          <select id="qmDay" style="flex:1;min-width:50px"></select>
+          <span style="flex-shrink:0">日</span>
         </div>
         <div class="field-group" style="flex:0 0 auto;min-width:90px">
           <label>时间</label>
-          <input type="time" id="qmTime" value="12:00">
+          <select id="qmHour" style="width:60px"></select>
+          <span>时</span>
+          <select id="qmMin" style="width:60px"></select>
+          <span>分</span>
         </div>
         <div class="field-group" style="flex:0 0 auto;min-width:100px">
           <label>地点</label>
@@ -1102,9 +1110,14 @@
       </div>
       <p style="font-size:0.82rem;color:var(--ink-muted);margin-bottom:12px">选择日期，自动计算当天十二个时辰的吉凶。</p>
       <div class="form-classic">
-        <div class="field-group" style="flex:0 0 auto;min-width:150px">
-          <label>日期</label>
-          <input type="date" id="scDate">
+        <div class="field-group" style="display:flex;gap:4px;flex-wrap:nowrap;align-items:center">
+          <label style="flex-shrink:0">日期</label>
+          <select id="scYear" style="flex:1;min-width:60px"></select>
+          <span style="flex-shrink:0">年</span>
+          <select id="scMonth" style="flex:1;min-width:50px"></select>
+          <span style="flex-shrink:0">月</span>
+          <select id="scDay" style="flex:1;min-width:50px"></select>
+          <span style="flex-shrink:0">日</span>
         </div>
         <div class="field-group" style="flex:0 0 auto;min-width:100px">
           <label>地点</label>
@@ -1155,13 +1168,21 @@
         <span class="folio-badge">卷一</span>
       </div>
       <div class="form-classic">
-        <div class="field-group" style="flex:0 0 auto;min-width:150px">
-          <label>公历日期</label>
-          <input type="date" id="bzDate">
+        <div class="field-group" style="display:flex;gap:4px;flex-wrap:nowrap;align-items:center">
+          <label style="flex-shrink:0">公历日期</label>
+          <select id="bzYear" style="flex:1;min-width:60px"></select>
+          <span style="flex-shrink:0">年</span>
+          <select id="bzMonth" style="flex:1;min-width:50px"></select>
+          <span style="flex-shrink:0">月</span>
+          <select id="bzDay" style="flex:1;min-width:50px"></select>
+          <span style="flex-shrink:0">日</span>
         </div>
-        <div class="field-group" style="flex:0 0 auto;min-width:90px">
+        <div class="field-group" style="flex:0 0 auto;min-width:100px">
           <label>时间</label>
-          <input type="time" id="bzTime" value="12:00">
+          <select id="bzHour" style="width:60px"></select>
+          <span>时</span>
+          <select id="bzMin" style="width:60px"></select>
+          <span>分</span>
         </div>
         <div class="field-group" style="flex:0 0 auto;min-width:70px">
           <label>性别</label>
@@ -1345,7 +1366,7 @@
         <span class="folio-title">紫微斗数 · 排盘</span>
         <span class="folio-badge">卷一</span>
       </div>
-      <p style="font-size:0.82rem;color:var(--ink-muted);margin-bottom:12px">请输入出生信息（公历），系统自动计算命盘。时辰可选子~亥，性别必选。</p>
+      <p style="font-size:0.82rem;color:var(--ink-muted);margin-bottom:12px">请输入出生信息（公历📅），系统自动计算命盘。时辰可选子~亥，性别必选。</p>
       <div class="form-classic">
         <div class="field-group" style="flex:0 0 auto;min-width:90px">
           <label>出生年</label>
@@ -1647,13 +1668,24 @@ function termHint(termName) {
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function nowDate(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function nowTime(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
-
-// 初始化日期
-document.getElementById('qmDate').value=nowDate();
-document.getElementById('qmTime').value=nowTime();
-document.getElementById('scDate').value=nowDate();
-document.getElementById('bzDate').value=nowDate();
-document.getElementById('bzTime').value=nowTime();
+// 下拉选择器填充
+function populateSelect(id,start,end,pad,selected){
+  var el=document.getElementById(id),i,opts=[];
+  for(i=start;i<=end;i++){var v=pad?String(i).padStart(2,'0'):String(i);opts.push('<option value="'+v+'"'+(v===selected?' selected':'')+'>'+v+'</option>');}
+  el.innerHTML=opts.join('');
+}
+function setNowDropdown(){
+  var d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0'),h=String(d.getHours()).padStart(2,'0'),mi=String(d.getMinutes()).padStart(2,'0');
+  populateSelect('qmYear',1900,2030,false,String(y));populateSelect('qmMonth',1,12,true,m);populateSelect('qmDay',1,31,true,day);
+  populateSelect('qmHour',0,23,true,h);populateSelect('qmMin',0,59,true,mi);
+  populateSelect('scYear',1900,2030,false,String(y));populateSelect('scMonth',1,12,true,m);populateSelect('scDay',1,31,true,day);
+  populateSelect('bzYear',1900,2030,false,String(y));populateSelect('bzMonth',1,12,true,m);populateSelect('bzDay',1,31,true,day);
+  populateSelect('bzHour',0,23,true,h);populateSelect('bzMin',0,59,true,mi);
+}
+function getSelDate(yId,mId,dId){return document.getElementById(yId).value+'-'+document.getElementById(mId).value+'-'+document.getElementById(dId).value;}
+function getSelTime(hId,miId){return document.getElementById(hId).value+':'+document.getElementById(miId).value;}
+// 初始化下拉
+setNowDropdown();
 
 // ═════════════════════════════════════════════════
 // Tabs 切换
@@ -1672,20 +1704,30 @@ document.querySelectorAll('.tab-classic').forEach(function(b){
 // ═════════════════════════════════════════════════
 document.getElementById('qmCalT').addEventListener('change',function(){
   var g=document.getElementById('qmDateG');
-  g.style.display=(this.value==='now')?'none':'block';
-  document.getElementById('qmTime').disabled=(this.value==='now');
-  document.getElementById('qmDate').disabled=(this.value==='now');
+  g.style.display=(this.value==='now')?'none':'flex';
+  document.getElementById('qmHour').disabled=(this.value==='now');
+  document.getElementById('qmMin').disabled=(this.value==='now');
+  document.getElementById('qmYear').disabled=(this.value==='now');
+  document.getElementById('qmMonth').disabled=(this.value==='now');
+  document.getElementById('qmDay').disabled=(this.value==='now');
 });
 document.getElementById('qmNow').addEventListener('click',function(){
-  document.getElementById('qmDate').value=nowDate();
-  document.getElementById('qmTime').value=nowTime();
+  setNowDropdown();
   document.getElementById('qmCalT').value='solar';
-  document.getElementById('qmDateG').style.display='block';
-  document.getElementById('qmTime').disabled=false;
-  document.getElementById('qmDate').disabled=false;
+  document.getElementById('qmDateG').style.display='flex';
+  document.getElementById('qmHour').disabled=false;
+  document.getElementById('qmMin').disabled=false;
+  document.getElementById('qmYear').disabled=false;
+  document.getElementById('qmMonth').disabled=false;
+  document.getElementById('qmDay').disabled=false;
 });
-document.getElementById('scToday').addEventListener('click',function(){document.getElementById('scDate').value=nowDate();});
-document.getElementById('bzNow').addEventListener('click',function(){document.getElementById('bzDate').value=nowDate();document.getElementById('bzTime').value=nowTime();});
+document.getElementById('scToday').addEventListener('click',function(){
+  var d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  populateSelect('scYear',1900,2030,false,String(y));populateSelect('scMonth',1,12,true,m);populateSelect('scDay',1,31,true,day);
+});
+document.getElementById('bzNow').addEventListener('click',function(){
+  setNowDropdown();
+});
 
 // ═════════════════════════════════════════════════
 // 奇门 — 格局分析（深化版）
@@ -2092,7 +2134,7 @@ async function qimenGo(){
   document.getElementById('qmBtn').disabled=true;
   var typ=document.getElementById('qmCalT').value,loc=document.getElementById('qmLoc').value;
   var ti,ct;
-  if(typ==='now'){ti='now';ct='now';}else if(typ==='lunar'){ti=document.getElementById('qmDate').value+' '+document.getElementById('qmTime').value+':00';ct='lunar';}else{ti=document.getElementById('qmDate').value+' '+document.getElementById('qmTime').value+':00';ct='solar';}
+  if(typ==='now'){ti='now';ct='now';}else if(typ==='lunar'){ti=getSelDate('qmYear','qmMonth','qmDay')+' '+getSelTime('qmHour','qmMin')+':00';ct='lunar';}else{ti=getSelDate('qmYear','qmMonth','qmDay')+' '+getSelTime('qmHour','qmMin')+':00';ct='solar';}
   try{
     var d;
     if(typ==='now'){
@@ -2629,7 +2671,7 @@ document.getElementById('scBtn').addEventListener('click',async function(){
   var l=document.getElementById('scLoad');l.classList.add('active');this.disabled=true;
   var loc=document.getElementById('scLoc').value;
   try{
-    var r=await fetch('/api/qimen_batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:document.getElementById('scDate').value,timezone:LOC_TZ[loc]||'Asia/Shanghai'})});
+    var r=await fetch('/api/qimen_batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:getSelDate('scYear','scMonth','scDay'),timezone:LOC_TZ[loc]||'Asia/Shanghai'})});
     var d=await r.json();if(!r.ok||d.error)throw new Error(d.error||'失败');
     document.getElementById('scInfo').innerHTML='<div class="info-item"><span class="ilabel">日期</span><span class="ivalue">'+d.date+'</span></div><div class="info-item"><span class="ilabel">时区</span><span class="ivalue">'+d.timezone+'</span></div><div class="info-item"><span class="ilabel">共</span><span class="ivalue">'+d.results.length+'个时辰</span></div>';
     var gg=document.getElementById('scGrid');
@@ -2985,8 +3027,8 @@ document.getElementById('bzBtn').addEventListener('click',function(){
   document.getElementById('bzResults').style.display='none';
   var l=document.getElementById('bzLoad');l.classList.add('active');this.disabled=true;
   try{
-    var dt=document.getElementById('bzDate').value;
-    var tm=document.getElementById('bzTime').value;
+    var dt=getSelDate('bzYear','bzMonth','bzDay');
+    var tm=getSelTime('bzHour','bzMin');
     var parts=dt.split('-');
     var tparts=tm.split(':');
     var year=parseInt(parts[0]),month=parseInt(parts[1]),day=parseInt(parts[2]);
@@ -3066,12 +3108,11 @@ function renderBaziAll(d){
 
   // 大运（增强：起运具体年份 + 交运年份列表）
   var birthYear=d.current_year?d.current_year.year:new Date().getFullYear();
-  // Try to extract birth year from bzDate field
+  // Try to extract birth year from bzYear field
   (function(){
-    var dtEl=document.getElementById('bzDate');
+    var dtEl=document.getElementById('bzYear');
     if(dtEl&&dtEl.value){
-      var parts=dtEl.value.split('-');
-      if(parts[0]) birthYear=parseInt(parts[0]);
+      birthYear=parseInt(dtEl.value);
     }
   })();
   var startYear=birthYear+d.dayun.start_age;
@@ -3396,7 +3437,7 @@ function renderBaziAll(d){
   if(dm && TIANGAN_CHARACTER[dm]){
     ch.style.display='block';
     var c = TIANGAN_CHARACTER[dm];
-    cc.innerHTML = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-size:2rem">'+c.image+'</span><div><span style="font-family:var(--font-title);font-size:1.1rem;font-weight:700">'+c.name+'</span><span style="color:var(--ink-muted);margin-left:8px">'+c.desc+'</span></div></div>'+
+    cc.innerHTML = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-size:2rem">'+c.image+'</span><div><span style="font-family:var(--font-title);font-size:0.9rem;font-weight:700">'+c.name+'</span><span style="color:var(--ink-muted);margin-left:6px;font-size:0.78rem">'+c.desc+'</span></div></div>'+
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;font-size:0.82rem">'+
       '<div style="padding:8px;background:var(--paper-dark)"><strong style="font-family:var(--font-title);color:var(--stone-blue)">性格特质</strong><br>'+c.character+'</div>'+
       '<div style="padding:8px;background:var(--paper-dark)"><strong style="font-family:var(--font-title);color:var(--stone-blue)">优势</strong><br>'+c.strength+'</div>'+
