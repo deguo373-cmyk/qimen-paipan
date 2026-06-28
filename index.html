@@ -206,6 +206,7 @@
       display: flex; flex-wrap: wrap; gap: 6px 20px;
       padding: 12px 16px; background: var(--paper-dark);
       margin-bottom: 16px; font-size: 0.82rem;
+      overflow-wrap: break-word; word-break: break-word;
       animation: folioIn 0.5s ease 0.15s both;
       background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200,184,154,0.05) 1px, rgba(200,184,154,0.05) 3px);
     }
@@ -218,6 +219,7 @@
     .analysis-classic {
       padding: 14px 16px; background: var(--paper-dark);
       font-size: 0.85rem; line-height: 1.8;
+      overflow-wrap: break-word; word-break: break-word;
       background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200,184,154,0.04) 1px, rgba(200,184,154,0.04) 3px);
     }
     .tag-classic { display: inline-block; font-size: 0.7rem; padding: 1px 7px; margin: 1px 2px; font-family: var(--font-title); }
@@ -574,6 +576,7 @@
     .plain-talk {
       padding: 14px 16px; background: #f0f4ec;
       font-size: 0.85rem; line-height: 1.9;
+      overflow-wrap: break-word; word-break: break-word;
       border-left: 3px solid var(--stone-blue);
       background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(74,103,65,0.04) 1px, rgba(74,103,65,0.04) 3px);
     }
@@ -1539,22 +1542,84 @@ var QIMEN_TERMS = {
 };
 
 var SHORT_HINTS = {
+  // 八神
   "值符": "总指挥", "值使": "行动队长", "旬首": "当值组长",
-  "旬空": "力量偏虚", "三奇": "吉星组合", "门受制": "受阻受限",
-  "阳遁": "阳气上升·宜主动", "阴遁": "阴气上升·宜守成",
-  "上元": "力量最强", "中元": "力量中等", "下元": "力量偏弱", "局": "气场模板",
-  "青龙回首": "转机出现", "飞鸟跌穴": "藏器待时",
-  "太白入荧": "防外部干扰", "荧入太白": "先稳内部",
+  "旬空": "力量偏虚",
   "白虎": "冲突压力", "玄武": "隐情小人",
   "九天": "宜主动出击", "九地": "宜守成等待",
   "太阴": "暗中相助", "六合": "合作协调",
   "朱雀": "口舌文书", "腾蛇": "虚惊变化",
+  // 九星
   "天蓬": "防盗防骗", "天任": "稳重积累", "天冲": "冲锋变动",
   "天辅": "文书大利", "天英": "注意安全", "天芮": "关注健康",
   "天柱": "注意口舌", "天心": "谋略策划", "天禽": "居中协调",
+  // 八门
   "休门": "宜休息求财", "生门": "宜创业求财", "伤门": "防争斗损失",
   "杜门": "宜幕后工作", "景门": "宜考试宣传",
   "死门": "不利求财签约", "惊门": "防口舌官非", "开门": "宜开创求职",
+  // 阴阳遁 · 三元
+  "阳遁": "阳气上升·宜主动", "阴遁": "阴气上升·宜守成",
+  "上元": "力量最强", "中元": "力量中等", "下元": "力量偏弱", "局": "气场模板",
+  // 天盘+地盘 经典格局
+  "青龙返首": "戊加丙，木火相生母顾子，大吉。利求财求职。若逢空亡击刑则吉力打折。",
+  "青龙回首": "戊加丙，木火相生母顾子，大吉。利求财求职。若逢空亡击刑则吉力打折。",
+  "飞鸟跌穴": "丙加戊，朱雀归巢百事皆吉。利求财、求职、婚姻、建造。",
+  "青龙转光": "戊加丁，木火相生光明通达，宜见贵求名、进取发展。",
+  "青龙逃走": "乙加辛，金克木龙逃虎追，主失财破败百事不利，宜退守。",
+  "白虎猖狂": "辛加乙，虎在龙上反客为主，主客两伤凡事皆凶。",
+  "朱雀投江": "丁加癸，火入水乡，主文书口舌不利音信沉没。",
+  "腾蛇夭矫": "癸加丁，蛇入火中，主虚惊不宁百事不利，宜静守。",
+  "荧入太白": "丙加庚，火入金乡利主不利客，宜退守固本、先稳内部。",
+  "太白入荧": "庚加丙，金入火乡贼来，利客不利主，防外部干扰入侵。",
+  "伏宫格": "庚加戊，主客皆不利，求人不在人等不来，诸事阻滞。",
+  "飞宫格": "戊加庚，大凶尤不利客，经商破财诸事不顺，宜静不宜动。",
+  "大格": "庚加癸，行人不至官司破财，百事不利，出行远行尤忌。",
+  "小格": "庚加壬，远行失迷道路，求谋破财，宜谨慎行事。",
+  "刑格": "庚加己，官司受刑求谋破财，谨防官非是非。",
+  "天网四张": "癸加癸，天网四张不可当，强行外出必有血光之灾。",
+  "伏吟格": "戊加戊，天地同临宜静不宜动，诸事迟滞等待时机。",
+  "天网低张": "壬加癸，天网低张事易败露，不宜举事。",
+  // 九遁
+  "天遁": "丙奇+生门+丁奇，得天华之蔽，百事生旺诸事大吉。",
+  "地遁": "乙奇+开门+六己，得日精之蔽，宜安营藏兵修造。",
+  "人遁": "丁奇+休门+太阴，得星精之蔽，利和谈婚姻人事。",
+  "风遁": "乙奇+吉门+巽宫，得风精之蔽，宜火攻乘风破敌。",
+  "云遁": "乙奇+吉门+辛，得云精之蔽，宜求雨立寨埋伏。",
+  "龙遁": "乙奇+吉门+坎宫或癸，得龙精之蔽，利水战捕鱼。",
+  "虎遁": "乙+休+辛+艮或庚+开+兑，得虎威之蔽，宜招安。",
+  "神遁": "丙奇+生门+九天，得神助，宜祭祀攻城练军。",
+  "鬼遁": "丁奇+杜门+九地，得鬼精之蔽，宜偷营设伏侦探。",
+  // 三诈五假
+  "真诈": "三吉门+三奇+太阴，利密谋策划、暗中行事。",
+  "休诈": "三吉门+三奇+六合，利合谋合作、团队协作。",
+  "重诈": "三吉门+三奇+九地，利隐藏设伏、暗中行动。",
+  "天假": "景门+三奇+九天，利争战诉讼上书，主动出击。",
+  "地假": "杜门+丁己癸+九地/太阴/六合，利潜藏逃亡。",
+  "人假": "惊门+六壬+九天，利捕捉逃亡追捕。",
+  "神假": "伤门+丁己癸+九地，利埋藏伏藏静待时机。",
+  "鬼假": "死门+丁己癸+九地，利超度破土祭祀。",
+  // 其他格局
+  "三奇得使": "乙丙丁临值使门位，遇之非小补，百事有利。",
+  "玉女守门": "值使门遇地盘丁奇，利宴会婚姻和合之事。",
+  "三奇升殿": "乙到震丙到离丁到兑，三奇到旺地大吉。",
+  "五不遇时": "时干克日干且阴阳同，大凶百事不宜，主事难成。",
+  "天辅时": "甲己日甲子甲戌等时，虽伏吟反为吉，暗中有成。",
+  "悖格": "丙+值符或值符+丙，纲纪紊乱事难成，宜谨慎。",
+  // 四害
+  "伏吟": "星门落本宫不动，宜静不宜动，事迟滞需等待。",
+  "反吟": "星门落对冲宫，事有反复宜主动应对，先破后立。",
+  "门迫": "门五行克宫五行，吉门被克吉不就，凶门被克祸更重。",
+  "宫迫": "宫五行克门五行，人事受环境限制，诸事受阻。",
+  "入墓": "天干入辰戌丑未宫，能量被封仅余20%，气数无力。",
+  "击刑": "六仪在特定宫位能量冲突激烈，易生事端。",
+  "旺相休囚死": "五行四季旺衰：同我旺我生相生我休克我囚我克死。",
+  // 基础术语
+  "三奇": "乙（日奇）丙（月奇）丁（星奇），三奇临位遇之主吉。",
+  "六仪": "戊己庚辛壬癸，甲木的仪仗队，排盘基础要素。",
+  "马星": "申子辰马在寅等，主变动出行快速，事急可成。",
+  "用神": "针对所问之事选取的核心判断参数，决定分析方向。",
+  "应期": "事件发生的时间判断，据盘中信号定应验之期。",
+  "门受制": "门被宫克，受阻受限",
   // 八字 · 十神
   "正官": "事业运", "偏官": "挑战压力", "正印": "学业贵人",
   "偏印": "独特思维", "正财": "稳定财源", "偏财": "偏财运",
@@ -1790,6 +1855,56 @@ function renderGeju(chart) {
         lines.push('<span class="tag-classic '+cls+'">'+icon+'</span> '+text+'<br>');
       });
       ct.innerHTML=lines.join('\n');
+
+      // 经典格局补充（天盘+地盘格局 / 九遁 / 三诈五假）
+      if(typeof window.analyzeClassicPatterns === 'function'){
+        try{
+          var chart=window._lastChart||(typeof getQimenChart==='function'?getQimenChart():null);
+          if(chart&&chart.ganzhi){
+            var cp=window.analyzeClassicPatterns(chart,chart.ganzhi.day,chart.ganzhi.time);
+            var extra=[];
+            if(cp.gejuPatterns&&cp.gejuPatterns.length){
+              extra.push('<div style="margin:10px 0 6px 0;font-weight:600;color:var(--cinnabar);font-family:var(--font-title)">🏛️ 经典格局</div>');
+              cp.gejuPatterns.forEach(function(pt){
+                var cls=pt.type==='吉'?'good':(pt.type==='凶'?'bad':'warn');
+                var icon=pt.type==='吉'?'✅':(pt.type==='凶'?'❌':'⚠️');
+                extra.push('<div style="margin:2px 0;padding:2px 6px;border-left:3px solid '+
+                  (pt.type==='吉'?'var(--stone-blue)':(pt.type==='凶'?'var(--cinnabar)':'#d4a853'))+
+                  ';background:'+(pt.type==='吉'?'#e8efe6':(pt.type==='凶'?'#f5e8e6':'#fff8e6'))+
+                  ';font-size:0.8rem"><span class="tag-classic '+cls+'">'+icon+'</span> <b>'+pt.name+'</b> @ '+
+                  (pt.palaceName||'?')+'宫 —— '+pt.detail+'</div>');
+              });
+            }
+            if(cp.dunPatterns&&cp.dunPatterns.length){
+              extra.push('<div style="margin:10px 0 6px 0;font-weight:600;color:var(--stone-blue);font-family:var(--font-title)">🌀 九遁</div>');
+              cp.dunPatterns.forEach(function(d){
+                extra.push('<div style="margin:2px 0;padding:2px 6px;border-left:3px solid var(--stone-blue);background:#e8efe6;font-size:0.8rem">'+
+                  '<span class="tag-classic good">✅</span> <b>'+d.name+'</b> @ '+d.palaceName+'宫 —— '+d.detail+'</div>');
+              });
+            }
+            if(cp.sanzhaPatterns&&cp.sanzhaPatterns.length){
+              extra.push('<div style="margin:10px 0 6px 0;font-weight:600;color:#8a6d3b;font-family:var(--font-title)">🎭 三诈五假</div>');
+              cp.sanzhaPatterns.forEach(function(s){
+                extra.push('<div style="margin:2px 0;padding:2px 6px;border-left:3px solid #8a6d3b;background:#f5f0e6;font-size:0.8rem">'+
+                  '<span class="tag-classic good">✅</span> <b>'+s.name+'</b> @ '+s.palaceName+'宫 —— '+s.detail+'</div>');
+              });
+            }
+            if(cp.timePatterns&&cp.timePatterns.length){
+              extra.push('<div style="margin:10px 0 6px 0;font-weight:600;color:var(--cinnabar);font-family:var(--font-title)">⏰ 时间格局</div>');
+              cp.timePatterns.forEach(function(t){
+                var cls=t.type==='吉'?'good':'bad';
+                var icon=t.type==='吉'?'✅':'❌';
+                extra.push('<div style="margin:2px 0;padding:2px 6px;border-left:3px solid '+
+                  (t.type==='吉'?'var(--stone-blue)':'var(--cinnabar)')+
+                  ';background:'+(t.type==='吉'?'#e8efe6':'#f5e8e6')+
+                  ';font-size:0.8rem"><span class="tag-classic '+cls+'">'+icon+'</span> '+t.detail+'</div>');
+              });
+            }
+            if(extra.length) ct.innerHTML+=extra.join('\n');
+          }
+        }catch(e){}
+      }
+
       return;
     }
   }
