@@ -2380,7 +2380,7 @@ function renderQimenAll(d){
   // 干支日历
   document.getElementById('qmCal').innerHTML=
     '<div class="detail-classic-item"><div class="dlabel">公历</div><div class="dvalue">'+cal.solar.ymd_hms+'</div></div>'+
-    '<div class="detail-classic-item"><div class="dlabel">农历</div><div class="dvalue">'+cal.lunar.year+'年'+cal.lunar.month_text+'月'+cal.lunar.day_text+'</div></div>'+
+    '<div class="detail-classic-item"><div class="dlabel">节气</div><div class="dvalue">'+cal.jieqi.active_jie+'</div></div>'+
     '<div class="detail-classic-item"><div class="dlabel">年干支</div><div class="dvalue">'+g.year+'</div></div>'+
     '<div class="detail-classic-item"><div class="dlabel">月干支</div><div class="dvalue">'+g.month+'</div></div>'+
     '<div class="detail-classic-item"><div class="dlabel">日干支</div><div class="dvalue">'+g.day+'</div></div>'+
