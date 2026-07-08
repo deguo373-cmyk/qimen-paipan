@@ -13,6 +13,7 @@
   <script src="ziwei_calculator.js"></script>
   <script src="bazi_calculator.js"></script>
   <script src="qimen_calculator.js?v=2"></script>
+  <script src="yijing.js"></script>
   <style>
     /* ════════════════════════════════════════════
        术数 · 古书风格 — 宣纸底纹 · 朱砂 · 石青
@@ -848,6 +849,205 @@
       background: rgba(194,59,34,0.03);
     }
     .timing-card .tc-wx { font-size: 0.75rem; color: var(--ink-muted); }
+
+    /* ══ 周易模块专用样式 ══ */
+    .yijing-hex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .yijing-hex-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 6px;
+      border: 1px solid var(--border-color);
+      background: var(--paper);
+      cursor: pointer;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      text-align: center;
+    }
+    .yijing-hex-cell:hover {
+      transform: translateY(-3px);
+      border-color: var(--cinnabar);
+      box-shadow: 0 4px 16px rgba(194,59,34,0.1);
+    }
+    .yijing-hex-cell .yh-symbol { font-size: 1.6rem; line-height: 1.3; }
+    .yijing-hex-cell .yh-name { font-family: var(--font-title); font-size: 0.82rem; font-weight: 600; margin-top: 4px; }
+    .yijing-hex-cell .yh-pinyin { font-size: 0.65rem; color: var(--ink-muted); }
+    .yijing-hex-cell.active {
+      background: #f5eee0;
+      border-color: var(--cinnabar);
+    }
+
+    /* 起卦结果 */
+    .yijing-casting {
+      animation: folioIn 0.5s ease both;
+    }
+    .yijing-casting-header {
+      font-family: var(--font-title);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cinnabar);
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .yijing-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: var(--paper-dark);
+      border: 1px solid var(--border-color);
+    }
+    .yijing-line-yang,
+    .yijing-line-yin {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 8px;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .yijing-line-yang:hover,
+    .yijing-line-yin:hover { background: rgba(200,184,154,0.1); }
+    .yijing-line-label {
+      font-family: var(--font-title);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      min-width: 36px;
+    }
+    .yijing-line-bar {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+    }
+    .yijing-line-type {
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      margin-left: auto;
+    }
+    .yijing-line-moving {
+      background: rgba(194,59,34,0.06);
+    }
+    .yijing-original-block,
+    .yijing-change-block {
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--paper-light);
+    }
+    .yijing-change-block {
+      border-left: 3px solid var(--stone-blue);
+    }
+    .yijing-change-label {
+      font-family: var(--font-title);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--stone-blue);
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+    .yijing-hexagram {
+      text-align: center;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .yijing-hex-symbol {
+      font-size: 2.8rem;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .yijing-hex-name {
+      font-family: var(--font-title);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .yijing-pinyin {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      font-weight: 400;
+    }
+    .yijing-hex-trigrams {
+      font-size: 0.78rem;
+      color: var(--ink-light);
+      margin-top: 2px;
+    }
+    .yijing-change-guaci,
+    .yijing-change-xiang,
+    .yijing-change-tuan,
+    .yijing-modern {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      padding: 6px 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .yijing-change-guaci:last-child,
+    .yijing-change-xiang:last-child,
+    .yijing-change-tuan:last-child,
+    .yijing-modern:last-child { border-bottom: none; }
+    .yijing-moving-info {
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      background: var(--paper-dark);
+      border: 1px solid var(--border-color);
+      margin-bottom: 12px;
+    }
+    .yijing-empty {
+      padding: 20px;
+      text-align: center;
+      color: var(--ink-muted);
+      font-family: var(--font-title);
+    }
+
+    /* 卦详情弹窗内样式 */
+    .yijing-detail-box {
+      background: var(--paper-light);
+      margin-top: 16px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--cinnabar);
+      animation: folioIn 0.4s ease both;
+    }
+    .yijing-detail-box .yd-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .yijing-detail-box .yd-symbol { font-size: 2.4rem; }
+    .yijing-detail-box .yd-name {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .yijing-detail-box .yd-section {
+      margin-bottom: 8px;
+    }
+    .yijing-detail-box .yd-section .yd-label {
+      font-family: var(--font-title);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .yijing-detail-box .yd-section .yd-value {
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    @media (max-width: 640px) {
+      .yijing-hex-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 6px; }
+      .yijing-hex-cell { padding: 6px; }
+      .yijing-hex-cell .yh-symbol { font-size: 1.3rem; }
+      .yijing-hex-cell .yh-name { font-size: 0.75rem; }
+      .yijing-detail-box { padding: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -860,7 +1060,7 @@
     <div class="seal">术数<br>集要</div>
     <div class="book-title">
       <h1>术数工具箱</h1>
-      <div class="subtitle">奇门遁甲 · 八字排盘 · 紫微斗数 · 择时推演 · <em>格局用神</em>鉴赏</div>
+      <div class="subtitle">奇门遁甲 · 八字排盘 · 紫微斗数 · 周易起卦 · 择时推演 · <em>格局用神</em>鉴赏</div>
     </div>
   </div>
 
@@ -871,6 +1071,7 @@
     <button class="tab-classic" data-tab="shichen">⏰ 择时推荐</button>
     <button class="tab-classic" data-tab="bazi">📜 八字排盘</button>
     <button class="tab-classic" data-tab="ziwei">✨ 紫微斗数</button>
+    <button class="tab-classic" data-tab="yijing">☯️ 周易</button>
   </div>
 
   <!-- ════════════════════════════════════════════
@@ -1584,6 +1785,41 @@
     </div>
   </div>
 
+  <!-- ════════════════════════════════════════════
+       TAB 6: 周易
+       ════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-yijing">
+    <div class="folio">
+      <div class="folio-header">
+        <div class="dot"></div>
+        <span class="folio-title">☯ 起卦</span>
+        <span class="folio-badge">卷一</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button class="btn-classic btn-cinnabar btn-hand" id="yjCastBtn">起 卦</button>
+        <span style="font-size:0.82rem;color:var(--ink-muted)">点击起卦，随机生成6爻，得本卦、变卦、动爻</span>
+      </div>
+      <div class="loading-classic" id="yjLoad"><div class="spinner"></div><span>起卦中…</span></div>
+    </div>
+    <div class="error-banner" id="yjErr"></div>
+    <div id="yjResult" style="display:none"></div>
+
+    <div class="ink-divider"></div>
+
+    <div class="folio">
+      <div class="folio-header">
+        <div class="dot"></div>
+        <span class="folio-title">六十四卦速查</span>
+        <span class="folio-badge">卷二</span>
+      </div>
+      <div class="field-group" style="max-width:400px;margin-bottom:16px">
+        <label>搜索卦名/拼音</label>
+        <input type="text" id="yjSearch" placeholder="输入卦名或拼音，如：乾、qian、泰" style="width:100%">
+      </div>
+      <div id="yjGrid" class="yijing-hex-grid"></div>
+      <div id="yjDetail"></div>
+    </div>
+  </div>
 
 
   <!-- 通用详解弹窗（全站共用，必须放在所有 Tab 容器之外） -->
@@ -1818,8 +2054,106 @@ document.querySelectorAll('.tab-classic').forEach(function(b){
     document.querySelectorAll('.tab-pane').forEach(function(x){x.classList.remove('active');});
     this.classList.add('active');
     document.getElementById('tab-'+this.dataset.tab).classList.add('active');
+
+    // 进入择时推荐Tab时自动计算今天的数据
+    if (this.dataset.tab === 'shichen') {
+      // 先确保日期是今天
+      var d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0'),max=getMaxDay(y,m);
+      populateSelect('scYear',1900,2030,false,String(y));
+      populateSelect('scMonth',1,12,true,m);
+      populateSelect('scDay',1,max,true,day);
+      // 自动点击分析按钮
+      setTimeout(function(){
+        var btn=document.getElementById('scBtn');
+        if(btn) btn.click();
+      },100);
+    }
   });
 });
+
+// ═════════════════════════════════════════════════
+// 周易 — 起卦 + 速查
+// ═════════════════════════════════════════════════
+(function(){
+  var grid=document.getElementById('yjGrid');
+  var detail=document.getElementById('yjDetail');
+  var search=document.getElementById('yjSearch');
+
+  // 渲染64卦网格
+  function renderGrid(list){
+    if(!grid)return;
+    grid.innerHTML=list.map(function(h){
+      return '<div class="yijing-hex-cell clickable-item" data-idx="'+h.index+'">'+
+        '<div class="yh-symbol">'+h.symbol+'</div>'+
+        '<div class="yh-name">'+h.name+'</div>'+
+        '<div class="yh-pinyin">'+h.pinyin+'</div>'+
+        '</div>';
+    }).join('');
+    // 点击展开详情
+    grid.querySelectorAll('.yijing-hex-cell').forEach(function(el){
+      el.addEventListener('click',function(){
+        var idx=parseInt(this.dataset.idx);
+        var h=window.YIJING.getByIndex(idx);
+        if(!h)return;
+        grid.querySelectorAll('.yijing-hex-cell').forEach(function(c){c.classList.remove('active');});
+        this.classList.add('active');
+        showDetail(h);
+      });
+    });
+  }
+
+  // 显示卦详情
+  function showDetail(h){
+    if(!h||!detail)return;
+    detail.innerHTML='<div class="yijing-detail-box">'+
+      '<div class="yd-header">'+
+      '<span class="yd-symbol">'+h.symbol+'</span>'+
+      '<div><div class="yd-name">'+h.name+' <span style="font-size:0.8rem;color:var(--ink-muted);font-weight:400">('+h.pinyin+')</span></div>'+
+      '<div style="font-size:0.78rem;color:var(--ink-light)">第'+h.index+'卦 · '+(h.upper||'')+' ☰ 上 '+(h.lower||'')+' ☷ 下</div></div>'+
+      '</div>'+
+      '<div class="yd-section"><span class="yd-label">卦辞</span><div class="yd-value">'+h.guaci+'</div></div>'+
+      '<div class="yd-section"><span class="yd-label">彖传要义</span><div class="yd-value">'+h.tuan+'</div></div>'+
+      '<div class="yd-section"><span class="yd-label">象传要点</span><div class="yd-value">'+h.xiang+'</div></div>'+
+      '<div class="yd-section"><span class="yd-label">现代应用</span><div class="yd-value">'+h.modern+'</div></div>'+
+      '</div>';
+    detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  // 初始渲染全部卦
+  renderGrid(window.YIJING.getAll());
+
+  // 搜索过滤
+  search.addEventListener('input',function(){
+    var q=this.value.trim();
+    var results=q?window.YIJING.searchHexagrams(q):window.YIJING.getAll();
+    detail.innerHTML='';
+    renderGrid(results);
+  });
+
+  // 起卦
+  document.getElementById('yjCastBtn').addEventListener('click',function(){
+    var err=document.getElementById('yjErr');
+    err.classList.remove('active');
+    var load=document.getElementById('yjLoad');
+    load.classList.add('active');
+    this.disabled=true;
+
+    setTimeout(function(){
+      try{
+        var result=window.YIJING.cast();
+        var html=window.YIJING.renderCasting(result);
+        var resDiv=document.getElementById('yjResult');
+        resDiv.innerHTML=html;
+        resDiv.style.display='block';
+      }catch(e){
+        err.textContent='❌ 起卦出错：'+e.message;
+        err.classList.add('active');
+      }
+      load.classList.remove('active');
+      document.getElementById('yjCastBtn').disabled=false;
+    },200);
+  });
+})();
 
 // ═════════════════════════════════════════════════
 // 奇门 — 历法切换、填当前时间
