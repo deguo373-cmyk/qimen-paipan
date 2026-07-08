@@ -272,6 +272,14 @@
     .shichen-classic-card.lev-ping { background: var(--paper-dark); }
     .shichen-classic-card.lev-xiong { background: #f5e8e6; }
     .shichen-classic-card.lev-daxiong { background: #f0e0de; }
+    .shichen-classic-card { cursor: pointer; position: relative; }
+    .shichen-classic-card .sc-expand-icon { font-size: 0.55rem; color: var(--ink-muted); margin-top: 3px; transition: transform 0.3s ease; }
+    .shichen-classic-card .sc-expand-icon.open { transform: rotate(180deg); }
+    .shichen-detail { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease; opacity: 0; margin-top: 0; text-align: left; font-size: 0.72rem; line-height: 1.6; color: var(--ink-muted); border-top: 0 solid var(--border-color); }
+    .shichen-detail.open { max-height: 300px; opacity: 1; margin-top: 6px; border-top-width: 1px; padding-top: 6px; overflow-y: auto; }
+    .shichen-detail .sc-detail-text { margin-bottom: 5px; color: var(--ink-light); }
+    .shichen-detail .sc-detail-suitable { margin-bottom: 3px; color: #5a7a5a; }
+    .shichen-detail .sc-detail-unsuitable { color: #a06050; }
     /* 八字四柱 */
     .bazi-classic-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border-color); margin: 12px 0; }
     .bazi-classic-cell { padding: 12px 8px; background: var(--paper-light); text-align: center; min-height: 80px; transition: background 0.3s; background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200,184,154,0.03) 1px, rgba(200,184,154,0.03) 3px); }
@@ -3147,7 +3155,7 @@ document.getElementById('scBtn').addEventListener('click',function(){
     for(var i=0;i<shichen.length;i++){
       var sc=shichen[i];
       var chart=computeQimenChart({year:y,month:m,day:d,hour:sc.hour,minute:sc.min});
-      var luck=chart?analyzeTimeLuck(chart):{overall:"平"};
+      var luck=chart?analyzeTimeLuck(chart):{overall:"平",suitable:[],unsuitable:[],analysis:"",score:0};
       var timeGZ=chart&&chart.ganzhi?chart.ganzhi.time:'';
       // 从chart提取门信息
       var door='',star='',god='';
@@ -3163,13 +3171,17 @@ document.getElementById('scBtn').addEventListener('click',function(){
       }
       var rating=luck.overall||'平';
       var starStr=rating==='大吉'?'★★★':rating==='吉'?'★★':rating==='平'?'★':rating==='凶'?'☆':'';
-      results.push({name:sc.name,period:sc.period,rating:{text:rating,star:starStr},door:door,time_ganzhi:timeGZ});
+      results.push({name:sc.name,period:sc.period,rating:{text:rating,star:starStr},door:door,time_ganzhi:timeGZ,analysis:luck.analysis||'',suitable:luck.suitable||[],unsuitable:luck.unsuitable||[]});
     }
     var gg=document.getElementById('scGrid');
     document.getElementById('scInfo').innerHTML='<div class="info-item"><span class="ilabel">日期</span><span class="ivalue">'+y+'年'+String(m).padStart(2,'0')+'月'+String(d).padStart(2,'0')+'日</span></div><div class="info-item"><span class="ilabel">共</span><span class="ivalue">'+results.length+'个时辰</span></div>';
     gg.innerHTML=results.map(function(r){
       var rt=r.rating.text,cm={'大吉':'lev-daji','吉':'lev-ji','平':'lev-ping','凶':'lev-xiong','大凶':'lev-daxiong'};
-      return '<div class="shichen-classic-card '+(cm[rt]||'lev-ping')+'"><div class="sc-name">'+r.name+'</div><div class="sc-period">'+r.period+'</div><div class="sc-rating">'+r.rating.star+' '+rt+'</div><div class="sc-door">'+r.door+termHint(r.door)+'</div><div style="font-size:0.65rem;color:var(--ink-muted)">'+(r.time_ganzhi||'')+'</div></div>';
+      var detailHtml='';
+      if(r.analysis) detailHtml+='<div class="sc-detail-text">'+r.analysis+'</div>';
+      if(r.suitable&&r.suitable.length) detailHtml+='<div class="sc-detail-suitable">✅ 适合：'+r.suitable.join('、')+'</div>';
+      if(r.unsuitable&&r.unsuitable.length) detailHtml+='<div class="sc-detail-unsuitable">⚠️ 注意：'+r.unsuitable.join('、')+'</div>';
+      return '<div class="shichen-classic-card '+(cm[rt]||'lev-ping')+'" onclick="toggleShichenDetail(this)"><div class="sc-name">'+r.name+'</div><div class="sc-period">'+r.period+'</div><div class="sc-rating">'+r.rating.star+' '+rt+'</div><div class="sc-door">'+r.door+termHint(r.door)+'</div><div style="font-size:0.65rem;color:var(--ink-muted)">'+(r.time_ganzhi||'')+'</div><div class="sc-expand-icon">▼</div><div class="shichen-detail">'+detailHtml+'</div></div>';
     }).join('');
     var st={};results.forEach(function(r){var t=r.rating.text;st[t]=(st[t]||0)+1;});
     document.getElementById('scStats').innerHTML=Object.entries(st).map(function(kv){return '<div class="detail-classic-item"><div class="dlabel">'+kv[0]+'</div><div class="dvalue">'+kv[1]+'个时辰</div></div>';}).join('');
@@ -3177,6 +3189,32 @@ document.getElementById('scBtn').addEventListener('click',function(){
   }catch(err){e.textContent='❌ '+err.message;e.classList.add('active');}
   l.classList.remove('active');this.disabled=false;
 });
+
+// 时辰卡片展开/收起详细信息
+function toggleShichenDetail(card){
+  var detail=card.querySelector('.shichen-detail');
+  var icon=card.querySelector('.sc-expand-icon');
+  if(!detail)return;
+  var isOpen=detail.classList.contains('open');
+  // 关闭其他已展开的卡片
+  document.querySelectorAll('.shichen-detail.open').forEach(function(d){
+    if(d!==detail){
+      d.classList.remove('open');
+      d.style.maxHeight='0';
+      var p=d.parentNode;
+      if(p){var ic=p.querySelector('.sc-expand-icon');if(ic)ic.classList.remove('open');}
+    }
+  });
+  if(isOpen){
+    detail.classList.remove('open');
+    detail.style.maxHeight='0';
+    if(icon)icon.classList.remove('open');
+  }else{
+    detail.classList.add('open');
+    detail.style.maxHeight=detail.scrollHeight+'px';
+    if(icon)icon.classList.add('open');
+  }
+}
 
 // ═════════════════════════════════════════════════
 // TAB 3: 八字 — 刑冲合害分析
