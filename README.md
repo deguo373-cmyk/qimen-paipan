@@ -9,6 +9,7 @@
 | `qimen-dunjia/` | 奇门遁甲 | 单事判断、择时、方位、趋吉避凶 | Python CLI：`scripts/qimen_cli.py` |
 | `ziwei-doushu/` | 紫微斗数 | 本命盘结构解读、宫位分析、大限流年 | 规则与 references 驱动 |
 | `bazi/` | 四柱八字 | 日主强弱、格局、十神、大运流年 | 规则与 references 驱动 |
+| `yijing/` | 周易六十四卦 | 起卦、解卦、爻辞分析、体用生克、具体事项决策参考 | 规则与 references 驱动 |
 
 ## 仓库结构
 
