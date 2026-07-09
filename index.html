@@ -232,7 +232,7 @@
     .palace-classic {
       background: var(--paper-light); padding: 10px 8px; min-height: 110px;
       display: flex; flex-direction: column; position: relative;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease; cursor: pointer;
       background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200,184,154,0.03) 1px, rgba(200,184,154,0.03) 3px);
     }
     .palace-classic:hover { background: #f0e8dc; }
@@ -251,6 +251,54 @@
     .palace-classic.kong::after { content: '旬空'; position: absolute; top: 2px; right: 4px; font-size: 0.55rem; color: var(--ink-muted); font-family: var(--font-title); opacity: 0.5; }
     .palace-classic .center-txt { text-align: center; font-family: var(--font-title); font-size: 0.75rem; color: var(--ink-muted); }
     .palace-classic .center-txt strong { display: block; font-size: 0.9rem; color: var(--ink-light); margin-bottom: 2px; }
+    /* 九宫详情弹窗 */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 9999;
+      display: none; justify-content: center; align-items: center;
+      animation: modalFadeIn 0.25s ease;
+    }
+    .modal-overlay.active { display: flex; }
+    @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalSlideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-card {
+      background: var(--paper-light); border: 1.5px solid var(--border-color);
+      border-radius: 8px; max-width: 520px; width: 90%; max-height: 80vh;
+      box-shadow: 0 8px 32px rgba(44,36,22,0.2);
+      animation: modalSlideIn 0.3s ease;
+      display: flex; flex-direction: column;
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px 10px; border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-title); font-size: 0.9rem; font-weight: 700;
+    }
+    .modal-close {
+      background: none; border: none; font-size: 1.2rem; cursor: pointer;
+      color: var(--ink-muted); padding: 4px 8px; border-radius: 4px;
+      transition: background 0.2s, color 0.2s; line-height: 1;
+    }
+    .modal-close:hover { background: var(--paper-dark); color: var(--cinnabar); }
+    .modal-body {
+      padding: 14px 18px 18px; overflow-y: auto;
+      font-size: 0.82rem; line-height: 1.7;
+    }
+    .modal-body .md-section { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
+    .modal-body .md-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .modal-body .md-label { font-weight: 700; font-size: 0.8rem; margin-bottom: 2px; }
+    .modal-body .md-label .md-icon { margin-right: 4px; }
+    .modal-body .md-hint { color: var(--ink-muted); font-size: 0.78rem; margin-bottom: 2px; }
+    .modal-body .md-wuxing { font-size: 0.74rem; color: var(--ink-light); padding-left: 4px; margin-top: 1px; }
+    .modal-body .md-wuxing .clr-good { color: var(--stone-blue); font-weight: 600; }
+    .modal-body .md-wuxing .clr-bad { color: var(--cinnabar); font-weight: 600; }
+    .modal-body .md-wuxing .clr-neutral { color: var(--ink-muted); }
+    .modal-body .md-pattern { background: var(--paper-dark); padding: 6px 10px; border-left: 3px solid var(--gold); margin: 6px 0; border-radius: 2px; }
+    .modal-body .md-pattern .md-pattern-name { font-weight: 700; color: var(--cinnabar-dark); }
+    .modal-body .md-stems { display: flex; gap: 6px; margin: 6px 0; }
+    .modal-body .md-stems .stem-tag { background: var(--paper-dark); padding: 2px 8px; font-family: var(--font-title); font-size: 0.8rem; border-radius: 2px; }
+    .modal-body .md-stems .stem-tag.earth { color: #6b4f3a; }
+    .modal-body .md-stems .stem-tag.sky { color: var(--stone-blue); }
+    .modal-body .md-kong { color: var(--ink-muted); font-style: italic; font-size: 0.75rem; margin-top: 4px; }
     /* 方位 */
     .dir-classic-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .dir-classic-card { padding: 10px; border: 1px solid var(--border-color); text-align: center; font-size: 0.8rem; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; cursor: default; }
@@ -2010,6 +2058,179 @@ function termHint(termName) {
   return '<span class="term-note">（'+hint+'）</span>';
 }
 
+// ═════════════════════════════════════════════════
+// 五行生克工具函数（用于九宫弹窗）
+// ═════════════════════════════════════════════════
+var WUXING_CYCLE = ['金','水','木','火','土'];
+var WUXING_SHENG = {'金':'水','水':'木','木':'火','火':'土','土':'金'};
+var WUXING_KE   = {'金':'木','水':'火','木':'土','火':'金','土':'水'};
+
+var STAR_WUXING = {
+  '天蓬':'水','天任':'土','天芮':'土','天冲':'木','天辅':'木',
+  '天英':'火','天柱':'金','天心':'金','天禽':'土'
+};
+var DOOR_WUXING = {
+  '休门':'水','生门':'土','死门':'土','伤门':'木','杜门':'木',
+  '景门':'火','惊门':'金','开门':'金'
+};
+
+// 解析宫位五行（从元素文本中提取）
+function getPalaceElement(el) {
+  var dirEl = el.querySelector('.p-dir');
+  if (!dirEl) return null;
+  var txt = dirEl.textContent || '';
+  var parts = txt.split('·');
+  return parts.length > 1 ? parts[1].trim() : null;
+}
+
+// 生成生克关系描述
+function getWuxingRelation(aName, aWx, bName, bWx) {
+  if (!aWx || !bWx) return null;
+  if (aWx === bWx) return {text: aName+'与'+bName+'五行相同（'+aWx+'），比和相助', cls:'clr-neutral'};
+  if (WUXING_SHENG[aWx] === bWx) return {text: aWx+'生'+bWx+' → '+aName+'生'+bName+'，'+bName+'得"'+aWx+'生"力量增强', cls:'clr-good'};
+  if (WUXING_SHENG[bWx] === aWx) return {text: bWx+'生'+aWx+' → '+bName+'生'+aName+'，'+aName+'得"'+bWx+'生"力量增强', cls:'clr-good'};
+  if (WUXING_KE[aWx] === bWx) return {text: aWx+'克'+bWx+' → '+aName+'克'+bName+'，'+bName+'受克力量受阻', cls:'clr-bad'};
+  if (WUXING_KE[bWx] === aWx) return {text: bWx+'克'+aWx+' → '+bName+'克'+aName+'，'+aName+'受克力量受阻', cls:'clr-bad'};
+  return null;
+}
+
+// 天干组合 → 格局名称映射
+var STEM_PATTERNS = {
+  '戊丙':'青龙返首','丙戊':'飞鸟跌穴','戊丁':'青龙转光',
+  '乙辛':'青龙逃走','辛乙':'白虎猖狂','丁癸':'朱雀投江',
+  '癸丁':'腾蛇夭矫','丙庚':'荧入太白','庚丙':'太白入荧',
+  '庚戊':'伏宫格','戊庚':'飞宫格','庚癸':'大格',
+  '庚壬':'小格','庚己':'刑格','癸癸':'天网四张',
+  '戊戊':'伏吟格','壬癸':'天网低张'
+};
+
+// 九宫弹窗：从单击的宫位DOM提取数据并渲染
+function openPalaceDetail(el) {
+  var overlay = document.getElementById('qmPalaceDetail');
+  if (!overlay) return;
+
+  // 提取宫名/方向/五行
+  var nameEl = el.querySelector('.p-name');
+  var nameTxt = nameEl ? nameEl.childNodes[0].textContent.trim() : '未知';
+  var palaceElement = getPalaceElement(el); // 宫五行
+  var dirEl = el.querySelector('.p-dir');
+  var dirTxt = dirEl ? dirEl.textContent.trim() : '';
+  var palaceTitle = nameTxt + '（' + dirTxt + '）';
+
+  // 提取神/星/门
+  var godEl = el.querySelector('.p-god');
+  var starEl = el.querySelector('.p-star');
+  var doorEl = el.querySelector('.p-door');
+  var kongEl = el.querySelector('.p-kong');
+
+  var godName = godEl ? godEl.childNodes[0].textContent.trim() : '';
+  var starName = starEl ? starEl.childNodes[0].textContent.trim() : '';
+  var doorName = doorEl ? doorEl.childNodes[0].textContent.trim() : '';
+  var hasKong = kongEl !== null;
+  var isCenter = el.classList.contains('is-center');
+
+  // 提取天干
+  var earthStemEl = el.querySelector('.stem.earth');
+  var skyStemEl = el.querySelector('.stem.sky');
+  var earthStem = earthStemEl ? earthStemEl.textContent.trim() : '';
+  var skyStem = skyStemEl ? skyStemEl.textContent.trim() : '';
+
+  // 标题
+  var headerIcon = isCenter ? '🏛️' : '🏠';
+  document.getElementById('qmDetailTitle').textContent = headerIcon + ' ' + palaceTitle;
+
+  var body = document.getElementById('qmDetailBody');
+  var html = '';
+
+  // 中宫特殊处理
+  if (isCenter) {
+    var centerNote = el.querySelector('.center-txt span');
+    html += '<div class="md-section"><div class="md-label">中宫</div>' +
+      '<div class="md-hint">中宫为太极点，天禽星居中，八方之气汇聚于此，代表事物整体格局。</div>' +
+      (centerNote ? '<div class="md-hint" style="margin-top:4px">' + centerNote.textContent + '</div>' : '') +
+      '</div>';
+    document.getElementById('qmDetailBody').innerHTML = html;
+    overlay.classList.add('active');
+    return;
+  }
+
+  var starWx = STAR_WUXING[starName] || '';
+  var doorWx = DOOR_WUXING[doorName] || '';
+
+  // ── 星 ──
+  if (starName) {
+    var starHint = SHORT_HINTS[starName] || '';
+    html += '<div class="md-section">' +
+      '<div class="md-label"><span class="md-icon">🔮</span>' + starName + '</div>' +
+      (starHint ? '<div class="md-hint">「' + starHint + '」</div>' : '');
+    if (starWx && palaceElement) {
+      var rel = getWuxingRelation(starName, starWx, '宫位', palaceElement);
+      if (rel) html += '<div class="md-wuxing">' + rel.text + '（' + starWx + ' vs ' + palaceElement + '）</div>';
+    }
+    html += '</div>';
+  }
+
+  // ── 门 ──
+  if (doorName) {
+    var doorHint = SHORT_HINTS[doorName] || '';
+    html += '<div class="md-section">' +
+      '<div class="md-label"><span class="md-icon">🚪</span>' + doorName + '</div>' +
+      (doorHint ? '<div class="md-hint">「' + doorHint + '」</div>' : '');
+    if (doorWx && palaceElement) {
+      var rel2 = getWuxingRelation(doorName, doorWx, '宫位', palaceElement);
+      if (rel2) html += '<div class="md-wuxing">' + rel2.text + '（' + doorWx + ' vs ' + palaceElement + '）</div>';
+    }
+    html += '</div>';
+  }
+
+  // ── 神 ──
+  if (godName) {
+    var godHint = SHORT_HINTS[godName] || '';
+    html += '<div class="md-section">' +
+      '<div class="md-label"><span class="md-icon">👻</span>' + godName + '</div>' +
+      (godHint ? '<div class="md-hint">「' + godHint + '」</div>' : '') +
+      '</div>';
+  }
+
+  // ── 天盘+地盘 格局 ──
+  if (earthStem || skyStem) {
+    var stemKey = (earthStem || '') + (skyStem || '');
+    var patName = STEM_PATTERNS[stemKey] || '';
+    var patHint = patName ? (SHORT_HINTS[patName] || '') : '';
+    html += '<div class="md-section">' +
+      '<div class="md-label"><span class="md-icon">🌿</span>天盘·地盘</div>' +
+      '<div class="md-stems">' +
+      (earthStem ? '<span class="stem-tag earth">地盘 ' + earthStem + '</span>' : '') +
+      (skyStem ? '<span class="stem-tag sky">天盘 ' + skyStem + '</span>' : '') +
+      '<span style="font-size:0.78rem;color:var(--ink-muted);align-self:center">→ ' + (earthStem||'') + '加' + (skyStem||'') + '</span>' +
+      '</div>';
+    if (patName) {
+      html += '<div class="md-pattern"><span class="md-pattern-name">' + patName + '</span>：' + patHint + '</div>';
+    } else {
+      html += '<div class="md-hint" style="font-size:0.75rem;color:var(--ink-muted)">此天干组合无特殊格局命名</div>';
+    }
+    html += '</div>';
+  }
+
+  // ── 旬空 ──
+  if (hasKong) {
+    var kongHint = SHORT_HINTS['旬空'] || '力量偏虚';
+    html += '<div class="md-section">' +
+      '<div class="md-label"><span class="md-icon">⚠️</span>旬空</div>' +
+      '<div class="md-hint">此宫旬空，' + kongHint + '。求事迟缓，待出空填实之日方可成。</div>' +
+      '</div>';
+  }
+
+  document.getElementById('qmDetailBody').innerHTML = html;
+  overlay.classList.add('active');
+}
+
+// 关闭弹窗
+function closePalaceDetail() {
+  var overlay = document.getElementById('qmPalaceDetail');
+  if (overlay) overlay.classList.remove('active');
+}
+
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function nowDate(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function nowTime(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
@@ -2693,9 +2914,9 @@ function renderQimenAll(d){
   c.palaces.forEach(function(p){pmap[p.palace]=p;});
   document.getElementById('qmGrid').innerHTML=gridOrder.map(function(no){
     var p=pmap[no];
-    if(!p||p.is_center) return '<div class="palace-classic is-center"><div class="center-txt"><strong>中宫</strong>天禽<br><span>'+(p?.hosting_note||'')+'</span></div></div>';
+    if(!p||p.is_center) return '<div class="palace-classic is-center" onclick="openPalaceDetail(this)"><div class="center-txt"><strong>中宫</strong>天禽<br><span>'+(p?.hosting_note||'')+'</span></div></div>';
     var kwClass=(c.kongwang_palaces||[]).includes(no)?' kong':'';
-    return '<div class="palace-classic'+kwClass+'">'+
+    return '<div class="palace-classic'+kwClass+'" onclick="openPalaceDetail(this)">'+
       '<div class="p-name">'+p.name+' <span class="p-dir">'+p.direction+'·'+p.element+'</span></div>'+
       (p.god?'<div class="p-god">'+p.god+termHint(p.god)+'</div>':'')+
       '<div class="p-star">'+p.star+termHint(p.star)+'</div>'+
@@ -4647,6 +4868,31 @@ document.getElementById('zwDetailClose').addEventListener('click',function(){
 document.getElementById('zwDetail').addEventListener('click',function(e){
   if(e.target===this) this.classList.remove('active');
 });
+
+// 九宫详情弹窗 — 关闭事件
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var overlay = document.getElementById('qmPalaceDetail');
+    if (overlay && overlay.classList.contains('active')) {
+      overlay.classList.remove('active');
+    }
+  }
+});
+document.getElementById('qmPalaceDetail').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('active');
+});
 </script>
+
+<!-- 九宫详情弹窗 -->
+<div class="modal-overlay" id="qmPalaceDetail">
+  <div class="modal-card">
+    <div class="modal-header">
+      <span id="qmDetailTitle">🏠 离宫（南方·火）</span>
+      <button class="modal-close" onclick="closePalaceDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="qmDetailBody"></div>
+  </div>
+</div>
+
 </body>
 </html>
