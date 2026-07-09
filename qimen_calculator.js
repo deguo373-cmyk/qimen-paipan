@@ -2481,10 +2481,11 @@ function analyzeTimeLuck(chart, questionType) {
   
   // 综合评级
   var overall = "平";
-  if (score >= 3) overall = "吉";
-  else if (score >= 5) overall = "大吉";
-  else if (score <= -1) overall = "凶";
+  if (score >= 5) overall = "大吉";
+  else if (score >= 2) overall = "吉";
   else if (score <= -3) overall = "大凶";
+  else if (score <= 0) overall = "凶";
+  // 其余分数 0.01~1.99 → 平
   
   // 适合/不适合做的事
   var suitable = QM_TIME_SUITABLE[qtype] || QM_TIME_SUITABLE.career;
