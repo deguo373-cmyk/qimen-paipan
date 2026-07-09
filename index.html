@@ -3272,6 +3272,7 @@ function renderTimeLuck(chart, qtype) {
   if (!qtype) qtype = document.getElementById('qmQType').value || 'career';
   var tl = null;
   var innerChart = (chart && chart.chart && chart.chart.palaces) ? chart.chart : chart;
+  if (chart && chart.ganzhi && !innerChart.ganzhi) innerChart.ganzhi = chart.ganzhi;
   if (typeof window.analyzeTimeLuck === 'function') {
     tl = window.analyzeTimeLuck(innerChart, qtype);
   }
@@ -3378,6 +3379,7 @@ document.getElementById('scBtn').addEventListener('click',function(){
       var sc=shichen[i];
       var chart=computeQimenChart({year:y,month:m,day:d,hour:sc.hour,minute:sc.min});
       var innerChart = (chart && chart.chart && chart.chart.palaces) ? chart.chart : chart;
+      if (chart && chart.ganzhi && !innerChart.ganzhi) innerChart.ganzhi = chart.ganzhi;
       var luck=innerChart?analyzeTimeLuck(innerChart):{overall:"平",suitable:[],unsuitable:[],analysis:"",score:0};
       var timeGZ=chart&&chart.ganzhi?chart.ganzhi.time:'';
       // 从chart提取门信息
