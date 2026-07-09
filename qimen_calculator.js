@@ -2431,7 +2431,7 @@ function analyzeTimeLuck(chart, questionType) {
   
   // 1. 遁类判断
   if (dunType === "阳遁") {
-    score += 1;
+    score += 3;
     analysisParts.push("阳遁·阳气上升，宜主动。");
   } else {
     analysisParts.push("阴遁·阴气上升，宜守成。");
@@ -2440,22 +2440,22 @@ function analyzeTimeLuck(chart, questionType) {
   // 2. 时干落宫状态
   if (timeStemPalace) {
     if (timeStemPalace.door && QM_DOOR_JI.indexOf(timeStemPalace.door) !== -1) {
-      score += 2;
+      score += 4;
       analysisParts.push("时干落" + timeStemPalace.name + "宫配" + timeStemPalace.door + "（吉门得力）。");
     } else if (timeStemPalace.door && QM_DOOR_XIONG.indexOf(timeStemPalace.door) !== -1) {
-      score -= 1;
+      score -= 3;
       analysisParts.push("时干落" + timeStemPalace.name + "宫配" + timeStemPalace.door + "（凶门受制）。");
     }
     if (timeStemPalace.is_kong) {
-      score -= 1;
+      score -= 3;
       analysisParts.push("时干落空亡宫，事易虚。");
     }
     if (timeStemPalace.god === "白虎" || timeStemPalace.god === "玄武") {
-      score -= 1;
+      score -= 2;
       analysisParts.push("时干临" + timeStemPalace.god + "（有干扰）。");
     }
     if (timeStemPalace.sky_stem && ["乙","丙","丁"].indexOf(timeStemPalace.sky_stem) !== -1) {
-      score += 1.5;
+      score += 3;
       analysisParts.push("时干临三奇（" + timeStemPalace.sky_stem + "），有转机。");
     }
   } else {
@@ -2472,20 +2472,20 @@ function analyzeTimeLuck(chart, questionType) {
     }
   }
   if (goodDoorCount > badDoorCount) {
-    score += 1;
+    score += 2;
     analysisParts.push("盘中吉门偏多，整体气场积极。");
   } else if (badDoorCount > goodDoorCount) {
-    score -= 1;
+    score -= 2;
     analysisParts.push("盘中凶门偏多，气场有压力。");
   }
   
   // 综合评级
   var overall = "平";
-  if (score >= 5) overall = "大吉";
-  else if (score >= 2) overall = "吉";
-  else if (score <= -3) overall = "大凶";
-  else if (score <= 0) overall = "凶";
-  // 其余分数 0.01~1.99 → 平
+  if (score >= 8) overall = "大吉";
+  else if (score >= 3) overall = "吉";
+  else if (score <= -6) overall = "大凶";
+  else if (score <= -3) overall = "凶";
+  // 剩余 score 在 0~1.99 之间 → 平
   
   // 适合/不适合做的事
   var suitable = QM_TIME_SUITABLE[qtype] || QM_TIME_SUITABLE.career;
